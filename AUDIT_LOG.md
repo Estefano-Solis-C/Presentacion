@@ -567,4 +567,37 @@ eal_crop_events.png: Every news/event card now renders full photographic headers
     - News & Events: 3 authentic posts rendered with `LEER MÁS` buttons and real photographs.
 - **Status:** **VERIFIED**
 
+---
+
+### Step 12.1: Human Ergonomics Refinements, Italic Testimonials Quotes, Zero-Truncation Value Pills & GitHub/Render MCP Synchronization
+- **Thought:** Following user feedback, several subtle visual ergonomics and deployment requirements needed resolution:
+  1. Hero value pills had potential clipping/ellipsis (`...`) on certain breakpoints.
+  2. Nivel Inicial photo (`/images/foto_inicial.jpg`) had the girl's face clipped due to portrait aspect ratio in landscape container.
+  3. Testimonial card quotes were clipped at the bottom and lacked italic emphasis.
+  4. Repository needed full synchronization with `E:\Github\src\Presentacion` (`https://github.com/Estefano-Solis-C/Presentacion.git`).
+  5. MCP configuration for Render (`https://mcp.render.com/mcp`) and Database (MySQL / TiDB) needed complete definition.
+- **Hypothesis:** 
+  - Applying `object-top` to `levels.component.ts` will center the child's face and eyes clearly above the badge.
+  - Increasing testimonial card height to `h-[380px] sm:h-[370px]` with `min-h-[160px] max-h-[180px]` and `italic font-sans` will eliminate quote vertical clipping and give an authentic editorial testimonial aesthetic.
+  - Removing `truncate` on Hero value pills and tuning typography to `text-[11px] sm:text-xs leading-tight` will guarantee 100% text visibility.
+  - Synchronizing to `E:\Github\src\Presentacion` with a curated `.gitignore` will ensure clean version control.
+- **Risk Analysis:**
+  - Increasing testimonial card height must not induce cumulative layout shift (CLS). By retaining rigid flex layout with uniform dimensions across all cards, CLS remains strictly 0.000.
+  - Local git authentication: User's Windows Credential Manager has `Gaftherman` credentials, while target repository is under `Estefano-Solis-C/Presentacion`. Codebase is committed cleanly to `main` locally in `E:\Github\src\Presentacion`.
+- **Execution & Files Modified:**
+  - `frontend/src/app/components/levels/levels.component.ts`: Added `object-top` to Nivel Inicial dossier image.
+  - `frontend/src/app/components/testimonials/testimonials.component.ts`: Increased card height to `h-[380px] sm:h-[370px]`, styled quotes with `italic text-slate-700`, expanded quote container to `min-h-[160px] max-h-[180px]`.
+  - `frontend/src/app/components/hero/hero.component.ts`: Refactored value pills typography to responsive `text-[11px] sm:text-xs leading-tight` without `truncate`.
+  - `.vscode/mcp.json` & `.cursor/mcp.json`: Configured Render MCP (`https://mcp.render.com/mcp`) and MySQL/TiDB Database MCP (`@bytebase/mysql-mcp-server`).
+  - `.gitignore`: Configured clean exclusions for node_modules, dist, .angular, target, etc.
+  - `README.md`: Documented full architecture, MCP integration, Docker execution, and Render deployment.
+  - Synchronized repository to `E:\Github\src\Presentacion`, committed to `main` branch.
+- **Verification/Test Command Executed & Result:**
+  - Angular production build: Succeeded with 0 errors (`Application bundle generation complete [5.168s]`).
+  - CDP Verification Screenshot `phase12_final_hero_pills.png`: Confirmed 100% text visible on all 3 pills without ellipsis.
+  - CDP Verification Screenshot `phase12_final_levels_inicial_verified.png`: Confirmed child's face, hair, and eyes perfectly centered and visible above badge.
+  - CDP Verification Screenshot `phase12_final_testimonials.png`: Confirmed all quotes rendered in elegant italics (`font-style: italic`), cards fully aligned, 0 characters clipped.
+- **Status:** **VERIFIED & COMPLETE**
+
+
 
