@@ -1,0 +1,69 @@
+# =============================================================================
+# RENDER BLUEPRINT (render.yaml)
+# Institución Educativa Privada "Dora Mayer de Zulen" (doramayerdezulen.edu.pe)
+# Despliegue de Alto Rendimiento: Frontend SPA + Backend Spring Boot TiDB
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # 1. SERVICIO WEB BACKEND (Spring Boot 3.3.4 + Java 21 Virtual Threads)
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: dora-mayer-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: starter
+    region: oregon
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: PORT
+        value: 8080
+      - key: TIDB_HOST
+        sync: false # Configurar desde el dashboard de TiDB Cloud Serverless
+      - key: TIDB_PORT
+        value: "4000"
+      - key: TIDB_DATABASE
+        value: doramayer
+      - key: TIDB_USER
+        sync: false
+      - key: TIDB_PASSWORD
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://doramayerdezulen.edu.pe,https://www.doramayerdezulen.edu.pe,http://localhost:4200
+
+  # ---------------------------------------------------------------------------
+  # 2. SITIO ESTÁTICO FRONTEND (Angular 18+ Signals & Tailwind CSS CDN Edge)
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: dora-mayer-frontend
+    runtime: static
+    plan: starter
+    region: oregon
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist/dora-mayer-portal/browser
+    pullRequestPreviewsEnabled: true
+    routes:
+      # Proxy reverso para API al backend
+      - type: rewrite
+        source: /api/*
+        destination: https://dora-mayer-backend.onrender.com/api/*
+      # Enrutamiento de Single Page Application (SPA)
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable

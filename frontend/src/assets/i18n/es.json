@@ -1,0 +1,124 @@
+{
+  "common": {
+    "schoolName": "I.E.P. Dora Mayer de Zulen",
+    "motto": "Estudio – Trabajo – Amistad",
+    "location": "Calle Ricardo Bentín 749, Urb. Ventura Rossi, Rímac, Lima",
+    "phone": "(01) 4815770",
+    "whatsapp": "+51 966057981",
+    "secretariaEmail": "secretaria@doramayerdezulen.edu.pe",
+    "backupEmail": "doramayer1957@gmail.com",
+    "facebook": "@iepdoramayerdezulen",
+    "copyright": "Todos los derechos reservados. Cumplimiento Ley N° 29733 y Directiva Indecopi."
+  },
+  "nav": {
+    "propuesta": "Propuesta",
+    "niveles": "Niveles",
+    "historia": "Historia",
+    "testimonios": "Exalumnos",
+    "comunicados": "Comunicados",
+    "contacto": "Contacto",
+    "matriculaCta": "Matrícula 2026 / 2027"
+  },
+  "hero": {
+    "badge": "+65 Años de Excelencia en el Rímac · Fundado en 1957",
+    "headline": "Educación con valores, rigor y tareas realizadas en clase.",
+    "subheadline": "Bajo el lema histórico 'Estudio – Trabajo – Amistad', brindamos a tus hijos acompañamiento psicopedagógico permanente, modernos laboratorios y formación integral de excelencia.",
+    "mascotTitle": "Nuestra Mascota Institucional: El Búho Académico",
+    "mascotDesc": "Simboliza la sabiduría, la disciplina en el estudio y la constante búsqueda de superación académica que inculcó nuestro fundador, el Prof. Paulino Lapa."
+  },
+  "admission": {
+    "tabNuevo": "Alumno Nuevo",
+    "tabMayerino": "Alumno Mayerino",
+    "tabVacaciones": "Vacaciones Útiles",
+    "titleNuevo": "Postulación para Alumno Nuevo 2026 / 2027",
+    "titleMayerino": "Ratificación de Matrícula Mayerina",
+    "titleVacaciones": "Inscripción en Vacaciones Útiles de Verano",
+    "subtitle": "Completa los datos y recibe respuesta inmediata vía WhatsApp o llamada.",
+    "apoderadoNombres": "Nombres del Apoderado *",
+    "apoderadoApellidos": "Apellidos del Apoderado *",
+    "numeroDocumento": "DNI / CE Apoderado *",
+    "telefonoContacto": "Celular WhatsApp (9 dígitos) *",
+    "correoElectronico": "Correo Electrónico *",
+    "alumnoNombres": "Nombres y Apellidos del Alumno *",
+    "nivelEducativo": "Nivel Educativo *",
+    "gradoIngreso": "Grado al que postula *",
+    "tallerVerano": "Taller de Verano *",
+    "ley29733Checkbox": "Autorizo el tratamiento de mis datos personales para fines de admisión escolar conforme a la Ley N° 29733 (Protección de Datos Personales).",
+    "terminosCheckbox": "Acepto los términos de postulación y el reglamento del proceso de admisión 2026 / 2027.",
+    "submitBtn": "Solicitar Vacante e Información en WhatsApp",
+    "submitting": "Procesando solicitud...",
+    "successTitle": "¡Registro Exitoso!",
+    "successDesc": "Hemos recibido la información de postulación. Puedes continuar la conversación de inmediato en WhatsApp con Secretaría.",
+    "whatsappAction": "Continuar en WhatsApp (+51 966057981)",
+    "anotherAction": "Registrar otra postulación"
+  },
+  "counters": {
+    "trajectory": "Años de Trayectoria",
+    "trajectoryDesc": "Desde 1957 en el Rímac",
+    "levels": "Niveles Educativos",
+    "levelsDesc": "Inicial, Primaria y Secundaria",
+    "homework": "Tareas en Clase",
+    "homeworkDesc": "Acompañamiento docente real",
+    "alumni": "Egresados Mayerinos",
+    "alumniDesc": "Líderes en el Perú y el mundo"
+  },
+  "pillars": {
+    "badge": "Nuestra Filosofía Formativa",
+    "title": "El Trinomio de Formación Mayerina",
+    "desc": "Inculcado por nuestros fundadores Paulino Lapa y Yolanda Salinas, este lema guía el crecimiento intelectual, técnico y humano de cada estudiante.",
+    "estudio": "1. Estudio",
+    "estudioDesc": "Proceso que realiza el estudiante para aprender y adquirir conocimientos con tareas supervisadas y desarrolladas en clase.",
+    "trabajo": "2. Trabajo",
+    "trabajoDesc": "Actividad física, moral e intelectual para obtener un bien o un servicio, fortaleciendo hábitos de perseverancia y disciplina.",
+    "amistad": "3. Amistad",
+    "amistadDesc": "Relación afectiva entre personas asociadas a valores como amor, lealtad y compromiso ético."
+  },
+  "benefits": {
+    "badge": "Diferenciadores Clave",
+    "title": "¿Por qué las Familias del Rímac nos Eligen?",
+    "desc": "Diseñamos un modelo educativo que responde a las necesidades reales de los padres de hoy.",
+    "b1Title": "Atención Psicológica",
+    "b1Desc": "Todos nuestros alumnos recibirán talleres o charlas con un psicólogo(a) para aprender a convivir en estos tiempos difíciles.",
+    "b2Title": "Herramientas Lúdicas",
+    "b2Desc": "Nuestros profesores están capacitados para realizar clases dinámicas y nuestros alumnos puedan disfrutar de su aprendizaje.",
+    "b3Title": "Tareas Realizadas en Clase",
+    "b3Desc": "Sabemos que los padres de familia no cuentan con tiempo suficiente por eso la mayoría de las tareas serán desarrolladas con el profesor en clase."
+  },
+  "levels": {
+    "badge": "Propuesta Curricular",
+    "title": "Niveles Educativos Integrados",
+    "desc": "Acompañamos a tu hijo en cada etapa de su desarrollo con una metodología secuencial y formativa."
+  },
+  "history": {
+    "badge": "Nuestra Historia y Legado (1957 – Presente)",
+    "title": "Más de 65 Años Forjando el Futuro del Rímac",
+    "missionTitle": "Nuestra Misión",
+    "visionTitle": "Nuestra Visión",
+    "valuesTitle": "Nuestros Valores"
+  },
+  "testimonials": {
+    "badge": "Voces de la Familia Mayerina",
+    "title": "Testimonios de Nuestros Exalumnos",
+    "desc": "Historias reales de egresados que hoy destacan profesionalmente gracias a los cimientos forjados en nuestras aulas."
+  },
+  "events": {
+    "badge": "Canal Oficial",
+    "title": "Comunicados, Eventos y Noticias",
+    "desc": "Mantente informado con los avisos y cronogramas oficiales de la Dirección y Secretaría."
+  },
+  "contact": {
+    "badge": "Canales de Atención",
+    "title": "Contáctanos o Visítanos en el Rímac",
+    "desc": "Nuestra secretaría y equipo directivo están a tu disposición para orientarte sobre vacantes y visitas guiadas."
+  },
+  "reclamaciones": {
+    "title": "Libro de Reclamaciones Virtual",
+    "subtitle": "I.E.P. Dora Mayer de Zulen · D.S. N° 011-2011-PCM (Indecopi)",
+    "legalNotice": "Conforme a la normativa de Indecopi, toda hoja de reclamación recibirá respuesta formal en un plazo no mayor a 15 días hábiles."
+  },
+  "whatsapp": {
+    "title": "Admisión Mayerina",
+    "online": "En línea · +51 966 057 981",
+    "welcome": "¡Hola! Bienvenido a la I.E.P. Dora Mayer de Zulen. ¿En qué podemos orientarte hoy?"
+  }
+}

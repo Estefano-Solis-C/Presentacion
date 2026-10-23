@@ -1,0 +1,82 @@
+services:
+  # ---------------------------------------------------------------------------
+  # 1. BASE DE DATOS LOCAL COMPATIBLE CON TIDB SERVERLESS (MYSQL 8.3)
+  # ---------------------------------------------------------------------------
+  dora-mayer-db:
+    image: mysql:8.3
+    container_name: dora-mayer-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mayerino1957
+      MYSQL_DATABASE: doramayer
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - dora_mayer_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pmayerino1957"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - dora-mayer-network
+
+  # ---------------------------------------------------------------------------
+  # 2. BACKEND API (Spring Boot 3.3.4 + Java 21 Virtual Threads)
+  # Mapeado al puerto 8081 para evitar conflictos con otros servicios locales en 8080
+  # ---------------------------------------------------------------------------
+  dora-mayer-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: dora-mayer-backend
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      PORT: 8080
+      SPRING_DATASOURCE_URL: jdbc:mysql://dora-mayer-db:3306/doramayer?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Lima
+      TIDB_HOST: dora-mayer-db
+      TIDB_PORT: 3306
+      TIDB_DATABASE: doramayer
+      TIDB_USER: root
+      TIDB_PASSWORD: mayerino1957
+      CORS_ALLOWED_ORIGINS: "http://localhost:4200,http://localhost:8081,http://localhost,https://doramayerdezulen.edu.pe"
+    ports:
+      - "8081:8080"
+    depends_on:
+      dora-mayer-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | grep UP || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 25s
+    networks:
+      - dora-mayer-network
+
+  # ---------------------------------------------------------------------------
+  # 3. FRONTEND PORTAL SPA (Angular 18+ Signals & Nginx Alpine)
+  # Mapeado al puerto 4200 para evitar conflictos con el puerto 80
+  # ---------------------------------------------------------------------------
+  dora-mayer-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: dora-mayer-frontend
+    restart: always
+    ports:
+      - "4200:80"
+    depends_on:
+      - dora-mayer-backend
+    networks:
+      - dora-mayer-network
+
+networks:
+  dora-mayer-network:
+    driver: bridge
+
+volumes:
+  dora_mayer_db_data:

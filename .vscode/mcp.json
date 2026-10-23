@@ -1,0 +1,20 @@
+{
+  "servers": {
+    "render": {
+      "type": "http",
+      "url": "https://mcp.render.com/mcp"
+    },
+    "database": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@bytebase/mysql-mcp-server",
+        "--host", "127.0.0.1",
+        "--port", "3306",
+        "--user", "root",
+        "--password", "mayerino1957",
+        "--database", "doramayer"
+      ]
+    }
+  }
+}
