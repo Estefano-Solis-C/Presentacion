@@ -24,11 +24,11 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
               Más de {{ yearsActive() }} años forjando el futuro del Rímac
             </h2>
             
-            <p class="font-sans text-sm sm:text-base text-slate-700 leading-relaxed font-normal">
-              La Institución Educativa Privada <strong class="text-[#0F296B] font-semibold">"Dora Mayer de Zulen"</strong> nació en 1957 gracias a la visión educadora y vocación de servicio del recordado maestro <strong class="text-[#0F296B] font-semibold">Prof. Paulino Lapa ("El Dire")</strong> y su distinguida esposa, la <strong class="text-[#0F296B] font-semibold">Sra. Yolanda Salinas</strong>.
+            <p class="font-sans text-sm sm:text-base text-slate-700 leading-relaxed font-normal text-justify hyphens-auto">
+              La Institución Educativa Privada <strong class="text-[#0F296B] font-semibold">"Dora Mayer de Zulen"</strong> nació en 1957 gracias a la visión educadora y vocación de servicio del recordado educador <strong class="text-[#0F296B] font-semibold">Paulino Lapa</strong> y su distinguida esposa, la <strong class="text-[#0F296B] font-semibold">Sra. Yolanda Salinas</strong>.
             </p>
             
-            <p class="font-sans text-sm sm:text-base text-slate-700 leading-relaxed font-normal">
+            <p class="font-sans text-sm sm:text-base text-slate-700 leading-relaxed font-normal text-justify hyphens-auto">
               Inició sus actividades en el emblemático local de la <strong class="text-slate-900 font-semibold">Calle Monitor Huáscar</strong>, consolidándose como un referente bajopontino de disciplina, valores cívicos y rigor escolar. Con los años, la institución trasladó su sede central a su local propio en <strong class="text-slate-900 font-semibold">Calle Ricardo Bentín 749, Urb. Ventura Rossi, Rímac</strong>, donde generaciones de familias han confiado la formación humana y académica de sus hijos.
             </p>
 
@@ -59,7 +59,7 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
                   </div>
 
                   <h3 class="font-serif text-[#0F296B] font-bold text-sm sm:text-base leading-snug">
-                    Prof. Paulino Lapa («El Dire») & Sra. Yolanda Salinas
+                    Paulino Lapa & Sra. Yolanda Salinas
                   </h3>
 
                   <div class="pt-0.5">
@@ -97,7 +97,7 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
                 <div class="font-sans text-[11px] font-bold text-[#254EB6] uppercase tracking-wider">1957 · Fundación histórica</div>
                 <div class="font-serif text-sm font-bold text-slate-900 mt-0.5">Apertura en Calle Monitor Huáscar</div>
                 <div class="font-sans text-xs text-slate-600 leading-relaxed mt-1">
-                  Fundado por el Prof. Paulino Lapa y Yolanda Salinas con la convicción de ofrecer educación accesible, formativa y exigente para la niñez del Rímac.
+                  Fundado por Paulino Lapa y Sra. Yolanda Salinas con la convicción de ofrecer educación accesible, formativa y exigente para la niñez del Rímac.
                 </div>
               </div>
 

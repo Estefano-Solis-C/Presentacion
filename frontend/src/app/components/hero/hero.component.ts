@@ -295,14 +295,14 @@ export function atLeastOneContactValidator(): ValidatorFn {
                 <button
                   type="submit"
                   [disabled]="leadForm.invalid || isSubmitting()"
-                  class="w-full py-3 px-4 rounded-sm bg-[#254EB6] hover:bg-[#1D3FA2] disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs font-sans font-bold uppercase tracking-wider shadow-xs transition-all flex items-center justify-center space-x-2 cursor-pointer focus:outline-hidden"
+                  class="w-full py-3.5 px-4 rounded-sm bg-[#254EB6] hover:bg-[#1D3FA2] disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs font-sans font-bold uppercase tracking-wider shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer focus:outline-hidden"
                 >
                   @if (isSubmitting()) {
                     <span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                     <span>Procesando solicitud...</span>
                   } @else {
-                    <span>Enviar y continuar por WhatsApp</span>
-                    <app-icon name="whatsapp" size="16" className="text-[#FBB600]"></app-icon>
+                    <span class="leading-none">Enviar y continuar por WhatsApp</span>
+                    <app-icon name="whatsapp" size="18" className="text-[#25D366] shrink-0"></app-icon>
                   }
                 </button>
 

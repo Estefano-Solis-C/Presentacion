@@ -119,225 +119,270 @@ import { EventModel } from '../../models/portal.models';
           </div>
         </div>
 
-        <!-- ======================= VISTA CARRUSEL / CARDS ======================= -->
-        @if (viewMode() === 'grid') {
-          <div class="relative px-2 sm:px-12">
-            
-            @if (filteredEvents().length > visibleCards()) {
-              <button
-                type="button"
-                (click)="prev()"
-                aria-label="Noticia anterior"
-                class="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#254EB6] hover:bg-[#0F296B] text-white shadow-md flex items-center justify-center transition-all cursor-pointer"
-              >
-                <app-icon name="arrow-left" size="18"></app-icon>
-              </button>
-            }
+        <!-- Contenedor con Transición Suave entre Vistas y Filtros -->
+        <div
+          class="transition-all duration-300 ease-in-out"
+          [class.opacity-60]="isTransitioning()"
+          [class.scale-[0.995]]="isTransitioning()"
+        >
 
-            <!-- Contenedor Deslizable de Tarjetas -->
-            <div
-              #carouselContainer
-              (mouseenter)="onMouseEnter()"
-              (mouseleave)="onMouseLeave()"
-              (focusin)="onMouseEnter()"
-              (focusout)="onMouseLeave()"
-              (touchstart)="onTouchStart($event)"
-              (touchmove)="onTouchMove($event)"
-              (touchend)="onTouchEnd()"
-              class="flex space-x-6 overflow-x-auto pb-4 pt-2 no-scrollbar scroll-smooth"
-            >
-              @for (evento of filteredEvents(); track evento.id; let i = $index) {
-                <div
-                  [attr.data-index]="i"
-                  class="w-[85vw] sm:w-[350px] lg:w-[364px] min-w-[260px] sm:min-w-[350px] max-w-[380px] bg-white rounded-md border border-[#0F296B]/15 shadow-card-soft hover:shadow-card-elevated hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden shrink-0"
+          <!-- ======================= VISTA CARRUSEL / CARDS ======================= -->
+          @if (viewMode() === 'grid') {
+            <div class="relative px-2 sm:px-12 animate-fade-in">
+              
+              @if (filteredEvents().length > visibleCards()) {
+                <button
+                  type="button"
+                  (click)="prev()"
+                  aria-label="Noticia anterior"
+                  class="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#254EB6] hover:bg-[#0F296B] text-white shadow-md flex items-center justify-center transition-all cursor-pointer"
                 >
-                  <!-- Banner Fotográfico Superior -->
-                  <div class="relative h-48 sm:h-52 overflow-hidden border-b border-[#0F296B]/10 bg-slate-100">
-                    <img
-                      [src]="getEventoImage(evento)"
-                      [alt]="evento.titulo"
-                      class="w-full h-full object-cover hover:scale-105 transition-transform duration-500 pointer-events-none"
-                      loading="lazy"
-                    />
-                    <div class="absolute top-2 left-2 bg-[#0F296B] text-white font-sans text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-xs border border-white/20">
-                      {{ formatFecha(evento.fecha) }}
-                    </div>
-                    @if (evento.destacado) {
-                      <div class="absolute top-2 right-2 bg-[#FBB600] text-slate-950 font-sans text-[10px] font-bold uppercase px-2 py-0.5 rounded-xs shadow-xs flex items-center space-x-1">
-                        <app-icon name="sparkles" size="12"></app-icon>
-                        <span>Destacado</span>
+                  <app-icon name="arrow-left" size="18"></app-icon>
+                </button>
+              }
+
+              <!-- Contenedor Deslizable de Tarjetas -->
+              <div
+                #carouselContainer
+                (mouseenter)="onMouseEnter()"
+                (mouseleave)="onMouseLeave()"
+                (focusin)="onMouseEnter()"
+                (focusout)="onMouseLeave()"
+                (touchstart)="onTouchStart($event)"
+                (touchmove)="onTouchMove($event)"
+                (touchend)="onTouchEnd()"
+                class="flex space-x-6 overflow-x-auto pb-4 pt-2 no-scrollbar scroll-smooth"
+              >
+                @for (evento of filteredEvents(); track evento.id; let i = $index) {
+                  <!-- TARJETA 100% CLICKEABLE (Estilo Niveles Educativos) -->
+                  <div
+                    [attr.data-index]="i"
+                    (click)="openModal(evento)"
+                    (keydown.enter)="openModal(evento)"
+                    tabindex="0"
+                    role="button"
+                    [attr.aria-label]="'Abrir comunicado: ' + evento.titulo"
+                    class="w-[85vw] sm:w-[350px] lg:w-[364px] min-w-[260px] sm:min-w-[350px] max-w-[380px] bg-white rounded-md border border-[#0F296B]/15 shadow-card-soft hover:shadow-card-elevated hover:border-[#254EB6]/50 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden shrink-0 cursor-pointer group focus:outline-none focus:ring-2 focus:ring-[#254EB6]"
+                  >
+                    <!-- Banner Fotográfico con Rotación Dinámica Multi-Imagen -->
+                    <div class="relative h-48 sm:h-52 overflow-hidden border-b border-[#0F296B]/10 bg-slate-100">
+                      <img
+                        [src]="getCardActiveImage(evento)"
+                        [alt]="evento.titulo"
+                        class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 pointer-events-none"
+                        loading="lazy"
+                      />
+                      <div class="absolute top-2 left-2 bg-[#0F296B] text-white font-sans text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-xs border border-white/20">
+                        {{ formatFecha(evento.fecha) }}
                       </div>
+                      @if (evento.destacado) {
+                        <div class="absolute top-2 right-2 bg-[#FBB600] text-slate-950 font-sans text-[10px] font-bold uppercase px-2 py-0.5 rounded-xs shadow-xs flex items-center space-x-1">
+                          <app-icon name="sparkles" size="12"></app-icon>
+                          <span>Destacado</span>
+                        </div>
+                      }
+                      <!-- Indicador de Galería si tiene más de 1 imagen -->
+                      @if (getEventImages(evento).length > 1) {
+                        <div class="absolute bottom-2 right-2 flex items-center gap-1 bg-black/60 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-xs">
+                          <app-icon name="sparkles" [size]="10"></app-icon>
+                          <span>{{ getEventImages(evento).length }} fotos</span>
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Cuerpo de Noticia -->
+                    <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
+                      <div class="space-y-2.5">
+                        <div class="flex items-center justify-between gap-2">
+                          <span
+                            [class]="getBadgeClass(evento.tipo)"
+                            class="inline-block px-2.5 py-0.5 text-[10px] font-sans font-bold uppercase tracking-wider rounded-xs"
+                          >
+                            {{ evento.tipo }}
+                          </span>
+                          @if (evento.facebookPermalink) {
+                            <a
+                              [href]="evento.facebookPermalink"
+                              (click)="$event.stopPropagation()"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              class="inline-flex items-center gap-1 text-[10px] text-[#254EB6] font-semibold bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded border border-blue-100 transition-colors"
+                              title="Ver en Facebook"
+                            >
+                              <app-icon name="facebook" [size]="12"></app-icon>
+                              <span>FB Oficial</span>
+                            </a>
+                          }
+                        </div>
+
+                        <h3 class="font-serif text-base sm:text-lg font-bold text-[#0F296B] group-hover:text-[#254EB6] leading-snug line-clamp-2 transition-colors">
+                          {{ evento.titulo }}
+                        </h3>
+
+                        <p class="text-xs text-slate-600 leading-relaxed font-sans line-clamp-3 font-normal">
+                          {{ evento.resumen }}
+                        </p>
+                      </div>
+
+                      <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                        <span class="font-sans text-[10px] text-slate-500 uppercase font-semibold tracking-wider">
+                          Año {{ evento.anio || getYearFromDate(evento.fecha) }}
+                        </span>
+                        <span
+                          class="font-sans text-xs font-bold text-[#254EB6] group-hover:text-[#0F296B] flex items-center space-x-1 transition uppercase"
+                        >
+                          <span>Leer más</span>
+                          <app-icon name="arrow-right" size="13" className="group-hover:translate-x-0.5 transition-transform"></app-icon>
+                        </span>
+                      </div>
+                    </div>
+
+                  </div>
+                }
+              </div>
+
+              @if (filteredEvents().length > visibleCards()) {
+                <button
+                  type="button"
+                  (click)="next()"
+                  aria-label="Noticia siguiente"
+                  class="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#254EB6] hover:bg-[#0F296B] text-white shadow-md flex items-center justify-center transition-all cursor-pointer"
+                >
+                  <app-icon name="arrow-right" size="18"></app-icon>
+                </button>
+              }
+
+            </div>
+
+            <!-- Indicadores de Navegación Dinámicos -->
+            @if (dotIndexes().length > 1) {
+              <div class="flex items-center justify-center space-x-2 pt-2">
+                @for (idx of dotIndexes(); track idx) {
+                  <button
+                    type="button"
+                    (click)="scrollToIndex(idx)"
+                    [class]="currentIndex() === idx ? 'w-8 bg-[#254EB6]' : 'w-2.5 bg-slate-300 hover:bg-slate-400'"
+                    class="h-2 rounded-full transition-all duration-300 cursor-pointer"
+                    [attr.aria-label]="'Ir a publicación ' + (idx + 1)"
+                  ></button>
+                }
+              </div>
+            }
+          }
+
+          <!-- ======================= VISTA LISTA ANUAL HISTÓRICA ======================= -->
+          @if (viewMode() === 'list') {
+            <div class="bg-white rounded-lg border border-slate-200 divide-y divide-slate-100 shadow-sm overflow-hidden animate-fade-in">
+              @for (evento of filteredEvents(); track evento.id) {
+                <!-- FILA DE LISTA 100% CLICKEABLE -->
+                <div
+                  (click)="openModal(evento)"
+                  (keydown.enter)="openModal(evento)"
+                  tabindex="0"
+                  role="button"
+                  [attr.aria-label]="'Abrir comunicado: ' + evento.titulo"
+                  class="p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 hover:bg-[#F4F6FB]/80 transition-colors cursor-pointer group focus:outline-none focus:bg-[#F4F6FB]"
+                >
+                  
+                  <!-- Bloque de Fecha y Año Destacado -->
+                  <div class="flex items-center gap-4 shrink-0">
+                    <div class="w-16 h-16 rounded-lg bg-[#0F296B] group-hover:bg-[#254EB6] text-white flex flex-col items-center justify-center text-center shadow-xs transition-colors">
+                      <span class="text-xs uppercase tracking-wider font-semibold opacity-80">{{ getMonthFromDate(evento.fecha) }}</span>
+                      <span class="font-serif text-xl font-bold leading-none">{{ getDayFromDate(evento.fecha) }}</span>
+                      <span class="text-[10px] font-bold text-[#FBB600] mt-0.5">{{ evento.anio || getYearFromDate(evento.fecha) }}</span>
+                    </div>
+
+                    @if (getCardActiveImage(evento)) {
+                      <img
+                        [src]="getCardActiveImage(evento)"
+                        [alt]="evento.titulo"
+                        class="w-16 h-16 rounded-md object-cover border border-slate-200 hidden md:block group-hover:scale-105 transition-transform"
+                      />
                     }
                   </div>
 
-                  <!-- Cuerpo de Noticia -->
-                  <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
-                    <div class="space-y-2.5">
-                      <div class="flex items-center justify-between gap-2">
-                        <span
-                          [class]="getBadgeClass(evento.tipo)"
-                          class="inline-block px-2.5 py-0.5 text-[10px] font-sans font-bold uppercase tracking-wider rounded-xs"
-                        >
-                          {{ evento.tipo }}
-                        </span>
-                        @if (evento.facebookPermalink) {
-                          <span class="inline-flex items-center gap-1 text-[10px] text-[#254EB6] font-semibold bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
-                            <app-icon name="facebook" [size]="12"></app-icon>
-                            <span>FB Oficial</span>
-                          </span>
-                        }
-                      </div>
-
-                      <h3 class="font-serif text-base sm:text-lg font-bold text-[#0F296B] leading-snug line-clamp-2">
-                        {{ evento.titulo }}
-                      </h3>
-
-                      <p class="text-xs text-slate-600 leading-relaxed font-sans line-clamp-3 font-normal">
-                        {{ evento.resumen }}
-                      </p>
-                    </div>
-
-                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                      <span class="font-sans text-[10px] text-slate-500 uppercase font-semibold tracking-wider">
-                        Año {{ evento.anio || getYearFromDate(evento.fecha) }}
-                      </span>
-                      <button
-                        type="button"
-                        (click)="openModal(evento)"
-                        class="font-sans text-xs font-bold text-[#254EB6] hover:text-[#0F296B] flex items-center space-x-1 transition uppercase cursor-pointer"
+                  <!-- Detalle y Título -->
+                  <div class="flex-1 space-y-1.5 min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span
+                        [class]="getBadgeClass(evento.tipo)"
+                        class="inline-block px-2 py-0.5 text-[10px] font-sans font-bold uppercase tracking-wider rounded-xs"
                       >
-                        <span>Leer más</span>
-                        <app-icon name="arrow-right" size="13"></app-icon>
-                      </button>
+                        {{ evento.tipo }}
+                      </span>
+                      @if (evento.destacado) {
+                        <span class="inline-flex items-center gap-1 bg-[#FBB600]/30 text-slate-900 border border-[#FBB600]/60 px-2 py-0.5 text-[10px] font-bold rounded-xs">
+                          <app-icon name="sparkles" [size]="10"></app-icon>
+                          <span>Destacado</span>
+                        </span>
+                      }
+                      @if (evento.facebookPermalink) {
+                        <a
+                          [href]="evento.facebookPermalink"
+                          (click)="$event.stopPropagation()"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="inline-flex items-center gap-1 text-[10px] text-[#254EB6] font-semibold bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded border border-blue-100 transition-colors"
+                        >
+                          <app-icon name="facebook" [size]="12"></app-icon>
+                          <span>Facebook Oficial</span>
+                        </a>
+                      }
+                      @if (getEventImages(evento).length > 1) {
+                        <span class="text-[10px] text-slate-500 font-medium">
+                          ({{ getEventImages(evento).length }} fotos)
+                        </span>
+                      }
                     </div>
+
+                    <h3 class="font-serif text-base sm:text-lg font-bold text-[#0F296B] group-hover:text-[#254EB6] truncate transition-colors">
+                      {{ evento.titulo }}
+                    </h3>
+
+                    <p class="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed">
+                      {{ evento.resumen }}
+                    </p>
+                  </div>
+
+                  <!-- Botones de Acción -->
+                  <div class="flex items-center gap-2 shrink-0 self-end sm:self-center w-full sm:w-auto justify-end">
+                    @if (evento.facebookPermalink) {
+                      <a
+                        [href]="evento.facebookPermalink"
+                        (click)="$event.stopPropagation()"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="p-2 text-[#254EB6] hover:bg-blue-50 rounded border border-blue-200 transition-colors"
+                        title="Ver en Facebook"
+                      >
+                        <app-icon name="facebook" [size]="16"></app-icon>
+                      </a>
+                    }
+                    <span
+                      class="px-4 py-2 bg-[#254EB6] group-hover:bg-[#0F296B] text-white rounded font-sans font-bold uppercase text-xs transition flex items-center gap-1.5"
+                    >
+                      <span>Leer completo</span>
+                      <app-icon name="arrow-right" [size]="13"></app-icon>
+                    </span>
                   </div>
 
                 </div>
-              }
-            </div>
-
-            @if (filteredEvents().length > visibleCards()) {
-              <button
-                type="button"
-                (click)="next()"
-                aria-label="Noticia siguiente"
-                class="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#254EB6] hover:bg-[#0F296B] text-white shadow-md flex items-center justify-center transition-all cursor-pointer"
-              >
-                <app-icon name="arrow-right" size="18"></app-icon>
-              </button>
-            }
-
-          </div>
-
-          <!-- Indicadores de Navegación Dinámicos -->
-          @if (dotIndexes().length > 1) {
-            <div class="flex items-center justify-center space-x-2 pt-2">
-              @for (idx of dotIndexes(); track idx) {
-                <button
-                  type="button"
-                  (click)="scrollToIndex(idx)"
-                  [class]="currentIndex() === idx ? 'w-8 bg-[#254EB6]' : 'w-2.5 bg-slate-300 hover:bg-slate-400'"
-                  class="h-2 rounded-full transition-all duration-300 cursor-pointer"
-                  [attr.aria-label]="'Ir a publicación ' + (idx + 1)"
-                ></button>
+              } @empty {
+                <div class="p-12 text-center text-slate-500">
+                  <p class="font-serif text-lg text-slate-700">No se encontraron publicaciones en la base de datos para este filtro.</p>
+                  <button
+                    type="button"
+                    (click)="resetFilters()"
+                    class="mt-3 text-xs font-bold text-[#254EB6] uppercase underline cursor-pointer"
+                  >
+                    Restablecer filtros
+                  </button>
+                </div>
               }
             </div>
           }
-        }
 
-        <!-- ======================= VISTA LISTA ANUAL HISTÓRICA ======================= -->
-        @if (viewMode() === 'list') {
-          <div class="bg-white rounded-lg border border-slate-200 divide-y divide-slate-100 shadow-sm overflow-hidden">
-            @for (evento of filteredEvents(); track evento.id) {
-              <div class="p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 hover:bg-[#F4F6FB]/70 transition-colors">
-                
-                <!-- Bloque de Fecha y Año Destacado -->
-                <div class="flex items-center gap-4 shrink-0">
-                  <div class="w-16 h-16 rounded-lg bg-[#0F296B] text-white flex flex-col items-center justify-center text-center shadow-xs">
-                    <span class="text-xs uppercase tracking-wider font-semibold opacity-80">{{ getMonthFromDate(evento.fecha) }}</span>
-                    <span class="font-serif text-xl font-bold leading-none">{{ getDayFromDate(evento.fecha) }}</span>
-                    <span class="text-[10px] font-bold text-[#FBB600] mt-0.5">{{ evento.anio || getYearFromDate(evento.fecha) }}</span>
-                  </div>
-
-                  @if (evento.imagenUrl) {
-                    <img
-                      [src]="getEventoImage(evento)"
-                      [alt]="evento.titulo"
-                      class="w-16 h-16 rounded-md object-cover border border-slate-200 hidden md:block"
-                    />
-                  }
-                </div>
-
-                <!-- Detalle y Título -->
-                <div class="flex-1 space-y-1.5 min-w-0">
-                  <div class="flex items-center gap-2 flex-wrap">
-                    <span
-                      [class]="getBadgeClass(evento.tipo)"
-                      class="inline-block px-2 py-0.5 text-[10px] font-sans font-bold uppercase tracking-wider rounded-xs"
-                    >
-                      {{ evento.tipo }}
-                    </span>
-                    @if (evento.destacado) {
-                      <span class="inline-flex items-center gap-1 bg-[#FBB600]/30 text-slate-900 border border-[#FBB600]/60 px-2 py-0.5 text-[10px] font-bold rounded-xs">
-                        <app-icon name="sparkles" [size]="10"></app-icon>
-                        Destacado
-                      </span>
-                    }
-                    @if (evento.facebookPermalink) {
-                      <span class="inline-flex items-center gap-1 text-[10px] text-[#254EB6] font-semibold bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
-                        <app-icon name="facebook" [size]="12"></app-icon>
-                        Facebook Oficial
-                      </span>
-                    }
-                  </div>
-
-                  <h3 class="font-serif text-base sm:text-lg font-bold text-[#0F296B] truncate">
-                    {{ evento.titulo }}
-                  </h3>
-
-                  <p class="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed">
-                    {{ evento.resumen }}
-                  </p>
-                </div>
-
-                <!-- Botones de Acción -->
-                <div class="flex items-center gap-2 shrink-0 self-end sm:self-center w-full sm:w-auto justify-end">
-                  @if (evento.facebookPermalink) {
-                    <a
-                      [href]="evento.facebookPermalink"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="p-2 text-[#254EB6] hover:bg-blue-50 rounded border border-blue-200 transition-colors"
-                      title="Ver en Facebook"
-                    >
-                      <app-icon name="facebook" [size]="16"></app-icon>
-                    </a>
-                  }
-                  <button
-                    type="button"
-                    (click)="openModal(evento)"
-                    class="px-4 py-2 bg-[#254EB6] hover:bg-[#0F296B] text-white rounded font-sans font-bold uppercase text-xs transition cursor-pointer flex items-center gap-1.5"
-                  >
-                    <span>Leer completo</span>
-                    <app-icon name="arrow-right" [size]="13"></app-icon>
-                  </button>
-                </div>
-
-              </div>
-            } @empty {
-              <div class="p-12 text-center text-slate-500">
-                <p class="font-serif text-lg text-slate-700">No se encontraron publicaciones para el año o categoría seleccionada.</p>
-                <button
-                  type="button"
-                  (click)="resetFilters()"
-                  class="mt-3 text-xs font-bold text-[#254EB6] uppercase underline cursor-pointer"
-                >
-                  Restablecer filtros
-                </button>
-              </div>
-            }
-          </div>
-        }
+        </div>
 
       </div>
 
@@ -390,14 +435,52 @@ import { EventModel } from '../../models/portal.models';
               </button>
             </div>
 
-            <!-- Imagen del Evento si existe -->
-            @if (modalItem.imagenUrl) {
-              <div class="rounded-lg overflow-hidden border border-[#0F296B]/15 max-h-72 bg-slate-100">
-                <img
-                  [src]="getEventoImage(modalItem)"
-                  [alt]="modalItem.titulo"
-                  class="w-full h-full object-cover"
-                />
+            <!-- Galería Multi-imagen del Modal -->
+            @if (getModalImages(modalItem).length > 0) {
+              <div class="relative rounded-lg overflow-hidden border border-[#0F296B]/15 bg-slate-900 group">
+                <div class="relative h-64 sm:h-80 w-full overflow-hidden flex items-center justify-center">
+                  @for (img of getModalImages(modalItem); track img; let idx = $index) {
+                    <img
+                      [src]="img"
+                      [alt]="modalItem.titulo + ' foto ' + (idx + 1)"
+                      class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
+                      [class.opacity-100]="modalImageIndex() === idx"
+                      [class.opacity-0]="modalImageIndex() !== idx"
+                    />
+                  }
+                </div>
+
+                @if (getModalImages(modalItem).length > 1) {
+                  <!-- Flechas Navegación Imagen -->
+                  <button
+                    type="button"
+                    (click)="prevModalImage(modalItem)"
+                    class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center transition-colors cursor-pointer"
+                    aria-label="Foto anterior"
+                  >
+                    <app-icon name="arrow-left" [size]="16"></app-icon>
+                  </button>
+                  <button
+                    type="button"
+                    (click)="nextModalImage(modalItem)"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center transition-colors cursor-pointer"
+                    aria-label="Foto siguiente"
+                  >
+                    <app-icon name="arrow-right" [size]="16"></app-icon>
+                  </button>
+
+                  <!-- Miniaturas o dots -->
+                  <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/50 px-2.5 py-1 rounded-full backdrop-blur-xs">
+                    @for (img of getModalImages(modalItem); track img; let idx = $index) {
+                      <button
+                        type="button"
+                        (click)="modalImageIndex.set(idx)"
+                        [class]="modalImageIndex() === idx ? 'w-5 bg-[#FBB600]' : 'w-1.5 bg-white/70 hover:bg-white'"
+                        class="h-1.5 rounded-full transition-all cursor-pointer"
+                      ></button>
+                    }
+                  </div>
+                }
               </div>
             }
 
@@ -442,7 +525,16 @@ import { EventModel } from '../../models/portal.models';
       }
 
     </section>
-  `
+  `,
+  styles: [`
+    @keyframes viewFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: viewFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+  `]
 })
 export class EventsComponent implements OnInit, OnDestroy {
   @ViewChild('carouselContainer', { static: false })
@@ -453,13 +545,18 @@ export class EventsComponent implements OnInit, OnDestroy {
   events = signal<EventModel[]>([]);
   selectedFilter = signal<string>('TODOS');
   selectedYear = signal<number | null>(null);
-  availableYears = signal<number[]>([2026, 2025, 2024, 2023]);
+  availableYears = signal<number[]>([]);
   viewMode = signal<'grid' | 'list'>('grid');
 
   selectedEvent = signal<EventModel | null>(null);
+  modalImageIndex = signal<number>(0);
 
   currentIndex = signal<number>(0);
   visibleCards = signal<number>(3);
+  isTransitioning = signal<boolean>(false);
+
+  // Tick para rotación periódica multi-imagen en tarjetas
+  cardImageTick = signal<number>(0);
 
   filteredEvents = computed(() => {
     let list = this.events();
@@ -480,6 +577,7 @@ export class EventsComponent implements OnInit, OnDestroy {
   dotIndexes = computed(() => Array.from({ length: this.maxIndex() + 1 }, (_, i) => i));
 
   private autoPlayTimer: any = null;
+  private imageRotationTimer: any = null;
   private isPaused = false;
 
   private touchStartX = 0;
@@ -502,10 +600,28 @@ export class EventsComponent implements OnInit, OnDestroy {
     this.loadEvents();
     this.updateVisibleCards();
     this.startAutoPlay();
+    this.startMultiImageRotation();
   }
 
   ngOnDestroy() {
     this.stopAutoPlay();
+    this.stopMultiImageRotation();
+  }
+
+  private startMultiImageRotation() {
+    this.stopMultiImageRotation();
+    this.imageRotationTimer = setInterval(() => {
+      if (!this.isPaused && !this.selectedEvent()) {
+        this.cardImageTick.update(t => t + 1);
+      }
+    }, 3800);
+  }
+
+  private stopMultiImageRotation() {
+    if (this.imageRotationTimer) {
+      clearInterval(this.imageRotationTimer);
+      this.imageRotationTimer = null;
+    }
   }
 
   private loadYears() {
@@ -522,16 +638,17 @@ export class EventsComponent implements OnInit, OnDestroy {
   loadEvents() {
     this.api.getEvents(this.selectedFilter(), this.selectedYear() ?? undefined, true).subscribe({
       next: data => {
-        if (data && data.length > 0) {
-          this.events.set(data);
-          this.updateVisibleCards();
-        }
+        this.events.set(data || []);
+        this.updateVisibleCards();
       },
-      error: () => {}
+      error: () => {
+        this.events.set([]);
+      }
     });
   }
 
   setFilter(filter: string) {
+    this.triggerTransition();
     this.selectedFilter.set(filter);
     this.currentIndex.set(0);
     this.scrollToIndex(0);
@@ -539,6 +656,7 @@ export class EventsComponent implements OnInit, OnDestroy {
   }
 
   setYear(year: number | null) {
+    this.triggerTransition();
     this.selectedYear.set(year);
     this.currentIndex.set(0);
     this.scrollToIndex(0);
@@ -546,6 +664,7 @@ export class EventsComponent implements OnInit, OnDestroy {
   }
 
   setViewMode(mode: 'grid' | 'list') {
+    this.triggerTransition();
     this.viewMode.set(mode);
     if (mode === 'grid') {
       this.currentIndex.set(0);
@@ -553,13 +672,22 @@ export class EventsComponent implements OnInit, OnDestroy {
     }
   }
 
+  private triggerTransition() {
+    this.isTransitioning.set(true);
+    setTimeout(() => {
+      this.isTransitioning.set(false);
+    }, 180);
+  }
+
   resetFilters() {
+    this.triggerTransition();
     this.selectedFilter.set('TODOS');
     this.selectedYear.set(null);
     this.loadEvents();
   }
 
   openModal(item: EventModel) {
+    this.modalImageIndex.set(0);
     this.selectedEvent.set(item);
     if (typeof document !== 'undefined') {
       document.body.style.overflow = 'hidden';
@@ -573,11 +701,38 @@ export class EventsComponent implements OnInit, OnDestroy {
     }
   }
 
-  getEventoImage(evento: EventModel): string {
-    if (evento.imagenUrl && evento.imagenUrl.trim().length > 0) {
-      return evento.imagenUrl;
+  getEventImages(evento: EventModel): string[] {
+    if (evento.imagenes && evento.imagenes.length > 0) {
+      return evento.imagenes;
     }
-    return '/images/posts/inicio_clases.jpg';
+    return evento.imagenUrl ? [evento.imagenUrl] : ['/images/posts/inicio_clases.jpg'];
+  }
+
+  getCardActiveImage(evento: EventModel): string {
+    const images = this.getEventImages(evento);
+    if (images.length === 1) return images[0];
+    const idx = this.cardImageTick() % images.length;
+    return images[idx] || images[0];
+  }
+
+  getModalImages(item: EventModel): string[] {
+    return this.getEventImages(item);
+  }
+
+  nextModalImage(item: EventModel) {
+    const images = this.getModalImages(item);
+    if (images.length > 1) {
+      const next = (this.modalImageIndex() + 1) % images.length;
+      this.modalImageIndex.set(next);
+    }
+  }
+
+  prevModalImage(item: EventModel) {
+    const images = this.getModalImages(item);
+    if (images.length > 1) {
+      const prev = (this.modalImageIndex() - 1 + images.length) % images.length;
+      this.modalImageIndex.set(prev);
+    }
   }
 
   formatFecha(fechaStr: string): string {

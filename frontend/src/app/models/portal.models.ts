@@ -7,6 +7,7 @@ export interface EventModel {
   resumen: string;
   contenido: string;
   imagenUrl?: string;
+  imagenes?: string[];
   destacado: boolean;
   publicado: boolean;
   facebookPostId?: string;

@@ -3,8 +3,10 @@ import {
   Component,
   ElementRef,
   HostListener,
+  OnDestroy,
   OnInit,
   ViewChild,
+  computed,
   inject,
   signal
 } from '@angular/core';
@@ -41,18 +43,18 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
           <!-- Cabecera de la Card -->
           <div class="px-4 sm:px-7 pt-4 pb-3 flex items-start justify-between gap-3 border-b border-gray-100 bg-[#F4F6FB]">
             <div class="flex flex-col gap-1.5 flex-1 min-w-0">
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-[#FBB600]/25 text-[#0F296B] border border-[#FBB600]/60 shrink-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-[#FBB600]/25 text-[#0F296B] border border-[#FBB600]/60 shrink-0">
                   <span class="w-2 h-2 rounded-full bg-[#E5A500] animate-ping shrink-0"></span>
-                  Último Comunicado Oficial
+                  <span>Último Comunicado Oficial</span>
                 </span>
-                <span class="inline-flex items-center gap-1 text-[11px] text-[#254EB6] font-semibold bg-white px-2 py-0.5 rounded-full border border-blue-200 shrink-0">
-                  <app-icon name="facebook" [size]="13" className="text-[#254EB6]"></app-icon>
-                  Facebook Oficial
+                <span class="inline-flex items-center gap-1 text-xs text-[#254EB6] font-semibold bg-white px-2.5 py-0.5 rounded-full border border-blue-200 shrink-0">
+                  <app-icon name="facebook" [size]="14" className="text-[#254EB6]"></app-icon>
+                  <span>Facebook Oficial</span>
                 </span>
               </div>
               <div class="flex items-center gap-1.5 text-xs text-gray-500 font-medium">
-                <app-icon name="calendar" [size]="13" className="text-gray-400"></app-icon>
+                <app-icon name="calendar" [size]="14" className="text-gray-400"></app-icon>
                 <span>{{ formatDate(announcement()!.fecha) }}</span>
               </div>
             </div>
@@ -61,7 +63,7 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
             <button
               type="button"
               (click)="closeModal()"
-              class="text-gray-400 hover:text-[#0F296B] hover:bg-gray-200/60 p-1.5 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#0F296B] shrink-0"
+              class="text-gray-400 hover:text-[#0F296B] hover:bg-gray-200/60 p-2 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#0F296B] shrink-0"
               aria-label="Cerrar comunicado"
             >
               <app-icon name="close" [size]="20"></app-icon>
@@ -78,15 +80,36 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
               {{ announcement()!.titulo }}
             </h3>
 
-            <!-- Imagen si existe -->
-            @if (announcement()!.imagenUrl) {
+            <!-- Galería Multi-imagen con rotación automática suave -->
+            @if (activeImages().length > 0) {
               <div class="relative w-full rounded-xl overflow-hidden border-2 border-gray-200/80 bg-gray-100 shadow-sm group">
-                <img
-                  [src]="announcement()!.imagenUrl"
-                  [alt]="announcement()!.titulo"
-                  class="w-full h-48 sm:h-64 object-cover object-center transition-transform duration-300 group-hover:scale-[1.01]"
-                  loading="lazy"
-                />
+                <div class="relative h-48 sm:h-64 w-full overflow-hidden bg-slate-900">
+                  @for (img of activeImages(); track img; let i = $index) {
+                    <img
+                      [src]="img"
+                      [alt]="announcement()!.titulo + ' foto ' + (i + 1)"
+                      class="absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out"
+                      [class.opacity-100]="activeImageIndex() === i"
+                      [class.opacity-0]="activeImageIndex() !== i"
+                      loading="lazy"
+                    />
+                  }
+                </div>
+
+                <!-- Indicadores de fotos múltiples si hay más de 1 -->
+                @if (activeImages().length > 1) {
+                  <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/40 px-2.5 py-1 rounded-full backdrop-blur-xs z-10">
+                    @for (img of activeImages(); track img; let i = $index) {
+                      <button
+                        type="button"
+                        (click)="setActiveImage(i)"
+                        [class]="activeImageIndex() === i ? 'w-5 bg-[#FBB600]' : 'w-1.5 bg-white/70 hover:bg-white'"
+                        class="h-1.5 rounded-full transition-all cursor-pointer"
+                        [attr.aria-label]="'Ver imagen ' + (i + 1)"
+                      ></button>
+                    }
+                  </div>
+                }
               </div>
             }
 
@@ -157,34 +180,67 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
     }
   `]
 })
-export class LatestAnnouncementModalComponent implements OnInit {
+export class LatestAnnouncementModalComponent implements OnInit, OnDestroy {
   private api = inject(PortalApiService);
 
   announcement = signal<EventModel | null>(null);
   isOpen = signal<boolean>(false);
+  activeImageIndex = signal<number>(0);
+
+  activeImages = computed(() => {
+    const a = this.announcement();
+    if (!a) return [];
+    if (a.imagenes && a.imagenes.length > 0) {
+      return a.imagenes;
+    }
+    return a.imagenUrl ? [a.imagenUrl] : [];
+  });
 
   @ViewChild('modalContainer') modalContainer?: ElementRef<HTMLDivElement>;
 
   private previousActiveElement: HTMLElement | null = null;
-  private readonly SESSION_STORAGE_KEY = 'doramayer_announcement_seen_v1';
+  private imageRotationTimer: any = null;
 
   ngOnInit(): void {
-    // Cargar último comunicado oficial desde la API / DB
+    // Cargar último comunicado oficial en tiempo real desde la base de datos
     this.api.getLatestAnnouncement().subscribe({
       next: (event) => {
         if (event) {
           this.announcement.set(event);
-          // Verificar si ya fue cerrado en esta sesión de navegación
-          const seen = sessionStorage.getItem(this.SESSION_STORAGE_KEY);
-          if (!seen) {
-            this.openModal();
-          }
+          this.activeImageIndex.set(0);
+          // Siempre abrir en primer plano al ingresar o recargar el portal
+          this.openModal();
+          this.startImageRotation();
         }
       },
-      error: () => {
-        // En caso de error de red, no interrumpir la navegación
-      }
+      error: () => {}
     });
+  }
+
+  ngOnDestroy(): void {
+    this.stopImageRotation();
+  }
+
+  private startImageRotation(): void {
+    this.stopImageRotation();
+    if (this.activeImages().length > 1) {
+      this.imageRotationTimer = setInterval(() => {
+        const next = (this.activeImageIndex() + 1) % this.activeImages().length;
+        this.activeImageIndex.set(next);
+      }, 4000);
+    }
+  }
+
+  private stopImageRotation(): void {
+    if (this.imageRotationTimer) {
+      clearInterval(this.imageRotationTimer);
+      this.imageRotationTimer = null;
+    }
+  }
+
+  setActiveImage(index: number): void {
+    this.activeImageIndex.set(index);
+    this.startImageRotation(); // reiniciar timer al interactuar
   }
 
   openModal(): void {
@@ -192,16 +248,15 @@ export class LatestAnnouncementModalComponent implements OnInit {
     this.isOpen.set(true);
     document.body.style.overflow = 'hidden';
 
-    // Foco en la ventana modal para accesibilidad
     setTimeout(() => {
       this.modalContainer?.nativeElement.focus();
     }, 50);
   }
 
   closeModal(): void {
+    this.stopImageRotation();
     this.isOpen.set(false);
     document.body.style.overflow = '';
-    sessionStorage.setItem(this.SESSION_STORAGE_KEY, 'true');
 
     if (this.previousActiveElement) {
       this.previousActiveElement.focus();

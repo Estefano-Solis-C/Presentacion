@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS events (
     facebook_post_id VARCHAR(100) NULL,
     facebook_permalink VARCHAR(350) NULL,
     anio INT NOT NULL DEFAULT 2026,
+    imagenes JSON NULL,
     INDEX idx_events_publicado_fecha (publicado, fecha DESC),
     INDEX idx_events_tipo (tipo),
     INDEX idx_events_anio (anio)
@@ -121,7 +122,7 @@ CREATE TABLE IF NOT EXISTS reclamos (
 -- DATOS SEMILLA INSTITUCIONALES AUTÉNTICOS
 -- -----------------------------------------------------------------------------
 
-INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_url, destacado, publicado, facebook_post_id, facebook_permalink) VALUES
+INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_url, destacado, publicado, facebook_post_id, facebook_permalink, imagenes) VALUES
 (
     1,
     'Inicio de Clases',
@@ -134,7 +135,8 @@ INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_ur
     TRUE,
     TRUE,
     'fb_post_2026_inicio',
-    'https://www.facebook.com/doramayer.dezulen'
+    'https://www.facebook.com/doramayer.dezulen',
+    '["/images/posts/inicio_clases.jpg", "/images/banners/foto_primaria_1.jpg"]'
 ),
 (
     2,
@@ -148,7 +150,8 @@ INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_ur
     TRUE,
     TRUE,
     'fb_post_2026_madre',
-    'https://www.facebook.com/doramayer.dezulen'
+    'https://www.facebook.com/doramayer.dezulen',
+    '["/images/posts/dia_madre.jpg", "/images/banners/foto_inicial_2.jpeg"]'
 ),
 (
     3,
@@ -162,7 +165,8 @@ INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_ur
     FALSE,
     TRUE,
     'fb_post_2026_patrias',
-    'https://www.facebook.com/doramayer.dezulen'
+    'https://www.facebook.com/doramayer.dezulen',
+    '["/images/posts/fiestas_patrias.jpg", "/images/banners/foto_primaria_1.jpg", "/images/banners/foto_secundaria_3.jpeg"]'
 ),
 (
     4,
@@ -176,7 +180,8 @@ INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_ur
     TRUE,
     TRUE,
     'fb_post_2026_01',
-    'https://www.facebook.com/doramayer.dezulen'
+    'https://www.facebook.com/doramayer.dezulen',
+    '["/images/banners/banner_001.jpg", "/images/banners/foto_primaria_3.jpg", "/images/banners/foto_inicial_1.jpeg"]'
 ),
 (
     5,
@@ -190,7 +195,8 @@ INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_ur
     FALSE,
     TRUE,
     'fb_post_2025_12',
-    'https://www.facebook.com/doramayer.dezulen'
+    'https://www.facebook.com/doramayer.dezulen',
+    '["/images/banners/foto_secundaria_1.jpeg", "/images/banners/foto_secundaria_2.jpeg"]'
 ),
 (
     6,
@@ -204,7 +210,8 @@ INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_ur
     FALSE,
     TRUE,
     'fb_post_2025_09',
-    'https://www.facebook.com/doramayer.dezulen'
+    'https://www.facebook.com/doramayer.dezulen',
+    '["/images/banners/foto_secundaria_3.jpeg", "/images/banners/foto_secundaria_1.jpeg"]'
 ),
 (
     7,
@@ -218,7 +225,8 @@ INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_ur
     FALSE,
     TRUE,
     'fb_post_2024_03',
-    'https://www.facebook.com/doramayer.dezulen'
+    'https://www.facebook.com/iepdoramayerdezulen/posts/pfbid02cjuE3P5PK9barkAAokbjCbQWHeM5vwNJDeuMgrE7Yqtbmxmi4xVEBXB2WrZK6SCCl',
+    '["/images/banners/foto_primaria_3.jpg", "/images/posts/inicio_clases.jpg", "/images/banners/foto_inicial_2.jpeg"]'
 ),
 (
     8,
@@ -232,7 +240,8 @@ INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_ur
     FALSE,
     TRUE,
     'fb_post_2024_07',
-    'https://www.facebook.com/doramayer.dezulen'
+    'https://www.facebook.com/doramayer.dezulen',
+    '["/images/posts/fiestas_patrias.jpg", "/images/banners/foto_secundaria_3.jpeg"]'
 ),
 (
     9,
@@ -246,9 +255,10 @@ INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_ur
     FALSE,
     TRUE,
     'fb_post_2023_05',
-    'https://www.facebook.com/doramayer.dezulen'
+    'https://www.facebook.com/doramayer.dezulen',
+    '["/images/banners/foto_inicial_2.jpeg", "/images/banners/foto_inicial_1.jpeg"]'
 )
-ON DUPLICATE KEY UPDATE titulo = VALUES(titulo), tipo = VALUES(tipo), fecha = VALUES(fecha), anio = VALUES(anio), resumen = VALUES(resumen), contenido = VALUES(contenido), imagen_url = VALUES(imagen_url), destacado = VALUES(destacado), facebook_permalink = VALUES(facebook_permalink);
+ON DUPLICATE KEY UPDATE titulo = VALUES(titulo), tipo = VALUES(tipo), fecha = VALUES(fecha), anio = VALUES(anio), resumen = VALUES(resumen), contenido = VALUES(contenido), imagen_url = VALUES(imagen_url), destacado = VALUES(destacado), facebook_permalink = VALUES(facebook_permalink), imagenes = VALUES(imagenes);
 
 INSERT INTO testimonials (id, nombre, profesion, detalle, texto, foto_url, activo) VALUES
 (

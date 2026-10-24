@@ -48,6 +48,9 @@ public class Event {
     @Column(name = "anio", nullable = false)
     private Integer anio = 2026;
 
+    @Column(name = "imagenes", columnDefinition = "JSON")
+    private String imagenes;
+
     public Event() {}
 
     public Long getId() { return id; }
@@ -88,4 +91,7 @@ public class Event {
 
     public Integer getAnio() { return anio; }
     public void setAnio(Integer anio) { this.anio = anio; }
+
+    public String getImagenes() { return imagenes; }
+    public void setImagenes(String imagenes) { this.imagenes = imagenes; }
 }

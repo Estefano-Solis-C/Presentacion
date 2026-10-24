@@ -727,6 +727,60 @@ umberScrollWidth: 66px, hasOverflow: false (zero overflow).
 
 ---
 
+## Step 17.0: Phase 17 — Facebook DB Sync (Multi-Image Support & Fanpage Integration), Zero Hardcoded Fallbacks, Y-Axis Icon Centering, Formal Founder Copy, and Interactive Full-Card Modals
+- **Date/Time:** 2026-10-24T02:48:00Z
+- **Sequential Thinking Protocol:**
+  - `[THOUGHT]`: The user requested strict elimination of hardcoded fallback arrays in `portal-api.service.ts` (`L217-L224`), requiring that 100% of data (events, testimonials, educational levels) be sourced dynamically from the MySQL database. Additionally, publications from both Facebook profiles (`doramayer.dezulen` and `iepdoramayerdezulen`) must support multi-image carousels (`imagenes JSON NULL`), rotate smoothly on cards and in modals, have zero abrupt jumps when filtering by year or switching views, display the latest announcement card on page entry with dynamic multi-image slideshow, center the WhatsApp and all other icons on the exact Y-axis of the text without baseline descent (using official green `#25D366`), formalize founder copy to "Paulino Lapa y Sra. Yolanda Salinas" without nicknames, justify history text, and make event cards 100% clickable like educational level cards.
+  - `[HYPOTHESIS]`: Introducing `imagenes JSON` column in MySQL, mapping it to JPA `Event.java` and Angular `EventModel`, removing all fallback methods in `PortalApiService`, styling `<app-icon>` host as `inline-flex items-center justify-center align-middle shrink-0 leading-none select-none`, making event cards full-card triggers with `$event.stopPropagation()` on Facebook links, and implementing dynamic image rotation intervals with smooth opacity transitions will achieve full architectural purity and flawless visual aesthetics across desktop and mobile.
+  - `[RISK ANALYSIS]`: Removing fallbacks could cause UI breakage if backend is down; this was mitigated by returning clean `of([])` observables and verifying backend Docker container health. In Angular, custom elements `<app-icon>` default to `display: inline`, causing a 2-4px baseline gap; setting `:host` display and vertical-align resolves this globally across all icons.
+  - `[VERIFICATION PLAN]`:
+    1. Apply database migration `V5__add_multiple_images_and_fanpage_posts.sql` with JSON column and multi-image posts.
+    2. Rebuild backend and frontend Docker containers, run all 28 unit tests.
+    3. Verify REST API endpoints (`GET /api/events/latest`, `GET /api/events?all=true`).
+    4. Run automated Edge CDP verification script (`scratch/verify_phase17_refinements.js`):
+       - Entrance announcement modal with multi-image indicators and Facebook permalink.
+       - WhatsApp button color `#25D366` and icon Y-axis centering.
+       - History text justification and formal founder text without nicknames.
+       - Events section 9 cards, 100% clickable with cursor pointer, multi-image rotation, and gallery modal.
+       - Year filter and Lista Anual smooth transitions.
+       - Mobile viewport 390x844 responsiveness.
+  - `[EXECUTION]`: All steps executed and validated.
+- **Files Modified / Created:**
+  - `backend/src/main/resources/db/migration/V5__add_multiple_images_and_fanpage_posts.sql`: Added `imagenes JSON NULL` and multi-image seeds.
+  - `schema.sql`: Updated root database schema with `imagenes` column and seeds.
+  - `backend/src/main/java/pe/edu/doramayer/domain/Event.java`: Added `@Column(name = "imagenes", columnDefinition = "JSON") private String imagenes;` with accessors.
+  - `frontend/src/app/models/portal.models.ts`: Added `imagenes?: string[];` to `EventModel`.
+  - `frontend/src/app/services/portal-api.service.ts`: Completely eliminated `getFallbackEvents()`, `getFallbackTestimonials()`, and `getFallbackLevels()`. Implemented `parseEvent(item)` for multi-image JSON arrays.
+  - `frontend/src/app/components/icon/outline-icon.component.ts`: Added `:host` rule `inline-flex items-center justify-center align-middle shrink-0 leading-none select-none`, updated WhatsApp outline vector.
+  - `frontend/src/app/components/hero/hero.component.ts`: Set WhatsApp button icon to official green `#25D366`, size 18, `shrink-0`, and aligned on Y-axis.
+  - `frontend/src/app/components/history/history.component.ts`: Applied `text-justify hyphens-auto`, replaced informal nicknames with formal "Paulino Lapa y Sra. Yolanda Salinas".
+  - `frontend/src/app/components/latest-announcement-modal/latest-announcement-modal.component.ts`: Display on page entry, multi-image slideshow crossfade, dots indicator, and Facebook link.
+  - `frontend/src/app/components/events/events.component.ts`: Entire card clickable (`role="button"`, `tabindex="0"`, `cursor-pointer`), dynamic multi-image rotation tick every 3.8s, smooth transition container `transition-all duration-300`, and modal image gallery navigation.
+- **Verification/Test Command Executed & Result:**
+  - Maven tests: 28 unit tests passed, `BUILD SUCCESS`.
+  - Docker Compose: `dora-mayer-backend` and `dora-mayer-frontend` built and running healthy.
+  - REST API `GET /api/events/latest`: returns 200 OK with `imagenes` array and Facebook permalink.
+  - Automated CDP Browser Test (`scratch/verify_phase17_refinements.js`):
+    - Entrance modal: `visible: true`, `dots: 4`, Facebook permalink present.
+    - WhatsApp button: `found: true`, `iconVerticalAlign: "middle"`, `iconDisplay: "flex"`.
+    - History: `hasFormalFounders: true`, `hasNicknames: false`, `justifiedP: 2`.
+    - Events cards: `cardCount: 9`, `clickableCards: 9`, full-card click opened modal with gallery indicators.
+    - Year filter & Lista Anual smooth transitions verified.
+    - Mobile 390x844 layout verified.
+  - Artifact Screenshots Generated:
+    - `phase17_entrance_modal.png`
+    - `phase17_hero_admission_whatsapp.png`
+    - `phase17_history_section.png`
+    - `phase17_events_cards.png`
+    - `phase17_event_modal_detail.png`
+    - `phase17_events_filter_2024.png`
+    - `phase17_events_list_view.png`
+    - `phase17_mobile_entrance.png`
+    - `phase17_mobile_hero.png`
+- **Status:** **VERIFIED & COMPLETE**
+
+---
+
 ## Step 15.0: Editorial Enhancements, Reactive Level/Grade Sync, Auditable Excel Generation, and Visual Ergonomics
 
 - **Date:** 2026-10-23
@@ -832,4 +886,58 @@ ivelSeleccionado, dynamic grade options, and flexible contact validator.
     - `phase16_events_list_view.png`
     - `phase16_events_read_modal_facebook.png`
     - `phase16_mobile_entrance_modal.png`
+- **Status:** **VERIFIED & COMPLETE**
+
+---
+
+## Step 17.0: Phase 17 — Facebook DB Sync (Multi-Image Support & Fanpage Integration), Zero Hardcoded Fallbacks, Y-Axis Icon Centering, Formal Founder Copy, and Interactive Full-Card Modals
+- **Date/Time:** 2026-10-24T02:48:00Z
+- **Sequential Thinking Protocol:**
+  - `[THOUGHT]`: The user requested strict elimination of hardcoded fallback arrays in `portal-api.service.ts` (`L217-L224`), requiring that 100% of data (events, testimonials, educational levels) be sourced dynamically from the MySQL database. Additionally, publications from both Facebook profiles (`doramayer.dezulen` and `iepdoramayerdezulen`) must support multi-image carousels (`imagenes JSON NULL`), rotate smoothly on cards and in modals, have zero abrupt jumps when filtering by year or switching views, display the latest announcement card on page entry with dynamic multi-image slideshow, center the WhatsApp and all other icons on the exact Y-axis of the text without baseline descent (using official green `#25D366`), formalize founder copy to "Paulino Lapa y Sra. Yolanda Salinas" without nicknames, justify history text, and make event cards 100% clickable like educational level cards.
+  - `[HYPOTHESIS]`: Introducing `imagenes JSON` column in MySQL, mapping it to JPA `Event.java` and Angular `EventModel`, removing all fallback methods in `PortalApiService`, styling `<app-icon>` host as `inline-flex items-center justify-center align-middle shrink-0 leading-none select-none`, making event cards full-card triggers with `$event.stopPropagation()` on Facebook links, and implementing dynamic image rotation intervals with smooth opacity transitions will achieve full architectural purity and flawless visual aesthetics across desktop and mobile.
+  - `[RISK ANALYSIS]`: Removing fallbacks could cause UI breakage if backend is down; this was mitigated by returning clean `of([])` observables and verifying backend Docker container health. In Angular, custom elements `<app-icon>` default to `display: inline`, causing a 2-4px baseline gap; setting `:host` display and vertical-align resolves this globally across all icons.
+  - `[VERIFICATION PLAN]`:
+    1. Apply database migration `V5__add_multiple_images_and_fanpage_posts.sql` with JSON column and multi-image posts.
+    2. Rebuild backend and frontend Docker containers, run all 28 unit tests.
+    3. Verify REST API endpoints (`GET /api/events/latest`, `GET /api/events?all=true`).
+    4. Run automated Edge CDP verification script (`scratch/verify_phase17_refinements.js`):
+       - Entrance announcement modal with multi-image indicators and Facebook permalink.
+       - WhatsApp button color `#25D366` and icon Y-axis centering.
+       - History text justification and formal founder text without nicknames.
+       - Events section 9 cards, 100% clickable with cursor pointer, multi-image rotation, and gallery modal.
+       - Year filter and Lista Anual smooth transitions.
+       - Mobile viewport 390x844 responsiveness.
+  - `[EXECUTION]`: All steps executed and validated.
+- **Files Modified / Created:**
+  - `backend/src/main/resources/db/migration/V5__add_multiple_images_and_fanpage_posts.sql`: Added `imagenes JSON NULL` and multi-image seeds.
+  - `schema.sql`: Updated root database schema with `imagenes` column and seeds.
+  - `backend/src/main/java/pe/edu/doramayer/domain/Event.java`: Added `@Column(name = "imagenes", columnDefinition = "JSON") private String imagenes;` with accessors.
+  - `frontend/src/app/models/portal.models.ts`: Added `imagenes?: string[];` to `EventModel`.
+  - `frontend/src/app/services/portal-api.service.ts`: Completely eliminated `getFallbackEvents()`, `getFallbackTestimonials()`, and `getFallbackLevels()`. Implemented `parseEvent(item)` for multi-image JSON arrays.
+  - `frontend/src/app/components/icon/outline-icon.component.ts`: Added `:host` rule `inline-flex items-center justify-center align-middle shrink-0 leading-none select-none`, updated WhatsApp outline vector.
+  - `frontend/src/app/components/hero/hero.component.ts`: Set WhatsApp button icon to official green `#25D366`, size 18, `shrink-0`, and aligned on Y-axis.
+  - `frontend/src/app/components/history/history.component.ts`: Applied `text-justify hyphens-auto`, replaced informal nicknames with formal "Paulino Lapa y Sra. Yolanda Salinas".
+  - `frontend/src/app/components/latest-announcement-modal/latest-announcement-modal.component.ts`: Display on page entry, multi-image slideshow crossfade, dots indicator, and Facebook link.
+  - `frontend/src/app/components/events/events.component.ts`: Entire card clickable (`role="button"`, `tabindex="0"`, `cursor-pointer`), dynamic multi-image rotation tick every 3.8s, smooth transition container `transition-all duration-300`, and modal image gallery navigation.
+- **Verification/Test Command Executed & Result:**
+  - Maven tests: 28 unit tests passed, `BUILD SUCCESS`.
+  - Docker Compose: `dora-mayer-backend` and `dora-mayer-frontend` built and running healthy.
+  - REST API `GET /api/events/latest`: returns 200 OK with `imagenes` array and Facebook permalink.
+  - Automated CDP Browser Test (`scratch/verify_phase17_refinements.js`):
+    - Entrance modal: `visible: true`, `dots: 4`, Facebook permalink present.
+    - WhatsApp button: `found: true`, `iconVerticalAlign: "middle"`, `iconDisplay: "flex"`.
+    - History: `hasFormalFounders: true`, `hasNicknames: false`, `justifiedP: 2`.
+    - Events cards: `cardCount: 9`, `clickableCards: 9`, full-card click opened modal with gallery indicators.
+    - Year filter & Lista Anual smooth transitions verified.
+    - Mobile 390x844 layout verified.
+  - Artifact Screenshots Generated:
+    - `phase17_entrance_modal.png`
+    - `phase17_hero_admission_whatsapp.png`
+    - `phase17_history_section.png`
+    - `phase17_events_cards.png`
+    - `phase17_event_modal_detail.png`
+    - `phase17_events_filter_2024.png`
+    - `phase17_events_list_view.png`
+    - `phase17_mobile_entrance.png`
+    - `phase17_mobile_hero.png`
 - **Status:** **VERIFIED & COMPLETE**
