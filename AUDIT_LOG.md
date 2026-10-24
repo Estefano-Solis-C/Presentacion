@@ -601,3 +601,41 @@ eal_crop_events.png: Every news/event card now renders full photographic headers
 
 
 
+
+---
+
+### Step 13.0: Full Functional Persistence, Spring Boot 3 API Endpoints, Accessible Modals, Indecopi Virtual Claims Book & GitHub Sychronization
+- **Thought:** Complete transformation of prototype into a real database-driven application with 6 relational tables, versioned Flyway-compatible migrations, 10 REST endpoints, editorial non-AI design system, WCAG accessible modals (with Esc key, focus traps and backdrop blur), dynamic event insertion, and synchronization with `E:\Github\src\Presentacion`.
+- **Hypothesis:** 
+  - Standardizing database persistence in MySQL 8.3 / TiDB Serverless with 6 tables (`events`, `testimonials`, `levels`, `leads`, `contact_messages`, `reclamos`) will allow dynamic updates without rebuilding frontend code.
+  - Creating dedicated REST controllers in Spring Boot 3.3.4 under `/api/*` with in-memory caching and Honeypot anti-spam protection will guarantee secure, low-latency execution (<50ms).
+  - Unifying frontend design with `Merriweather` (serif editorial) and `Plus Jakarta Sans`, strictly bounded to Mayerino palette (`#0F296B`, `#254EB6`, `#FBB600`, `#F4F6FB`), will eradicate AI boilerplate aesthetic.
+  - Adding centered accessible modals across Levels, Testimonials, Events, and Libro de Reclamaciones will deliver superior parental UX.
+- **Risk Analysis:**
+  - Angular `@defer` race conditions on quick anchor jumps: resolved by `@defer (on idle; on viewport)` ensuring non-blocking initial paint (107 KB bundle) with instantaneous background instantiation.
+  - Accents and special Spanish characters: handled by enforcing `utf8mb4_unicode_ci` and setting JVM encoding flags.
+- **Execution & Files Modified:**
+  - `schema.sql`, `backend/src/main/resources/db/migration/V1__schema.sql`, `V2__seed.sql`: 6 relational tables with verbatim seed data.
+  - `backend/src/main/java/pe/edu/doramayer/domain/`: `Event`, `Testimonial`, `Level`, `Lead`, `ContactMessage`, `Reclamo`.
+  - `backend/src/main/java/pe/edu/doramayer/repository/`: Spring Data JPA repositories.
+  - `backend/src/main/java/pe/edu/doramayer/web/api/`: REST controllers `EventApiController`, `TestimonialApiController`, `LevelApiController`, `LeadApiController`, `ContactApiController`, `ReclamoApiController`, `HealthApiController`.
+  - `frontend/src/app/components/history/history.component.ts`: Editorial timeline, dynamic 68 years counter, clean mission/vision/values block.
+  - `frontend/src/app/components/testimonials/testimonials.component.ts`: Wired to `/api/testimonials/random`, centered modal, face alignment, warm badges, italic quotes.
+  - `frontend/src/app/components/events/events.component.ts`: Wired to `/api/events`, modal for full event text and image without `#matricula` jump, auto-rotation.
+  - `frontend/src/app/components/contact-footer/contact-footer.component.ts`: Direct contact form, Libro de Reclamaciones Virtual generating formal Indecopi receipt (`DMS-LR-YYYY-NNNN`).
+  - `frontend/src/app/app.component.ts`: Removed redundant `<app-benefits>` component.
+  - `render.yaml`: Updated to `free` plan, `/api/health` check path.
+  - Synchronized repository to `E:\Github\src\Presentacion`, committed to `main` (commit `84f84ef`).
+- **Verification/Test Command Executed & Result:**
+  - Unit tests: 28 tests passing (`mvn clean test package`).
+  - All 10 REST endpoints verified via node script: HTTP 200 with database persistence.
+  - Edge CDP end-to-end audit (`scratch/verify_cdp.js`):
+    - All 7 blocks verified (`h1`, `hasPropuesta`, `hasNiveles`, `hasHistoria`, `hasTestimonios`, `hasEventos`, `hasContacto`).
+    - Levels Modal: opens and closes with `Escape` (`true`).
+    - Testimonials Modal: opens and closes with `Escape` (`true`).
+    - Events Modal: opens and closes with `Escape` (`true`).
+    - Contact Form: submitted and confirmed (`¡Mensaje Recibido con Éxito!`).
+    - Claims Book: submitted and generated formal code `DMS-LR-2026-0001`.
+    - Dynamic event inserted directly in MySQL verified live in `/api/events` and on frontend in real-time.
+  - Full screenshot captured and saved to `phase13_full_verification.png`.
+- **Status:** **VERIFIED & COMPLETE**
