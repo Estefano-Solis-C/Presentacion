@@ -7,19 +7,13 @@ import {
   OnInit,
   ViewChild,
   computed,
+  inject,
   signal
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OutlineIconComponent } from '../icon/outline-icon.component';
-
-interface Testimonial {
-  id: string;
-  name: string;
-  generation: string;
-  career: string;
-  quote: string;
-  image: string;
-}
+import { PortalApiService } from '../../services/portal-api.service';
+import { TestimonialModel } from '../../models/portal.models';
 
 @Component({
   selector: 'app-testimonials',
@@ -27,86 +21,101 @@ interface Testimonial {
   imports: [CommonModule, OutlineIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section id="testimonios" class="py-20 bg-mayer-fog border-b border-[#0F296B]/15 overflow-hidden select-none">
+    <section id="testimonios" class="py-20 bg-white border-b border-[#0F296B]/15 overflow-hidden select-none">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         
-        <!-- Header de Sección (Sin Controles Superiores) -->
-        <div class="pb-6 border-b border-[#0F296B]/15">
+        <!-- Header de Sección Sobrio y Editorial -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-6 border-b border-[#0F296B]/15">
           <div class="space-y-2 max-w-2xl">
-            <div class="inline-flex items-center space-x-2 bg-emerald-50 text-emerald-950 font-sans text-xs uppercase px-3.5 py-1.5 font-bold tracking-wider border border-emerald-200 rounded-full shadow-xs">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-              <span>VOCES DE NUESTRA COMUNIDAD MAYERINA</span>
+            <div class="inline-flex items-center space-x-2 bg-white text-[#0F296B] font-sans text-xs uppercase px-3.5 py-1.5 font-bold tracking-wider border border-[#0F296B]/15 rounded-full shadow-2xs">
+              <span class="w-2 h-2 rounded-full bg-[#FBB600] shrink-0"></span>
+              <span>Voces de nuestra comunidad mayerina</span>
             </div>
-            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0F296B] tracking-tight">
+            <h2 class="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0F296B] tracking-tight">
               Voces de la Familia Mayerina
             </h2>
-            <p class="text-sm text-slate-600 leading-relaxed font-normal">
-              Historias reales de exalumnos egresados que hoy destacan profesionalmente gracias a los cimientos de Estudio, Trabajo y Amistad forjados en nuestras aulas.
+            <p class="font-sans text-sm text-slate-600 leading-relaxed font-normal">
+              Testimonios de exalumnos egresados y familias que vivieron en primera persona el lema de Estudio, Trabajo y Amistad forjado en nuestras aulas del Rímac.
             </p>
+          </div>
+          
+          <div class="hidden md:flex items-center space-x-2 font-sans text-xs text-slate-500 font-medium">
+            <span class="w-2 h-2 rounded-full bg-[#254EB6]"></span>
+            <span>Testimonios registrados en archivo escolar</span>
           </div>
         </div>
 
-        <!-- Carrusel Enmarcado con Flechas Laterales a Izquierda y Derecha -->
-        <div class="relative px-3 sm:px-12">
+        <!-- Carrusel Enmarcado con Flechas Laterales -->
+        <div class="relative px-2 sm:px-12">
           
-          <!-- Botón Anterior Flotante a la Izquierda -->
-          <button
-            type="button"
-            (click)="prev()"
-            aria-label="Testimonio anterior"
-            class="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#254EB6] hover:bg-[#0F296B] text-white shadow-md flex items-center justify-center transition-all cursor-pointer"
-          >
-            <app-icon name="arrow-left" size="18"></app-icon>
-          </button>
+          <!-- Botón Anterior Flotante -->
+          @if (testimonials().length > 1) {
+            <button
+              type="button"
+              (click)="prev()"
+              aria-label="Testimonio anterior"
+              class="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#254EB6] hover:bg-[#0F296B] text-white shadow-md flex items-center justify-center transition-all cursor-pointer"
+            >
+              <app-icon name="arrow-left" size="18"></app-icon>
+            </button>
+          }
 
           <!-- Contenedor del Carrusel Deslizable -->
           <div
             #carouselContainer
             (mouseenter)="onMouseEnter()"
             (mouseleave)="onMouseLeave()"
-            (mousedown)="onMouseDown($event)"
-            (mousemove)="onMouseMove($event)"
-            (mouseup)="onMouseUp()"
+            (focusin)="onMouseEnter()"
+            (focusout)="onMouseLeave()"
             (touchstart)="onTouchStart($event)"
             (touchmove)="onTouchMove($event)"
             (touchend)="onTouchEnd()"
-            class="flex space-x-4 sm:space-x-6 overflow-x-auto pb-4 pt-2 no-scrollbar cursor-grab active:cursor-grabbing scroll-smooth"
+            class="flex space-x-4 sm:space-x-6 overflow-x-auto pb-4 pt-2 no-scrollbar scroll-smooth"
           >
-            @for (item of testimonials(); track item.name; let i = $index) {
+            @for (item of testimonials(); track item.id; let i = $index) {
               <div
                 [attr.data-index]="i"
-                class="w-[82vw] sm:w-[350px] lg:w-[364px] min-w-[260px] sm:min-w-[350px] max-w-[380px] bg-white rounded-sm p-6 border border-[#0F296B]/15 shadow-mayer-soft hover:shadow-mayer-elevated hover:-translate-y-1 transition-all duration-300 h-[380px] sm:h-[370px] flex flex-col justify-between shrink-0"
+                class="w-[82vw] sm:w-[350px] lg:w-[364px] min-w-[260px] sm:min-w-[350px] max-w-[380px] bg-[#F4F6FB] rounded-sm p-6 border border-[#0F296B]/15 shadow-card-soft hover:shadow-card-elevated hover:-translate-y-1 transition-all duration-300 h-[390px] sm:h-[380px] flex flex-col justify-between shrink-0"
               >
                 
-                <!-- Encabezado de Tarjeta Editorial y Cita -->
+                <!-- Encabezado de Tarjeta con Etiqueta Cálida Humana -->
                 <div class="space-y-3">
-                  <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
-                    <span class="font-sans text-[11px] font-bold text-slate-500 uppercase tracking-wider truncate">
-                      EXPEDIENTE · EGRESADO #0{{ i + 1 }}
+                  <div class="flex items-center justify-between border-b border-[#0F296B]/10 pb-2.5">
+                    <span class="font-sans text-[11px] font-bold text-[#0F296B] uppercase tracking-wider truncate">
+                      {{ item.detalle || ('Egresado Promoción ' + (item.id)) }}
                     </span>
                     <div class="text-[#FBB600] text-2xl font-serif font-black leading-none">“</div>
                   </div>
 
-                  <!-- Cita Testimonial Real de la Web Histórica (En cursiva, sin cortes) -->
-                  <div class="min-h-[160px] max-h-[180px] overflow-y-auto no-scrollbar pr-1 text-slate-700 leading-relaxed font-sans italic text-xs sm:text-[13px]">
-                    <p class="italic">“{{ item.quote }}”</p>
+                  <!-- Cita Testimonial en Cursiva -->
+                  <div class="min-h-[140px] max-h-[160px] overflow-hidden text-slate-700 leading-relaxed font-sans italic text-xs sm:text-[13px]">
+                    <p class="italic line-clamp-5">“{{ item.texto }}”</p>
                   </div>
+
+                  <button
+                    type="button"
+                    (click)="openModal(item)"
+                    class="font-sans text-xs font-bold text-[#254EB6] hover:text-[#0F296B] flex items-center space-x-1 uppercase transition-colors cursor-pointer pt-1"
+                  >
+                    <span>Leer completo</span>
+                    <app-icon name="arrow-right" size="13"></app-icon>
+                  </button>
                 </div>
 
-                <!-- Autor Institucional con Fotografía Real y Profesión Verdadera -->
-                <div class="pt-3 border-t border-slate-100 flex items-center space-x-3.5">
-                  <div class="w-14 h-14 rounded-sm border border-[#0F296B]/20 shadow-xs overflow-hidden bg-slate-100 shrink-0">
+                <!-- Autor Institucional con Fotografía Real y Rostro Visible -->
+                <div class="pt-3 border-t border-[#0F296B]/10 flex items-center space-x-3.5">
+                  <div class="w-14 h-14 rounded-sm border border-[#0F296B]/20 shadow-xs overflow-hidden bg-slate-200 shrink-0">
                     <img
-                      [src]="item.image"
-                      [alt]="item.name"
-                      class="w-full h-full object-cover pointer-events-none"
+                      [src]="item.fotoUrl"
+                      [alt]="item.nombre"
+                      class="w-full h-full object-cover object-[center_15%] pointer-events-none"
                       loading="lazy"
                     />
                   </div>
                   <div class="min-w-0">
-                    <div class="font-bold text-sm text-[#0F296B] truncate">{{ item.name }}</div>
-                    <div class="text-[11px] font-sans text-[#254EB6] font-bold uppercase truncate">{{ item.career }}</div>
-                    <div class="text-[10px] font-sans text-slate-500 uppercase font-medium truncate">{{ item.generation }}</div>
+                    <div class="font-serif font-bold text-sm text-[#0F296B] truncate">{{ item.nombre }}</div>
+                    <div class="text-[11px] font-sans text-[#254EB6] font-bold uppercase truncate">{{ item.profesion }}</div>
+                    <div class="text-[10px] font-sans text-slate-500 uppercase font-medium truncate">{{ item.detalle }}</div>
                   </div>
                 </div>
 
@@ -114,32 +123,104 @@ interface Testimonial {
             }
           </div>
 
-          <!-- Botón Siguiente Flotante a la Derecha -->
-          <button
-            type="button"
-            (click)="next()"
-            aria-label="Testimonio siguiente"
-            class="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#254EB6] hover:bg-[#0F296B] text-white shadow-md flex items-center justify-center transition-all cursor-pointer"
-          >
-            <app-icon name="arrow-right" size="18"></app-icon>
-          </button>
+          <!-- Botón Siguiente Flotante -->
+          @if (testimonials().length > 1) {
+            <button
+              type="button"
+              (click)="next()"
+              aria-label="Testimonio siguiente"
+              class="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#254EB6] hover:bg-[#0F296B] text-white shadow-md flex items-center justify-center transition-all cursor-pointer"
+            >
+              <app-icon name="arrow-right" size="18"></app-icon>
+            </button>
+          }
 
         </div>
 
         <!-- Indicadores de Navegación Dinámicos (Dots según Viewport) -->
-        <div class="flex items-center justify-center space-x-2 pt-2">
-          @for (idx of dotIndexes(); track idx) {
-            <button
-              type="button"
-              (click)="scrollToIndex(idx)"
-              [class]="currentIndex() === idx ? 'w-8 bg-[#254EB6]' : 'w-2.5 bg-slate-300 hover:bg-slate-400'"
-              class="h-2 rounded-full transition-all duration-300 cursor-pointer"
-              [attr.aria-label]="'Ir a parada ' + (idx + 1)"
-            ></button>
-          }
-        </div>
+        @if (dotIndexes().length > 1) {
+          <div class="flex items-center justify-center space-x-2 pt-2">
+            @for (idx of dotIndexes(); track idx) {
+              <button
+                type="button"
+                (click)="scrollToIndex(idx)"
+                [class]="currentIndex() === idx ? 'w-8 bg-[#254EB6]' : 'w-2.5 bg-slate-300 hover:bg-slate-400'"
+                class="h-2 rounded-full transition-all duration-300 cursor-pointer"
+                [attr.aria-label]="'Ir a parada ' + (idx + 1)"
+              ></button>
+            }
+          </div>
+        }
 
       </div>
+
+      <!-- MODAL CENTRADO ACCESIBLE PARA LECTURA COMPLETA -->
+      @if (selectedTestimonial(); as modalItem) {
+        <div
+          class="fixed inset-0 z-50 bg-[#0F296B]/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-modalFadeIn"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-testimonio-nombre"
+          (click)="closeModal()"
+        >
+          <div
+            class="bg-white rounded-sm border border-[#0F296B]/25 max-w-xl w-full p-6 sm:p-8 space-y-6 shadow-card-elevated relative my-8"
+            (click)="$event.stopPropagation()"
+          >
+            <!-- Cabecera del Modal -->
+            <div class="flex items-start justify-between border-b border-[#0F296B]/15 pb-4">
+              <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 rounded-sm border border-[#0F296B]/20 shadow-xs overflow-hidden bg-slate-100 shrink-0">
+                  <img
+                    [src]="modalItem.fotoUrl"
+                    [alt]="modalItem.nombre"
+                    class="w-full h-full object-cover object-[center_15%]"
+                  />
+                </div>
+                <div>
+                  <h3 id="modal-testimonio-nombre" class="font-serif text-lg font-bold text-[#0F296B]">
+                    {{ modalItem.nombre }}
+                  </h3>
+                  <div class="font-sans text-xs font-bold text-[#254EB6] uppercase">
+                    {{ modalItem.profesion }}
+                  </div>
+                  <div class="font-sans text-[11px] text-slate-500 uppercase font-medium">
+                    {{ modalItem.detalle }}
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                (click)="closeModal()"
+                class="p-1 rounded-sm text-slate-400 hover:text-[#0F296B] transition-colors cursor-pointer"
+                aria-label="Cerrar testimonio"
+              >
+                <app-icon name="close" size="22"></app-icon>
+              </button>
+            </div>
+
+            <!-- Cita Completa -->
+            <div class="space-y-3 font-sans text-slate-700 text-sm sm:text-base leading-relaxed italic border-l-2 border-[#FBB600] pl-4 py-1">
+              “{{ modalItem.texto }}”
+            </div>
+
+            <!-- Pie del Modal -->
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-sans">
+              <span class="font-semibold text-[#0F296B]">I.E.P. Dora Mayer de Zulen</span>
+              <button
+                type="button"
+                (click)="closeModal()"
+                class="px-5 py-2 bg-[#254EB6] hover:bg-[#0F296B] text-white rounded-sm font-bold uppercase text-xs transition cursor-pointer"
+              >
+                Cerrar
+              </button>
+            </div>
+
+          </div>
+        </div>
+      }
+
     </section>
   `
 })
@@ -147,80 +228,38 @@ export class TestimonialsComponent implements OnInit, OnDestroy {
   @ViewChild('carouselContainer', { static: false })
   carouselContainer?: ElementRef<HTMLDivElement>;
 
-  // Datos 100% auténticos según la web histórica del colegio
-  testimonials = signal<Testimonial[]>([
-    {
-      id: '1',
-      name: 'Milagros Arteaga Rojas',
-      generation: 'Exalumna, Exdocente y Exmadre de Familia',
-      career: 'Licenciada en Educación',
-      quote: 'Fui parte de esta gran familia la IEP. “Dora Mayer de Zulen” y quiero compartir mi experiencia como exalumna, exdocente y exmadre de familia. Me sentí apoyada por mis profesores y directores: Paulino Lapa y Yolanda Salinas, quienes me formaron y entregaron todas las herramientas para ser una persona de bien y el cimiento para mi futuro laboral.',
-      image: '/images/milagros_arteaga.jpeg'
-    },
-    {
-      id: '2',
-      name: 'Miguel Blasica Soto',
-      generation: 'Promoción Primaria 1971–1975',
-      career: 'Docente y Director de Teatro',
-      quote: 'Mi querido Colegio Dora Mayer de Zulen, un tesoro de nuestro amado distrito del Rímac y ejemplo de educación del Perú para el mundo. A través de los años miro la huella de su siembra en mi dedicación a las Artes Escénicas como artista profesional y docente. Un fuerte abrazo y bendiciones para la familia del profesor Paulino Lapa.',
-      image: '/images/miguel_blasica.jpg'
-    },
-    {
-      id: '3',
-      name: 'Carlos Leonardo Cumpa Seminario',
-      generation: 'Primer Diploma de Honor 1971',
-      career: 'Abogado',
-      quote: 'Grandes anécdotas vienen a mi mente de mi querido colegio donde hice kindergarten y primaria, de la mano de mi profesor y Director Paulino Lapa. El 23 de Diciembre de 1971 recibí de sus manos el primer diploma de honor de mi vida, por mi aplicación en las clases de inglés, recuerdo que conservo con especial aprecio.',
-      image: '/images/carlos_cumpa.jpeg'
-    },
-    {
-      id: '4',
-      name: 'Patricia Lapa Salinas',
-      generation: 'Exalumna y Familia Fundadora',
-      career: 'Médico Cirujano',
-      quote: 'Cómo no recordar a mi querido colegio Dora Mayer de Zulen... siempre con la misma calidez, valores y principios inculcados a sus alumnos. Sentaste las bases de mi educación, me llevaste de la mano en mis primeros años y gracias a ello logré ser una profesional médica y puse en tus manos la educación de mis hijos.',
-      image: '/images/patricia_lapa.jpg'
-    },
-    {
-      id: '5',
-      name: 'Lizandro Morillo Viera',
-      generation: 'Promoción 1980',
-      career: 'Ingeniero de Sistemas',
-      quote: 'Tengo los más lindos recuerdos de mi paso por el Colegio Dora Mayer de Zulen en la sede de Monitor Huáscar. Época de felicidad total, amigos, clases, aprendizajes y fulbito en el recreo con nuestro querido "DIRE" Paulino Lapa. Hoy con emocionada nostalgia agradezco la formación académica y los valores recibidos.',
-      image: '/images/lizandro_morillo.jpg'
-    },
-    {
-      id: '6',
-      name: 'Gabriela Estephany Rosanna Ravelo Lapa',
-      generation: 'Promoción Inicial, Primaria y Secundaria',
-      career: 'Odontóloga',
-      quote: 'Un agradecimiento especial a la institución educativa por haber sido mi primer lugar de enseñanza desde inicial, primaria y secundaria. Un recinto donde no solo se fomenta el estudio, el trabajo y los valores, sino también el compromiso continuo para lograr metas personales y convertirme en Odontóloga.',
-      image: '/images/gabriela_ravelo.jpg'
-    }
-  ]);
+  private api = inject(PortalApiService);
+
+  testimonials = signal<TestimonialModel[]>([]);
+  selectedTestimonial = signal<TestimonialModel | null>(null);
 
   currentIndex = signal<number>(0);
-  visibleCards = signal<number>(3); // Calculado dinámicamente
+  visibleCards = signal<number>(3);
 
-  // Cantidad dinámica de paradas (dots) según el viewport
-  totalCards = computed(() => this.testimonials().length); // 6
+  totalCards = computed(() => this.testimonials().length);
   maxIndex = computed(() => Math.max(0, this.totalCards() - this.visibleCards()));
   dotIndexes = computed(() => Array.from({ length: this.maxIndex() + 1 }, (_, i) => i));
 
   private autoPlayTimer: any = null;
   private isPaused = false;
 
-  // Estado de Arrastre (Mouse Drag & Touch Swipe)
-  private isDragging = false;
-  private startX = 0;
-  private initialScrollLeft = 0;
+  private touchStartX = 0;
+  private touchEndX = 0;
 
   @HostListener('window:resize')
   onResize() {
     this.updateVisibleCards();
   }
 
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Escape' && this.selectedTestimonial()) {
+      this.closeModal();
+    }
+  }
+
   ngOnInit() {
+    this.loadTestimonials();
     this.updateVisibleCards();
     this.startAutoPlay();
   }
@@ -229,15 +268,43 @@ export class TestimonialsComponent implements OnInit, OnDestroy {
     this.stopAutoPlay();
   }
 
+  private loadTestimonials() {
+    this.api.getRandomTestimonials(6).subscribe({
+      next: data => {
+        if (data && data.length > 0) {
+          this.testimonials.set(data);
+          this.updateVisibleCards();
+        }
+      },
+      error: () => {
+        // Fallback already handled inside service
+      }
+    });
+  }
+
+  openModal(item: TestimonialModel) {
+    this.selectedTestimonial.set(item);
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  closeModal() {
+    this.selectedTestimonial.set(null);
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = '';
+    }
+  }
+
   private updateVisibleCards() {
     if (typeof window === 'undefined') return;
     const width = window.innerWidth;
     if (width >= 1024) {
-      this.visibleCards.set(3); // Desktop: 6 - 3 + 1 = 4 dots
+      this.visibleCards.set(3);
     } else if (width >= 640) {
-      this.visibleCards.set(2); // Tablet: 6 - 2 + 1 = 5 dots
+      this.visibleCards.set(2);
     } else {
-      this.visibleCards.set(1); // Mobile: 6 - 1 + 1 = 6 dots
+      this.visibleCards.set(1);
     }
 
     if (this.currentIndex() > this.maxIndex()) {
@@ -247,45 +314,20 @@ export class TestimonialsComponent implements OnInit, OnDestroy {
 
   private startAutoPlay() {
     this.stopAutoPlay();
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
     this.autoPlayTimer = setInterval(() => {
-      if (!this.isPaused && !this.isDragging) {
+      if (!this.isPaused && !this.selectedTestimonial() && this.totalCards() > this.visibleCards()) {
         this.next();
       }
-    }, 4500);
+    }, 8000);
   }
 
   private stopAutoPlay() {
     if (this.autoPlayTimer) {
       clearInterval(this.autoPlayTimer);
       this.autoPlayTimer = null;
-    }
-  }
-
-  next() {
-    const max = this.maxIndex();
-    const nextIdx = this.currentIndex() >= max ? 0 : this.currentIndex() + 1;
-    this.scrollToIndex(nextIdx);
-  }
-
-  prev() {
-    const max = this.maxIndex();
-    const prevIdx = this.currentIndex() <= 0 ? max : this.currentIndex() - 1;
-    this.scrollToIndex(prevIdx);
-  }
-
-  scrollToIndex(index: number) {
-    this.currentIndex.set(index);
-    const container = this.carouselContainer?.nativeElement;
-    if (!container) return;
-
-    const cards = container.children;
-    if (cards && cards[index]) {
-      const card = cards[index] as HTMLElement;
-      const targetLeft = card.offsetLeft - container.offsetLeft - 16;
-      container.scrollTo({
-        left: Math.max(0, targetLeft),
-        behavior: 'smooth'
-      });
     }
   }
 
@@ -297,81 +339,45 @@ export class TestimonialsComponent implements OnInit, OnDestroy {
     this.isPaused = false;
   }
 
-  onMouseDown(e: MouseEvent) {
-    this.isDragging = true;
-    this.isPaused = true;
-    const container = this.carouselContainer?.nativeElement;
-    if (container) {
-      this.startX = e.pageX - container.offsetLeft;
-      this.initialScrollLeft = container.scrollLeft;
-    }
+  next() {
+    const nextIdx = this.currentIndex() >= this.maxIndex() ? 0 : this.currentIndex() + 1;
+    this.scrollToIndex(nextIdx);
   }
 
-  onMouseMove(e: MouseEvent) {
-    if (!this.isDragging) return;
-    e.preventDefault();
-    const container = this.carouselContainer?.nativeElement;
-    if (container) {
-      const x = e.pageX - container.offsetLeft;
-      const walk = (x - this.startX) * 1.5;
-      container.scrollLeft = this.initialScrollLeft - walk;
-    }
+  prev() {
+    const prevIdx = this.currentIndex() <= 0 ? this.maxIndex() : this.currentIndex() - 1;
+    this.scrollToIndex(prevIdx);
   }
 
-  onMouseUp() {
-    if (this.isDragging) {
-      this.isDragging = false;
-      this.isPaused = false;
-      this.snapToClosestCard();
+  scrollToIndex(index: number) {
+    this.currentIndex.set(index);
+    if (!this.carouselContainer?.nativeElement) return;
+    const container = this.carouselContainer.nativeElement;
+    const card = container.querySelector(`[data-index="${index}"]`) as HTMLElement;
+    if (card) {
+      const offset = card.offsetLeft - container.offsetLeft;
+      container.scrollTo({ left: offset, behavior: 'smooth' });
     }
   }
 
   onTouchStart(e: TouchEvent) {
     this.isPaused = true;
-    this.isDragging = true;
-    const container = this.carouselContainer?.nativeElement;
-    if (container && e.touches.length > 0) {
-      this.startX = e.touches[0].pageX - container.offsetLeft;
-      this.initialScrollLeft = container.scrollLeft;
-    }
+    this.touchStartX = e.touches[0].clientX;
   }
 
   onTouchMove(e: TouchEvent) {
-    if (!this.isDragging || e.touches.length === 0) return;
-    const container = this.carouselContainer?.nativeElement;
-    if (container) {
-      const x = e.touches[0].pageX - container.offsetLeft;
-      const walk = (x - this.startX) * 1.5;
-      container.scrollLeft = this.initialScrollLeft - walk;
-    }
+    this.touchEndX = e.touches[0].clientX;
   }
 
   onTouchEnd() {
-    if (this.isDragging) {
-      this.isDragging = false;
-      this.isPaused = false;
-      this.snapToClosestCard();
-    }
-  }
-
-  private snapToClosestCard() {
-    const container = this.carouselContainer?.nativeElement;
-    if (!container) return;
-
-    const cards = Array.from(container.children) as HTMLElement[];
-    let closestIndex = 0;
-    let minDiff = Infinity;
-
-    cards.forEach((card, index) => {
-      const cardLeft = card.offsetLeft - container.offsetLeft;
-      const diff = Math.abs(container.scrollLeft - cardLeft);
-      if (diff < minDiff) {
-        minDiff = diff;
-        closestIndex = index;
+    this.isPaused = false;
+    const deltaX = this.touchStartX - this.touchEndX;
+    if (Math.abs(deltaX) > 40) {
+      if (deltaX > 0) {
+        this.next();
+      } else {
+        this.prev();
       }
-    });
-
-    const targetIndex = Math.min(closestIndex, this.maxIndex());
-    this.scrollToIndex(targetIndex);
+    }
   }
 }

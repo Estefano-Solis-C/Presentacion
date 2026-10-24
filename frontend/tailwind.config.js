@@ -7,8 +7,23 @@ module.exports = {
     extend: {
       colors: {
         mayer: {
+          // Azul Marino Institucional: títulos, header, fondos oscuros, tradición
+          navy: {
+            DEFAULT: '#0F296B', // rgb(15, 41, 107)
+            50: '#F4F6FB',
+            100: '#E6EBF5',
+            200: '#C7D3EA',
+            300: '#9FB3DC',
+            400: '#5479C1',
+            500: '#0F296B',
+            600: '#0C2258',
+            700: '#091A43',
+            800: '#06122F',
+            900: '#03091B'
+          },
+          // Azul Rey: SOLO botones principales, enlaces y estados activos
           royal: {
-            DEFAULT: '#254EB6', // rgb(37, 78, 182) - Primary Mayerino Royal Blue
+            DEFAULT: '#254EB6', // rgb(37, 78, 182)
             50: '#EEF3FF',
             100: '#DCE7FE',
             200: '#BFD3FD',
@@ -20,28 +35,9 @@ module.exports = {
             800: '#122765',
             900: '#0E1D4A'
           },
-          navy: {
-            DEFAULT: '#0F296B', // rgb(15, 41, 107) - Deep Institutional Navy
-            50: '#F0F4FA',
-            100: '#D9E3F3',
-            200: '#B3C7E7',
-            300: '#8CABDB',
-            400: '#4D73B8',
-            500: '#0F296B',
-            600: '#0C2156',
-            700: '#091A43',
-            800: '#06122F',
-            900: '#03091B'
-          },
-          sky: {
-            DEFAULT: '#0284C7',
-            50: '#F0F9FF',
-            100: '#E0F2FE',
-            500: '#0284C7',
-            600: '#0369A1'
-          },
+          // Dorado Oficial: SOLO acentos pequeños (laureles, línea, número destacado)
           gold: {
-            DEFAULT: '#FBB600', // rgb(251, 182, 0) - Official Mayerino Gold
+            DEFAULT: '#FBB600', // rgb(251, 182, 0)
             50: '#FFFDF0',
             100: '#FFF9D6',
             200: '#FFF0A8',
@@ -51,31 +47,25 @@ module.exports = {
             600: '#D49700',
             700: '#A87400'
           },
-          red: {
-            DEFAULT: '#DC2626',
-            50: '#FEF2F2',
-            500: '#DC2626',
-            600: '#B91C1C'
-          },
+          // Neutros institucionales derivados del azul marino
+          subtle: '#F4F6FB', // fondo alterno sobrio
+          text: '#1E2A4A',   // texto principal de alto contraste
+          muted: '#475569',  // texto secundario legible
           fog: '#F8FAFC'
         }
       },
       fontFamily: {
+        serif: ['Merriweather', 'Georgia', 'serif'],
         sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        heading: ['Poppins', '"Plus Jakarta Sans"', 'sans-serif']
-      },
-      borderRadius: {
-        '2xl': '1rem',
-        '3xl': '1.5rem',
-        '4xl': '2rem'
+        heading: ['Merriweather', 'Georgia', 'serif']
       },
       boxShadow: {
-        'card-soft': '0 10px 30px -10px rgba(15, 41, 107, 0.08)',
-        'elevated': '0 20px 40px -15px rgba(15, 41, 107, 0.16)',
-        'mayer-soft': '0 12px 32px -8px rgba(15, 41, 107, 0.12)',
-        'mayer-card': '0 4px 20px -4px rgba(15, 41, 107, 0.08)',
-        'mayer-elevated': '0 20px 40px -12px rgba(15, 41, 107, 0.18)',
-        'mayer-gold': '0 8px 24px -4px rgba(251, 182, 0, 0.30)'
+        'card-soft': '0 4px 16px -2px rgba(15, 41, 107, 0.06)',
+        'elevated': '0 12px 28px -6px rgba(15, 41, 107, 0.12)',
+        'mayer-soft': '0 8px 24px -4px rgba(15, 41, 107, 0.08)',
+        'mayer-card': '0 2px 12px -2px rgba(15, 41, 107, 0.06)',
+        'mayer-elevated': '0 16px 36px -8px rgba(15, 41, 107, 0.14)',
+        'mayer-gold': '0 4px 16px -2px rgba(251, 182, 0, 0.25)'
       }
     }
   },

@@ -1,77 +1,73 @@
-export interface LeadMatriculaRequest {
-  tipoProceso: 'NUEVO' | 'MAYERINO';
+export interface EventModel {
+  id: number;
+  titulo: string;
+  tipo: 'COMUNICADO' | 'EVENTO';
+  fecha: string;
+  resumen: string;
+  contenido: string;
+  imagenUrl?: string;
+  destacado: boolean;
+  publicado: boolean;
+  createdAt?: string;
+}
+
+export interface TestimonialModel {
+  id: number;
+  nombre: string;
+  profesion: string;
+  detalle: string; // Ej: Exalumna · Promoción 1980
+  texto: string;
+  fotoUrl: string;
+  activo: boolean;
+  createdAt?: string;
+}
+
+export interface LevelModel {
+  id: number;
+  slug: 'inicial' | 'primaria' | 'secundaria';
+  nombre: string;
+  rangoEdades: string;
+  resumen: string;
+  descripcion: string;
+  puntos: string[]; // parsed from JSON array
+  fotoUrl: string;
+  orden: number;
+}
+
+export interface LeadSubmission {
   apoderadoNombres: string;
   apoderadoApellidos: string;
-  tipoDocumento: 'DNI' | 'CE';
-  numeroDocumento: string;
-  telefonoContacto: string;
-  correoElectronico: string;
-  alumnoNombres: string;
-  alumnoApellidos: string;
-  nivelAcademico: 'INICIAL' | 'PRIMARIA' | 'SECUNDARIA';
-  gradoIngreso: string;
-  colegioProcedencia?: string;
-  comentarios?: string;
-  canalContactoPreferido: 'WHATSAPP' | 'LLAMADA' | 'CORREO';
-  aceptaTerminos: boolean;
-  aceptaPoliticaDatos: boolean;
+  documento?: string;
+  celular: string;
+  correo: string;
+  alumnoNombre: string;
+  nivel: 'INICIAL' | 'PRIMARIA' | 'SECUNDARIA';
+  grado: string;
   website?: string; // Honeypot
 }
 
-export interface InscripcionVacacionesRequest {
-  apoderadoNombres: string;
-  apoderadoApellidos: string;
-  numeroDocumento: string;
-  telefonoContacto: string;
-  correoElectronico: string;
-  alumnoNombres: string;
-  alumnoEdad: number;
-  tallerSeleccionado: string;
-  turnoPreferido: string;
-  aceptaTerminos: boolean;
-  aceptaPoliticaDatos: boolean;
-  website?: string;
-}
-
-export interface LibroReclamacionesRequest {
-  reclamanteTipoDoc: string;
-  reclamanteNumeroDoc: string;
-  reclamanteNombres: string;
-  reclamanteApellidos: string;
-  reclamanteDomicilio: string;
-  reclamanteTelefono: string;
-  reclamanteCorreo: string;
-  esMenorEdad: boolean;
-  nombreAlumnoAfectado?: string;
-  tipoBienServicio: string;
-  montoReclamado?: number;
-  descripcionBienServicio: string;
-  tipoAccion: 'RECLAMO' | 'QUEJA';
-  detalleReclamacion: string;
-  pedidoConsumidor: string;
-  aceptaPoliticaDatos: boolean;
-  website?: string;
-}
-
-export interface MensajeContactoRequest {
-  nombreCompleto: string;
-  correoElectronico: string;
-  telefono: string;
+export interface ContactSubmission {
+  nombre: string;
+  celular: string;
+  correo: string;
   asunto: string;
   mensaje: string;
   website?: string;
 }
 
-export interface EventoResponse {
-  id: number;
-  titulo: string;
-  slug: string;
-  categoria: 'NOTICIA' | 'EVENTO' | 'COMUNICADO' | 'VACACIONES';
-  resumen: string;
-  contenido: string;
-  imagenUrl?: string;
-  fechaEvento?: string;
-  isPinned: boolean;
+export interface ReclamoSubmission {
+  reclamanteNombres: string;
+  reclamanteApellidos: string;
+  reclamanteDocumento: string;
+  reclamanteTelefono: string;
+  reclamanteCorreo: string;
+  reclamanteDomicilio: string;
+  alumnoAfectado?: string;
+  tipoAccion: 'RECLAMO' | 'QUEJA';
+  descripcionBienServicio: string;
+  detalle: string;
+  pedido: string;
+  website?: string;
 }
 
 export interface ApiResponse<T> {
@@ -81,3 +77,9 @@ export interface ApiResponse<T> {
   whatsappRedirectUrl?: string;
   timestamp: string;
 }
+
+// Aliases para compatibilidad existente
+export type EventoResponse = EventModel;
+export type LeadMatriculaRequest = LeadSubmission;
+export type MensajeContactoRequest = ContactSubmission;
+export type LibroReclamacionesRequest = ReclamoSubmission;

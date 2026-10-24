@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OutlineIconComponent } from '../icon/outline-icon.component';
 
@@ -8,219 +8,154 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
   imports: [CommonModule, OutlineIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="py-16 bg-white border-b border-[#0F296B]/15">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+    <section id="propuesta" class="py-16 bg-[#F4F6FB] border-b border-[#0F296B]/15">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
-        <!-- Indicadores Numéricos de Confianza -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
+        <!-- Franja Fina y Sobria de Indicadores Clave -->
+        <div class="bg-white rounded-sm border border-[#0F296B]/15 shadow-card-soft p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-3 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
           
-          <div class="bg-white p-4 sm:p-6 rounded-sm border border-[#0F296B]/15 shadow-mayer-soft text-center space-y-1">
-            <div class="text-[10px] sm:text-xs font-sans text-slate-500 font-bold uppercase tracking-wider truncate">HISTORIA RIMENSE</div>
-            <div class="text-2xl sm:text-4xl lg:text-5xl font-black text-[#0F296B] font-heading">
-              +{{ yearsCount() }}
+          <div class="flex items-center space-x-4 px-2">
+            <div class="w-12 h-12 rounded-sm bg-[#0F296B]/5 border border-[#0F296B]/15 flex items-center justify-center shrink-0">
+              <span class="font-serif font-black text-xl text-[#0F296B]">{{ yearsActive() }}</span>
             </div>
-            <div class="text-xs sm:text-sm font-bold text-slate-800 truncate">Años al Servicio</div>
-            <div class="text-[10px] sm:text-[11px] font-sans text-slate-500 truncate">De la niñez y juventud rimense</div>
+            <div>
+              <div class="font-serif font-bold text-sm text-[#0F296B]">Años de Tradición</div>
+              <div class="font-sans text-xs text-slate-500">Fundado en el Rímac en 1957</div>
+            </div>
           </div>
 
-          <div class="bg-white p-4 sm:p-6 rounded-sm border border-[#0F296B]/15 shadow-mayer-soft text-center space-y-1">
-            <div class="text-[10px] sm:text-xs font-sans text-slate-500 font-bold uppercase tracking-wider truncate">CICLOS INTEGRADOS</div>
-            <div class="text-2xl sm:text-4xl lg:text-5xl font-black text-[#254EB6] font-heading">
-              {{ levelsCount() }}
+          <div class="flex items-center space-x-4 px-2 pt-4 sm:pt-0">
+            <div class="w-12 h-12 rounded-sm bg-[#0F296B]/5 border border-[#0F296B]/15 flex items-center justify-center shrink-0">
+              <span class="font-serif font-black text-xl text-[#254EB6]">3</span>
             </div>
-            <div class="text-xs sm:text-sm font-bold text-slate-800 truncate">Niveles Educativos</div>
-            <div class="text-[10px] sm:text-[11px] font-sans text-slate-500 truncate">Inicial · Primaria · Sec.</div>
+            <div>
+              <div class="font-serif font-bold text-sm text-[#0F296B]">Niveles Integrados</div>
+              <div class="font-sans text-xs text-slate-500">Inicial, Primaria y Secundaria</div>
+            </div>
           </div>
 
-          <div class="bg-white p-4 sm:p-6 rounded-sm border border-[#0F296B]/15 shadow-mayer-soft text-center space-y-1">
-            <div class="text-[10px] sm:text-xs font-sans text-slate-500 font-bold uppercase tracking-wider truncate">MÉTODO MAYERINO</div>
-            <div class="text-2xl sm:text-4xl lg:text-5xl font-black text-amber-500 font-heading">
-              {{ homeworkCount() }}%
+          <div class="flex items-center space-x-4 px-2 pt-4 sm:pt-0">
+            <div class="w-12 h-12 rounded-sm bg-[#0F296B]/5 border border-[#0F296B]/15 flex items-center justify-center shrink-0">
+              <span class="font-serif font-black text-xl text-[#FBB600]">100%</span>
             </div>
-            <div class="text-xs sm:text-sm font-bold text-slate-800 truncate">Tareas en Clase</div>
-            <div class="text-[10px] sm:text-[11px] font-sans text-slate-500 truncate">Desarrolladas con el profesor</div>
-          </div>
-
-          <div class="bg-white p-4 sm:p-6 rounded-sm border border-[#0F296B]/15 shadow-mayer-soft text-center space-y-1">
-            <div class="text-[10px] sm:text-xs font-sans text-slate-500 font-bold uppercase tracking-wider truncate">FUNDACIÓN</div>
-            <div class="text-2xl sm:text-4xl lg:text-5xl font-black text-rose-600 font-heading">
-              {{ foundationYear() }}
+            <div>
+              <div class="font-serif font-bold text-sm text-[#0F296B]">Tareas en Aula</div>
+              <div class="font-sans text-xs text-slate-500">Desarrolladas con el profesor</div>
             </div>
-            <div class="text-xs sm:text-sm font-bold text-slate-800 truncate">Año de Fundación</div>
-            <div class="text-[10px] sm:text-[11px] font-sans text-slate-500 truncate">Tradición en el Rímac</div>
           </div>
 
         </div>
 
-        <!-- Los 3 Pilares Históricos Institucionales: Estudio, Trabajo, Amistad -->
-        <div id="propuesta" class="pt-6">
+        <!-- Encabezado de Sección: Estudio, Trabajo y Amistad -->
+        <div class="text-center max-w-3xl mx-auto space-y-3">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white text-[#0F296B] font-sans text-xs font-semibold uppercase tracking-wider border border-[#0F296B]/15 shadow-2xs">
+            <span class="w-2 h-2 rounded-full bg-[#FBB600]"></span>
+            <span>Identidad Mayerina</span>
+          </div>
+          <h2 class="font-serif text-2xl sm:text-4xl font-bold text-[#0F296B] tracking-tight">
+            Estudio, Trabajo y Amistad
+          </h2>
+          <p class="font-sans text-sm sm:text-base text-slate-600 leading-relaxed">
+            Nuestro lema fundacional guía una formación equilibrada donde cada estudiante aprende a esforzarse, colaborar y construir su futuro en un ambiente cercano y exigente.
+          </p>
+        </div>
+
+        <!-- Los Tres Bloques Fusionados con Fotografías Reales (Sin Clipart) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           
-          <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#0F296B]/15 mb-12">
-            <div class="space-y-2 max-w-2xl">
-              <div class="inline-flex items-center space-x-2 bg-[#254EB6]/10 text-[#0F296B] font-sans text-xs uppercase px-3.5 py-1.5 font-bold tracking-wider rounded-full border border-[#254EB6]/20">
-                <span class="w-2 h-2 rounded-full bg-[#FBB600] shrink-0"></span>
-                <span>TRINOMIO DE FORMACIÓN MAYERINA</span>
+          <!-- Bloque 1: Estudio -->
+          <div class="bg-white rounded-sm border border-[#0F296B]/15 shadow-card-soft overflow-hidden flex flex-col justify-between">
+            <div class="relative h-48 sm:h-52 bg-slate-100 overflow-hidden">
+              <img
+                src="/images/tareas_clase.jpg"
+                alt="Alumnos realizando tareas dirigidas en aula con supervisión docente"
+                class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+              />
+              <div class="absolute bottom-2 left-2 bg-[#0F296B] text-white text-[11px] font-sans font-bold uppercase px-2.5 py-0.5 rounded-xs border border-white/20">
+                Pilar 01 · Estudio
               </div>
-              <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0F296B] tracking-tight">
-                El Trinomio de Formación Mayerina
-              </h2>
-              <p class="text-sm text-slate-600 leading-relaxed font-normal">
-                Inculcado por nuestros fundadores Prof. Paulino Lapa ("El Dire") y la Sra. Yolanda Salinas, este lema rector guía el desarrollo intelectual, técnico y humano de cada estudiante.
-              </p>
             </div>
-            <div class="hidden md:flex items-center space-x-2 text-xs font-sans text-slate-500 font-medium">
-              <span>LEMA INSTITUCIONAL DESDE 1957</span>
+            <div class="p-6 space-y-3 flex-1 flex flex-col justify-between">
+              <div class="space-y-2">
+                <h3 class="font-serif text-lg font-bold text-[#0F296B]">
+                  Tareas dirigidas en aula
+                </h3>
+                <p class="font-sans text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  "Las tareas se hacen en el colegio. Las tardes son para la familia." Nuestros alumnos resuelven sus dudas con el maestro en clase, consolidando el hábito de estudio sin tensiones en el hogar.
+                </p>
+              </div>
+              <div class="pt-3 border-t border-slate-100 flex items-center space-x-2 text-xs font-sans text-[#254EB6] font-semibold">
+                <app-icon name="check-circle" size="15" className="text-[#254EB6] shrink-0"></app-icon>
+                <span>Acompañamiento docente directo</span>
+              </div>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            <!-- Pilar 1: ESTUDIO -->
-            <div class="group bg-white rounded-sm border border-[#0F296B]/15 shadow-mayer-soft hover:shadow-mayer-elevated hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-              <div class="p-6 space-y-4">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-                  <div class="bg-[#0F296B] text-white font-sans text-xs uppercase font-extrabold px-2.5 py-1 tracking-wider rounded-xs">
-                    01 · ESTUDIO
-                  </div>
-                  <span class="font-sans text-xs text-slate-500 font-bold uppercase">CONOCIMIENTO ACTIVO</span>
-                </div>
-                
-                <div class="h-36 flex items-center justify-center p-3 bg-slate-50 rounded-sm border border-slate-200">
-                  <img
-                    src="/images/estudio.png"
-                    alt="Pilar Histórico: Estudio"
-                    class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
-                    loading="lazy"
-                  />
-                </div>
-
-                <h3 class="text-xl font-bold text-[#0F296B]">1. Estudio</h3>
-                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal italic">
-                  "Proceso que realiza el estudiante para aprender y adquirir conocimientos."
-                </p>
-              </div>
-
-              <div class="p-4 bg-slate-50 border-t border-slate-100 text-xs text-slate-700 space-y-1.5 font-medium">
-                <div class="flex items-center space-x-2">
-                  <span class="w-1.5 h-1.5 rounded-full bg-[#0F296B] inline-block"></span>
-                  <span>Tareas supervisadas y desarrolladas en aula</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                  <span class="w-1.5 h-1.5 rounded-full bg-[#0F296B] inline-block"></span>
-                  <span>Formación académica sólida y continua</span>
-                </div>
+          <!-- Bloque 2: Trabajo -->
+          <div class="bg-white rounded-sm border border-[#0F296B]/15 shadow-card-soft overflow-hidden flex flex-col justify-between">
+            <div class="relative h-48 sm:h-52 bg-slate-100 overflow-hidden">
+              <img
+                src="/images/banners/foto_secundaria_3.jpeg"
+                alt="Laboratorios de ciencias y cómputo práctico"
+                class="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+              />
+              <div class="absolute bottom-2 left-2 bg-[#0F296B] text-white text-[11px] font-sans font-bold uppercase px-2.5 py-0.5 rounded-xs border border-white/20">
+                Pilar 02 · Trabajo
               </div>
             </div>
-
-            <!-- Pilar 2: TRABAJO -->
-            <div class="group bg-white rounded-sm border border-[#0F296B]/15 shadow-mayer-soft hover:shadow-mayer-elevated hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-              <div class="p-6 space-y-4">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-                  <div class="bg-amber-500 text-slate-900 font-sans text-xs uppercase font-extrabold px-2.5 py-1 tracking-wider rounded-xs">
-                    02 · TRABAJO
-                  </div>
-                  <span class="font-sans text-xs text-slate-500 font-bold uppercase">DISCIPLINA PRÁCTICA</span>
-                </div>
-
-                <div class="h-36 flex items-center justify-center p-3 bg-slate-50 rounded-sm border border-slate-200">
-                  <img
-                    src="/images/trabajo.png"
-                    alt="Pilar Histórico: Trabajo"
-                    class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
-                    loading="lazy"
-                  />
-                </div>
-
-                <h3 class="text-xl font-bold text-[#0F296B]">2. Trabajo</h3>
-                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal italic">
-                  "Actividad física, moral e intelectual para obtener un bien o un servicio."
+            <div class="p-6 space-y-3 flex-1 flex flex-col justify-between">
+              <div class="space-y-2">
+                <h3 class="font-serif text-lg font-bold text-[#0F296B]">
+                  Laboratorios y método activo
+                </h3>
+                <p class="font-sans text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  Ciencia, tecnología y expresión oral aplicadas. Fomentamos la disciplina personal mediante el trabajo práctico en centros de cómputo, ciencias y proyectos de investigación escolar.
                 </p>
               </div>
-
-              <div class="p-4 bg-slate-50 border-t border-slate-100 text-xs text-slate-700 space-y-1.5 font-medium">
-                <div class="flex items-center space-x-2">
-                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block"></span>
-                  <span>Laboratorios equipados de cómputo e informática</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block"></span>
-                  <span>Hábitos de perseverancia, disciplina y superación</span>
-                </div>
+              <div class="pt-3 border-t border-slate-100 flex items-center space-x-2 text-xs font-sans text-[#254EB6] font-semibold">
+                <app-icon name="check-circle" size="15" className="text-[#254EB6] shrink-0"></app-icon>
+                <span>Cómputo, ciencias y oratoria</span>
               </div>
             </div>
-
-            <!-- Pilar 3: AMISTAD -->
-            <div class="group bg-white rounded-sm border border-[#0F296B]/15 shadow-mayer-soft hover:shadow-mayer-elevated hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-              <div class="p-6 space-y-4">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-                  <div class="bg-rose-600 text-white font-sans text-xs uppercase font-extrabold px-2.5 py-1 tracking-wider rounded-xs">
-                    03 · AMISTAD
-                  </div>
-                  <span class="font-sans text-xs text-slate-500 font-bold uppercase">VALORES HUMANOS</span>
-                </div>
-
-                <div class="h-36 flex items-center justify-center p-3 bg-slate-50 rounded-sm border border-slate-200">
-                  <img
-                    src="/images/amistad.png"
-                    alt="Pilar Histórico: Amistad"
-                    class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
-                    loading="lazy"
-                  />
-                </div>
-
-                <h3 class="text-xl font-bold text-[#0F296B]">3. Amistad</h3>
-                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal italic">
-                  "Relación afectiva entre personas asociadas a valores como amor, lealtad y compromiso."
-                </p>
-              </div>
-
-              <div class="p-4 bg-slate-50 border-t border-slate-100 text-xs text-slate-700 space-y-1.5 font-medium">
-                <div class="flex items-center space-x-2">
-                  <span class="w-1.5 h-1.5 rounded-full bg-rose-600 inline-block"></span>
-                  <span>Atención psicológica personalizada continua</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                  <span class="w-1.5 h-1.5 rounded-full bg-rose-600 inline-block"></span>
-                  <span>Danzas folklóricas peruanas e integración</span>
-                </div>
-              </div>
-            </div>
-
           </div>
+
+          <!-- Bloque 3: Amistad -->
+          <div class="bg-white rounded-sm border border-[#0F296B]/15 shadow-card-soft overflow-hidden flex flex-col justify-between">
+            <div class="relative h-48 sm:h-52 bg-slate-100 overflow-hidden">
+              <img
+                src="/images/atencion_psicologica.jpeg"
+                alt="Orientación psicopedagógica y convivencia escolar cercana"
+                class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+              />
+              <div class="absolute bottom-2 left-2 bg-[#0F296B] text-white text-[11px] font-sans font-bold uppercase px-2.5 py-0.5 rounded-xs border border-white/20">
+                Pilar 03 · Amistad
+              </div>
+            </div>
+            <div class="p-6 space-y-3 flex-1 flex flex-col justify-between">
+              <div class="space-y-2">
+                <h3 class="font-serif text-lg font-bold text-[#0F296B]">
+                  Psicopedagogía y convivencia
+                </h3>
+                <p class="font-sans text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  Cuidamos la dimensión emocional y social de cada niño y joven. Ofrecemos seguimiento psicopedagógico continuo, escuela para padres y normas de convivencia basadas en el respeto mutuo.
+                </p>
+              </div>
+              <div class="pt-3 border-t border-slate-100 flex items-center space-x-2 text-xs font-sans text-[#254EB6] font-semibold">
+                <app-icon name="check-circle" size="15" className="text-[#254EB6] shrink-0"></app-icon>
+                <span>Atención psicológica continua</span>
+              </div>
+            </div>
+          </div>
+
         </div>
 
       </div>
     </section>
   `
 })
-export class CountersComponent implements OnInit {
-  yearsCount = signal<number>(65);
-  levelsCount = signal<number>(3);
-  homeworkCount = signal<number>(100);
-  foundationYear = signal<number>(1957);
-
-  private el = inject(ElementRef);
-
-  ngOnInit() {
-    this.startCounters();
-  }
-
-  private startCounters() {
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 1;
-      this.yearsCount.set(Math.min(65, Math.round((progress / 35) * 65)));
-      this.levelsCount.set(Math.min(3, Math.round((progress / 35) * 3)));
-      this.homeworkCount.set(Math.min(100, Math.round((progress / 35) * 100)));
-      this.foundationYear.set(Math.min(1957, Math.round(1900 + (progress / 35) * 57)));
-
-      if (progress >= 35) {
-        this.yearsCount.set(65);
-        this.levelsCount.set(3);
-        this.homeworkCount.set(100);
-        this.foundationYear.set(1957);
-        clearInterval(interval);
-      }
-    }, 25);
-  }
+export class CountersComponent {
+  yearsActive = computed(() => new Date().getFullYear() - 1957);
 }

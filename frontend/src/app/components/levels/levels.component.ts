@@ -1,6 +1,16 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  inject,
+  signal
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OutlineIconComponent } from '../icon/outline-icon.component';
+import { PortalApiService } from '../../services/portal-api.service';
+import { LevelModel } from '../../models/portal.models';
 
 @Component({
   selector: 'app-levels',
@@ -11,265 +21,216 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
     <section id="niveles" class="py-20 bg-white border-b border-[#0F296B]/15">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
-        <!-- Header Institucional -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#0F296B]/15">
-          <div class="space-y-2 max-w-2xl">
-            <div class="inline-flex items-center space-x-2 bg-[#254EB6]/10 text-[#0F296B] font-sans text-xs uppercase px-3.5 py-1.5 font-bold tracking-wider rounded-full border border-[#254EB6]/20">
-              <span class="w-2 h-2 rounded-full bg-[#FBB600] shrink-0"></span>
-              <span>NIVELES EDUCATIVOS INTEGRADOS</span>
-            </div>
-            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0F296B] tracking-tight">
-              Niveles Educativos Integrados
-            </h2>
-            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-              La Institución Educativa Privada “Dora Mayer de Zulen” brinda a sus estudiantes una formación integral y humanística, promoviendo el desarrollo de sus competencias, capacidades y valores éticos, fortaleciendo las relaciones de cooperación y corresponsabilidad entre la escuela y la familia, que enriquece el proceso educativo en sus tres niveles.
-            </p>
+        <!-- Header Institucional Sobrio -->
+        <div class="text-center max-w-3xl mx-auto space-y-3">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#0F296B]/5 text-[#0F296B] font-sans text-xs font-semibold uppercase tracking-wider border border-[#0F296B]/15">
+            <span class="w-2 h-2 rounded-full bg-[#FBB600]"></span>
+            <span>Propuesta Pedagógica</span>
           </div>
-          
-          <!-- Selector de Nivel Interactivo (Estilo Refinado) -->
-          <div class="grid grid-cols-3 w-full sm:w-auto sm:inline-flex p-1 bg-slate-100 rounded-sm border border-[#0F296B]/15 shadow-xs">
-            <button
-              type="button"
-              (click)="selectedLevel.set('INICIAL')"
-              [class]="selectedLevel() === 'INICIAL' ? 'bg-[#254EB6] text-white shadow-xs' : 'text-slate-700 hover:text-[#0F296B] hover:bg-white/80'"
-              class="px-3 sm:px-5 py-2.5 rounded-xs font-sans text-xs uppercase font-bold tracking-wider transition-all flex items-center justify-center space-x-1 cursor-pointer"
-            >
-              <span>INICIAL</span>
-              <span class="hidden sm:inline text-[10px] opacity-80">(3-5 Años)</span>
-            </button>
-
-            <button
-              type="button"
-              (click)="selectedLevel.set('PRIMARIA')"
-              [class]="selectedLevel() === 'PRIMARIA' ? 'bg-[#254EB6] text-white shadow-xs' : 'text-slate-700 hover:text-[#0F296B] hover:bg-white/80'"
-              class="px-3 sm:px-5 py-2.5 rounded-xs font-sans text-xs uppercase font-bold tracking-wider transition-all flex items-center justify-center space-x-1 cursor-pointer"
-            >
-              <span>PRIMARIA</span>
-              <span class="hidden sm:inline text-[10px] opacity-80">(1°-6°)</span>
-            </button>
-
-            <button
-              type="button"
-              (click)="selectedLevel.set('SECUNDARIA')"
-              [class]="selectedLevel() === 'SECUNDARIA' ? 'bg-[#254EB6] text-white shadow-xs' : 'text-slate-700 hover:text-[#0F296B] hover:bg-white/80'"
-              class="px-3 sm:px-5 py-2.5 rounded-xs font-sans text-xs uppercase font-bold tracking-wider transition-all flex items-center justify-center space-x-1 cursor-pointer"
-            >
-              <span>SECUNDARIA</span>
-              <span class="hidden sm:inline text-[10px] opacity-80">(1°-5°)</span>
-            </button>
-          </div>
+          <h2 class="font-serif text-2xl sm:text-4xl font-bold text-[#0F296B] tracking-tight">
+            Niveles Educativos
+          </h2>
+          <p class="font-sans text-sm sm:text-base text-slate-600 leading-relaxed">
+            Una formación articulada desde los primeros pasos hasta el egreso escolar, combinando rigor pedagógico, contención emocional y valores cívicos.
+          </p>
         </div>
 
-        <!-- Ficha Editorial Detallada del Nivel Seleccionado (Zero CLS: Altura Fija lg:h-[460px]) -->
-        <div class="bg-white rounded-sm border border-[#0F296B]/15 p-5 sm:p-10 shadow-mayer-soft lg:h-[460px] flex flex-col justify-center overflow-hidden">
-          
-          @if (selectedLevel() === 'INICIAL') {
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div class="lg:col-span-7 space-y-4">
-                <div class="inline-flex items-center space-x-2 bg-[#254EB6]/10 text-[#254EB6] font-sans text-xs uppercase px-3 py-1 font-bold border border-[#254EB6]/25 rounded-sm">
-                  <span>CICLOS I & II · 3, 4 Y 5 AÑOS DE EDAD</span>
-                </div>
-                <h3 class="text-2xl sm:text-3xl font-extrabold text-[#0F296B] leading-snug min-h-[64px] flex items-center">
-                  Aprestamiento, desarrollo de la creatividad y valores
-                </h3>
-                <p class="text-sm text-slate-600 leading-relaxed font-normal min-h-[72px] flex items-center">
-                  Estimulamos la autonomía, la socialización y el desarrollo integral a través del juego dirigido, la psicomotricidad, el laboratorio de cómputo e inmersión temprana en inglés.
-                </p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-xs text-slate-700">
-                  <div class="flex items-center space-x-2.5 bg-slate-50 p-3 rounded-sm border border-[#0F296B]/10 shadow-xs">
-                    <app-icon name="check-circle" size="16" className="text-[#254EB6] shrink-0"></app-icon>
-                    <span class="font-bold">Aprestamiento y Lecto Escritura</span>
-                  </div>
-                  <div class="flex items-center space-x-2.5 bg-slate-50 p-3 rounded-sm border border-[#0F296B]/10 shadow-xs">
-                    <app-icon name="check-circle" size="16" className="text-[#254EB6] shrink-0"></app-icon>
-                    <span class="font-bold">Desarrollo de Creatividad</span>
-                  </div>
-                  <div class="flex items-center space-x-2.5 bg-slate-50 p-3 rounded-sm border border-[#0F296B]/10 shadow-xs">
-                    <app-icon name="check-circle" size="16" className="text-[#254EB6] shrink-0"></app-icon>
-                    <span class="font-bold">Laboratorio de Cómputo e Inglés</span>
-                  </div>
-                  <div class="flex items-center space-x-2.5 bg-slate-50 p-3 rounded-sm border border-[#0F296B]/10 shadow-xs">
-                    <app-icon name="check-circle" size="16" className="text-[#254EB6] shrink-0"></app-icon>
-                    <span class="font-bold">Psicomotricidad y Valores</span>
-                  </div>
+        <!-- Tres Tarjetas Grandes con Foto Real, Edades y Frase -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          @for (lvl of levels(); track lvl.slug) {
+            <div
+              (click)="openModal(lvl, $event)"
+              (keydown.enter)="openModal(lvl, $event)"
+              (keydown.space)="openModal(lvl, $event)"
+              tabindex="0"
+              class="group bg-white rounded-sm border border-[#0F296B]/15 shadow-card-soft hover:shadow-elevated transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-[#254EB6]"
+              [attr.aria-label]="'Ver detalles de ' + lvl.nombre"
+            >
+              <!-- Foto Real del Nivel -->
+              <div class="relative h-60 sm:h-64 bg-slate-100 overflow-hidden">
+                <img
+                  [src]="lvl.fotoUrl"
+                  [alt]="lvl.nombre + ' en I.E.P. Dora Mayer de Zulen'"
+                  class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-[#0F296B]/80 via-transparent to-transparent"></div>
+                
+                <div class="absolute bottom-3 left-3 right-3 text-white">
+                  <span class="inline-block px-2.5 py-0.5 rounded-xs bg-[#FBB600] text-slate-950 font-sans font-bold text-[11px] uppercase tracking-wider mb-1">
+                    {{ lvl.rangoEdades }}
+                  </span>
+                  <h3 class="font-serif text-xl font-bold text-white leading-tight">
+                    {{ lvl.nombre }}
+                  </h3>
                 </div>
               </div>
 
-              <!-- Dossier Fotográfico con Foto Real -->
-              <div class="lg:col-span-5 space-y-4">
-                <div class="relative overflow-hidden rounded-sm border border-[#0F296B]/15 shadow-mayer-card bg-slate-100">
-                  <img
-                    src="/images/foto_inicial.jpg"
-                    alt="Estudiantes de Nivel Inicial en clase Dora Mayer"
-                    class="w-full h-56 sm:h-60 object-cover object-top"
-                    loading="lazy"
-                  />
-                  <div class="absolute bottom-2 left-2 bg-[#0F296B] text-white font-sans text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-xs border border-white/20">
-                    INICIAL · 3 A 5 AÑOS
-                  </div>
-                </div>
-                
-                <div class="bg-slate-50 p-3.5 rounded-sm border border-[#0F296B]/10 space-y-2">
-                  <div class="font-sans text-xs font-bold text-[#0F296B] uppercase tracking-wider">TALLERES FORMATIVOS:</div>
-                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] font-bold text-slate-700">
-                    <span class="inline-flex items-center justify-center gap-1.5 px-2 py-1.5 bg-white border border-[#0F296B]/15 rounded-sm shadow-xs truncate text-[11px]">
-                      <app-icon name="sparkles" size="14" className="text-[#254EB6] shrink-0"></app-icon>
-                      <span class="truncate">Psicomotricidad</span>
-                    </span>
-                    <span class="inline-flex items-center justify-center gap-1.5 px-2 py-1.5 bg-white border border-[#0F296B]/15 rounded-sm shadow-xs truncate text-[11px]">
-                      <app-icon name="palette" size="14" className="text-[#254EB6] shrink-0"></app-icon>
-                      <span class="truncate">Creatividad</span>
-                    </span>
-                    <span class="inline-flex items-center justify-center gap-1.5 px-2 py-1.5 bg-white border border-[#0F296B]/15 rounded-sm shadow-xs truncate text-[11px]">
-                      <app-icon name="heart" size="14" className="text-[#254EB6] shrink-0"></app-icon>
-                      <span class="truncate">Psicología</span>
-                    </span>
-                  </div>
+              <!-- Frase Resumen y Botón de Exploración -->
+              <div class="p-6 space-y-4 flex-1 flex flex-col justify-between bg-white">
+                <p class="font-sans text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                  {{ lvl.resumen }}
+                </p>
+
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-sans font-bold text-[#254EB6] group-hover:text-[#0F296B] transition-colors">
+                  <span>Conocer propuesta y enfoque</span>
+                  <app-icon name="arrow-right" size="14" className="transform group-hover:translate-x-1 transition-transform"></app-icon>
                 </div>
               </div>
+
             </div>
           }
-
-          @if (selectedLevel() === 'PRIMARIA') {
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div class="lg:col-span-7 space-y-4">
-                <div class="inline-flex items-center space-x-2 bg-[#254EB6]/10 text-[#254EB6] font-sans text-xs uppercase px-3 py-1 font-bold border border-[#254EB6]/25 rounded-sm">
-                  <span>CICLOS III, IV & V · 1° A 6° DE PRIMARIA</span>
-                </div>
-                <h3 class="text-2xl sm:text-3xl font-extrabold text-[#0F296B] leading-snug min-h-[64px] flex items-center">
-                  Hábitos de estudio sólidos y tareas dirigidas en aula
-                </h3>
-                <p class="text-sm text-slate-600 leading-relaxed font-normal min-h-[72px] flex items-center">
-                  Consolidamos las competencias matemáticas y de comunicación integral. Los estudiantes aplican lo aprendido en clase y resuelven sus dudas con el docente, aliviando a la familia de tareas nocturnas.
-                </p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-xs text-slate-700">
-                  <div class="flex items-center space-x-2.5 bg-slate-50 p-3 rounded-sm border border-[#0F296B]/10 shadow-xs">
-                    <app-icon name="check-circle" size="16" className="text-[#254EB6] shrink-0"></app-icon>
-                    <span class="font-bold">Tareas supervisadas en aula</span>
-                  </div>
-                  <div class="flex items-center space-x-2.5 bg-slate-50 p-3 rounded-sm border border-[#0F296B]/10 shadow-xs">
-                    <app-icon name="check-circle" size="16" className="text-[#254EB6] shrink-0"></app-icon>
-                    <span class="font-bold">Laboratorio de Cómputo e Inglés</span>
-                  </div>
-                  <div class="flex items-center space-x-2.5 bg-slate-50 p-3 rounded-sm border border-[#0F296B]/10 shadow-xs">
-                    <app-icon name="check-circle" size="16" className="text-[#254EB6] shrink-0"></app-icon>
-                    <span class="font-bold">Atención psicológica continua</span>
-                  </div>
-                  <div class="flex items-center space-x-2.5 bg-slate-50 p-3 rounded-sm border border-[#0F296B]/10 shadow-xs">
-                    <app-icon name="check-circle" size="16" className="text-[#254EB6] shrink-0"></app-icon>
-                    <span class="font-bold">Talleres formativos y danzas</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Dossier Fotográfico con Foto Real -->
-              <div class="lg:col-span-5 space-y-4">
-                <div class="relative overflow-hidden rounded-sm border border-[#0F296B]/15 shadow-mayer-card bg-slate-100">
-                  <img
-                    src="/images/foto_primaria.jpeg"
-                    alt="Alumnos de Primaria en formación Dora Mayer"
-                    class="w-full h-56 sm:h-60 object-cover"
-                    loading="lazy"
-                  />
-                  <div class="absolute bottom-2 left-2 bg-[#0F296B] text-white font-sans text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-xs border border-white/20">
-                    PRIMARIA · 1° A 6° GRADO
-                  </div>
-                </div>
-                
-                <div class="bg-slate-50 p-3.5 rounded-sm border border-[#0F296B]/10 space-y-2">
-                  <div class="font-sans text-xs font-bold text-[#0F296B] uppercase tracking-wider">ÁREAS FORMATIVAS CLAVE:</div>
-                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] font-bold text-slate-700">
-                    <span class="inline-flex items-center justify-center gap-1.5 px-2 py-1.5 bg-white border border-[#0F296B]/15 rounded-sm shadow-xs truncate text-[11px]">
-                      <app-icon name="music" size="14" className="text-[#254EB6] shrink-0"></app-icon>
-                      <span class="truncate">Danzas Típicas</span>
-                    </span>
-                    <span class="inline-flex items-center justify-center gap-1.5 px-2 py-1.5 bg-white border border-[#0F296B]/15 rounded-sm shadow-xs truncate text-[11px]">
-                      <app-icon name="beaker" size="14" className="text-[#254EB6] shrink-0"></app-icon>
-                      <span class="truncate">Ciencias</span>
-                    </span>
-                    <span class="inline-flex items-center justify-center gap-1.5 px-2 py-1.5 bg-white border border-[#0F296B]/15 rounded-sm shadow-xs truncate text-[11px]">
-                      <app-icon name="users" size="14" className="text-[#254EB6] shrink-0"></app-icon>
-                      <span class="truncate">Escuela Padres</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          }
-
-          @if (selectedLevel() === 'SECUNDARIA') {
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div class="lg:col-span-7 space-y-4">
-                <div class="inline-flex items-center space-x-2 bg-[#254EB6]/10 text-[#254EB6] font-sans text-xs uppercase px-3 py-1 font-bold border border-[#254EB6]/25 rounded-sm">
-                  <span>CICLOS VI & VII · 1° A 5° DE SECUNDARIA</span>
-                </div>
-                <h3 class="text-2xl sm:text-3xl font-extrabold text-[#0F296B] leading-snug min-h-[64px] flex items-center">
-                  Formación integral, científica y humanística
-                </h3>
-                <p class="text-sm text-slate-600 leading-relaxed font-normal min-h-[72px] flex items-center">
-                  Brindamos una sólida preparación académica, científica y valórica, con laboratorios de cómputo, ciencias y seminarios multimedia para responder con éxito a un mundo globalizado.
-                </p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-xs text-slate-700">
-                  <div class="flex items-center space-x-2.5 bg-slate-50 p-3 rounded-sm border border-[#0F296B]/10 shadow-xs">
-                    <app-icon name="check-circle" size="16" className="text-[#254EB6] shrink-0"></app-icon>
-                    <span class="font-bold">Aplicación de la Nueva Currícula</span>
-                  </div>
-                  <div class="flex items-center space-x-2.5 bg-slate-50 p-3 rounded-sm border border-[#0F296B]/10 shadow-xs">
-                    <app-icon name="check-circle" size="16" className="text-[#254EB6] shrink-0"></app-icon>
-                    <span class="font-bold">Laboratorio de Biología y Química</span>
-                  </div>
-                  <div class="flex items-center space-x-2.5 bg-slate-50 p-3 rounded-sm border border-[#0F296B]/10 shadow-xs">
-                    <app-icon name="check-circle" size="16" className="text-[#254EB6] shrink-0"></app-icon>
-                    <span class="font-bold">Laboratorio de Cómputo e Inglés</span>
-                  </div>
-                  <div class="flex items-center space-x-2.5 bg-slate-50 p-3 rounded-sm border border-[#0F296B]/10 shadow-xs">
-                    <app-icon name="check-circle" size="16" className="text-[#254EB6] shrink-0"></app-icon>
-                    <span class="font-bold">Seminarios Audiovisuales Multimedia</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Dossier Fotográfico con Foto Real -->
-              <div class="lg:col-span-5 space-y-4">
-                <div class="relative overflow-hidden rounded-sm border border-[#0F296B]/15 shadow-mayer-card bg-slate-100">
-                  <img
-                    src="/images/foto_secundaria.jpeg"
-                    alt="Promoción de Secundaria en actividades escolares"
-                    class="w-full h-56 sm:h-60 object-cover"
-                    loading="lazy"
-                  />
-                  <div class="absolute bottom-2 left-2 bg-[#0F296B] text-white font-sans text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-xs border border-white/20">
-                    SECUNDARIA · 1° A 5° AÑO
-                  </div>
-                </div>
-                
-                <div class="bg-slate-50 p-3.5 rounded-sm border border-[#0F296B]/10 space-y-2">
-                  <div class="font-sans text-xs font-bold text-[#0F296B] uppercase tracking-wider">COMPETENCIAS CLAVE:</div>
-                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] font-bold text-slate-700">
-                    <span class="inline-flex items-center justify-center gap-1.5 px-2 py-1.5 bg-white border border-[#0F296B]/15 rounded-sm shadow-xs truncate text-[11px]">
-                      <app-icon name="target" size="14" className="text-[#254EB6] shrink-0"></app-icon>
-                      <span class="truncate">Seminarios</span>
-                    </span>
-                    <span class="inline-flex items-center justify-center gap-1.5 px-2 py-1.5 bg-white border border-[#0F296B]/15 rounded-sm shadow-xs truncate text-[11px]">
-                      <app-icon name="laptop" size="14" className="text-[#254EB6] shrink-0"></app-icon>
-                      <span class="truncate">Cómputo</span>
-                    </span>
-                    <span class="inline-flex items-center justify-center gap-1.5 px-2 py-1.5 bg-white border border-[#0F296B]/15 rounded-sm shadow-xs truncate text-[11px]">
-                      <app-icon name="mic" size="14" className="text-[#254EB6] shrink-0"></app-icon>
-                      <span class="truncate">Oratoria</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          }
-
         </div>
 
       </div>
+
+      <!-- MODAL CENTRADO ACCESIBLE (Role Dialog, Focus Trap, Backdrop 55% Blur) -->
+      @if (selectedLevel(); as level) {
+        <div
+          class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
+          role="dialog"
+          aria-modal="true"
+          [attr.aria-labelledby]="'modal-title-' + level.slug"
+        >
+          <!-- Backdrop Oscuro Translúcido con Desenfoque Leve -->
+          <div
+            class="fixed inset-0 bg-black/55 backdrop-blur-xs transition-opacity duration-200"
+            (click)="closeModal()"
+          ></div>
+
+          <!-- Contenedor del Modal Centrado (Animación <= 200ms) -->
+          <div
+            class="relative w-full max-w-2xl bg-white rounded-sm shadow-2xl border border-[#0F296B]/20 overflow-hidden z-10 max-h-[90vh] flex flex-col animate-modal-in"
+            (click)="$event.stopPropagation()"
+          >
+            <!-- Cabecera del Modal con Foto y Botón X -->
+            <div class="relative h-48 sm:h-56 bg-slate-100 shrink-0 overflow-hidden">
+              <img
+                [src]="level.fotoUrl"
+                [alt]="level.nombre"
+                class="w-full h-full object-cover object-top"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-[#0F296B]/90 via-[#0F296B]/40 to-transparent"></div>
+
+              <!-- Botón X Accesible Arriba a la Derecha -->
+              <button
+                type="button"
+                #closeBtn
+                (click)="closeModal()"
+                class="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center transition-colors cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-white"
+                aria-label="Cerrar ventana de detalles"
+              >
+                <app-icon name="x" size="18"></app-icon>
+              </button>
+
+              <div class="absolute bottom-3 left-4 right-4 text-white">
+                <span class="inline-block px-2.5 py-0.5 rounded-xs bg-[#FBB600] text-slate-950 font-sans font-bold text-[11px] uppercase tracking-wider mb-1">
+                  {{ level.rangoEdades }}
+                </span>
+                <h3 [id]="'modal-title-' + level.slug" class="font-serif text-2xl sm:text-3xl font-bold text-white leading-tight">
+                  {{ level.nombre }}
+                </h3>
+              </div>
+            </div>
+
+            <!-- Cuerpo del Modal con Scroll Interno -->
+            <div class="p-6 overflow-y-auto space-y-6 text-[#1E2A4A] flex-1">
+              
+              <!-- Qué Aprende el Alumno / Resumen Pedagógico -->
+              <div class="space-y-2">
+                <h4 class="font-serif font-bold text-sm text-[#0F296B] uppercase tracking-wider">
+                  Enfoque Pedagógico
+                </h4>
+                <p class="font-sans text-sm sm:text-base text-slate-700 leading-relaxed font-normal">
+                  {{ level.descripcion }}
+                </p>
+              </div>
+
+              <!-- 3-4 Puntos Clave del Enfoque Institucional -->
+              <div class="space-y-2.5">
+                <h4 class="font-serif font-bold text-sm text-[#0F296B] uppercase tracking-wider">
+                  Pilares de Aprendizaje
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  @for (punto of level.puntos; track punto) {
+                    <div class="flex items-start space-x-2.5 p-3 rounded-sm bg-[#F4F6FB] border border-[#0F296B]/10">
+                      <app-icon name="check-circle" size="16" className="text-[#254EB6] shrink-0 mt-0.5"></app-icon>
+                      <span class="font-sans text-xs sm:text-sm text-slate-800 font-medium leading-snug">
+                        {{ punto }}
+                      </span>
+                    </div>
+                  }
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Pie del Modal con Acción de Matrícula -->
+            <div class="p-4 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+              <span class="text-xs font-sans text-slate-500 text-center sm:text-left">
+                Vacantes limitadas para el año lectivo en curso.
+              </span>
+              <button
+                type="button"
+                (click)="solicitarVacante(level.slug)"
+                class="w-full sm:w-auto px-5 py-2.5 rounded-sm bg-[#254EB6] hover:bg-[#1D3FA2] text-white text-xs font-sans font-bold uppercase tracking-wider shadow-xs transition-all flex items-center justify-center space-x-2 cursor-pointer focus:outline-hidden"
+              >
+                <span>Solicitar vacante para {{ level.nombre }}</span>
+                <app-icon name="arrow-right" size="14" className="text-[#FBB600]"></app-icon>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      }
     </section>
   `
 })
-export class LevelsComponent {
-  selectedLevel = signal<'INICIAL' | 'PRIMARIA' | 'SECUNDARIA'>('PRIMARIA');
+export class LevelsComponent implements OnInit {
+  private api = inject(PortalApiService);
+
+  levels = signal<LevelModel[]>([]);
+  selectedLevel = signal<LevelModel | null>(null);
+  private lastFocusedElement: HTMLElement | null = null;
+
+  ngOnInit() {
+    this.api.getLevels().subscribe(data => this.levels.set(data));
+  }
+
+  openModal(level: LevelModel, event: Event) {
+    this.lastFocusedElement = event.currentTarget as HTMLElement;
+    this.selectedLevel.set(level);
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeModal() {
+    this.selectedLevel.set(null);
+    document.body.style.overflow = '';
+    if (this.lastFocusedElement) {
+      this.lastFocusedElement.focus();
+    }
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Escape' && this.selectedLevel()) {
+      this.closeModal();
+    }
+  }
+
+  solicitarVacante(slug: string) {
+    this.closeModal();
+    const nivelEnum = slug.toUpperCase() as 'INICIAL' | 'PRIMARIA' | 'SECUNDARIA';
+    
+    // Desplazar al formulario y preseleccionar nivel
+    const formElement = document.getElementById('formulario-admision');
+    if (formElement) {
+      const selectNivel = formElement.querySelector('select[formControlName="nivel"]') as HTMLSelectElement;
+      if (selectNivel) {
+        selectNivel.value = nivelEnum;
+        selectNivel.dispatchEvent(new Event('change'));
+      }
+      formElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
 }
