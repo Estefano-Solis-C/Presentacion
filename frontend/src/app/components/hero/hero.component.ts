@@ -302,7 +302,11 @@ export function atLeastOneContactValidator(): ValidatorFn {
                     <span>Procesando solicitud...</span>
                   } @else {
                     <span class="leading-none">Enviar y continuar por WhatsApp</span>
-                    <app-icon name="whatsapp" size="18" className="text-[#25D366] shrink-0"></app-icon>
+                    <app-icon
+                      name="whatsapp"
+                      size="18"
+                      [className]="(leadForm.invalid ? 'text-slate-400' : 'text-[#25D366]') + ' shrink-0 transition-colors'"
+                    ></app-icon>
                   }
                 </button>
 

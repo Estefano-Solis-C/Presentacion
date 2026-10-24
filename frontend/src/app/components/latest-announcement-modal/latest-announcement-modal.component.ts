@@ -83,17 +83,28 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
             <!-- Galería Multi-imagen con rotación automática suave -->
             @if (activeImages().length > 0) {
               <div class="relative w-full rounded-xl overflow-hidden border-2 border-gray-200/80 bg-gray-100 shadow-sm group">
-                <div class="relative h-48 sm:h-64 w-full overflow-hidden bg-slate-900">
+                <div
+                  (click)="openLightbox(activeImageIndex())"
+                  class="relative h-48 sm:h-64 w-full overflow-hidden bg-slate-900 cursor-zoom-in"
+                  title="Clic para ampliar imagen"
+                >
                   @for (img of activeImages(); track img; let i = $index) {
                     <img
                       [src]="img"
                       [alt]="announcement()!.titulo + ' foto ' + (i + 1)"
-                      class="absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out"
+                      (error)="onImgError($event)"
+                      class="absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-in-out group-hover:scale-105"
                       [class.opacity-100]="activeImageIndex() === i"
                       [class.opacity-0]="activeImageIndex() !== i"
                       loading="lazy"
                     />
                   }
+
+                  <!-- Indicador de zoom al pasar el cursor -->
+                  <div class="absolute top-2.5 right-2.5 z-10 px-2.5 py-1 bg-black/60 hover:bg-black/80 text-white rounded-full text-[11px] font-sans font-medium backdrop-blur-xs flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <app-icon name="sparkles" [size]="12" className="text-[#FBB600]"></app-icon>
+                    <span>Clic para ampliar</span>
+                  </div>
                 </div>
 
                 <!-- Indicadores de fotos múltiples si hay más de 1 -->
@@ -102,7 +113,7 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
                     @for (img of activeImages(); track img; let i = $index) {
                       <button
                         type="button"
-                        (click)="setActiveImage(i)"
+                        (click)="setActiveImage(i); $event.stopPropagation()"
                         [class]="activeImageIndex() === i ? 'w-5 bg-[#FBB600]' : 'w-1.5 bg-white/70 hover:bg-white'"
                         class="h-1.5 rounded-full transition-all cursor-pointer"
                         [attr.aria-label]="'Ver imagen ' + (i + 1)"
@@ -160,6 +171,88 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
             </button>
           </div>
         </div>
+
+        <!-- ======================= LIGHTBOX DE IMAGEN AMPLIADA (ZOOM) ======================= -->
+        @if (isLightboxOpen()) {
+          <div
+            class="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-6 bg-black/92 backdrop-blur-md animate-fade-in"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Imagen ampliada"
+            (click)="closeLightbox()"
+          >
+            <div
+              class="relative max-w-5xl w-full max-h-[92vh] flex flex-col items-center justify-center"
+              (click)="$event.stopPropagation()"
+            >
+              <!-- Cabecera del Lightbox -->
+              <div class="w-full flex items-center justify-between pb-3 text-white">
+                <div class="flex items-center gap-2 text-xs sm:text-sm font-sans">
+                  <span class="font-bold text-[#FBB600]">
+                    {{ announcement()!.titulo }}
+                  </span>
+                  @if (activeImages().length > 1) {
+                    <span class="text-white/60">· Foto {{ activeImageIndex() + 1 }} de {{ activeImages().length }}</span>
+                  }
+                </div>
+
+                <button
+                  type="button"
+                  (click)="closeLightbox()"
+                  class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer flex items-center justify-center"
+                  aria-label="Cerrar ampliación"
+                >
+                  <app-icon name="close" [size]="22"></app-icon>
+                </button>
+              </div>
+
+              <!-- Imagen Ampliada con Zoom Scale Up -->
+              <div class="relative overflow-hidden rounded-xl shadow-2xl flex items-center justify-center max-h-[80vh]">
+                <img
+                  [src]="activeImages()[activeImageIndex()]"
+                  [alt]="announcement()!.titulo"
+                  (error)="onImgError($event)"
+                  class="max-h-[80vh] max-w-full w-auto object-contain rounded-xl animate-scale-up"
+                />
+
+                <!-- Flechas de navegación en Lightbox -->
+                @if (activeImages().length > 1) {
+                  <button
+                    type="button"
+                    (click)="prevLightboxImage()"
+                    class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition-all cursor-pointer shadow-lg hover:scale-110"
+                    aria-label="Foto anterior"
+                  >
+                    <app-icon name="arrow-left" [size]="20"></app-icon>
+                  </button>
+                  <button
+                    type="button"
+                    (click)="nextLightboxImage()"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition-all cursor-pointer shadow-lg hover:scale-110"
+                    aria-label="Foto siguiente"
+                  >
+                    <app-icon name="arrow-right" [size]="20"></app-icon>
+                  </button>
+                }
+              </div>
+
+              <!-- Miniaturas / dots en Lightbox -->
+              @if (activeImages().length > 1) {
+                <div class="flex items-center gap-2 pt-3">
+                  @for (img of activeImages(); track img; let i = $index) {
+                    <button
+                      type="button"
+                      (click)="setActiveImage(i)"
+                      [class]="activeImageIndex() === i ? 'w-6 bg-[#FBB600]' : 'w-2 bg-white/50 hover:bg-white'"
+                      class="h-2 rounded-full transition-all cursor-pointer"
+                      [attr.aria-label]="'Ir a foto ' + (i + 1)"
+                    ></button>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
       </div>
     }
   `,
@@ -185,6 +278,7 @@ export class LatestAnnouncementModalComponent implements OnInit, OnDestroy {
 
   announcement = signal<EventModel | null>(null);
   isOpen = signal<boolean>(false);
+  isLightboxOpen = signal<boolean>(false);
   activeImageIndex = signal<number>(0);
 
   activeImages = computed(() => {
@@ -271,9 +365,48 @@ export class LatestAnnouncementModalComponent implements OnInit, OnDestroy {
 
   @HostListener('window:keydown.escape', ['$event'])
   onEscapeKey(event: KeyboardEvent): void {
+    if (this.isLightboxOpen()) {
+      event.preventDefault();
+      this.closeLightbox();
+      return;
+    }
     if (this.isOpen()) {
       event.preventDefault();
       this.closeModal();
+    }
+  }
+
+  openLightbox(index?: number): void {
+    if (typeof index === 'number') {
+      this.activeImageIndex.set(index);
+    }
+    this.stopImageRotation();
+    this.isLightboxOpen.set(true);
+  }
+
+  closeLightbox(): void {
+    this.isLightboxOpen.set(false);
+    this.startImageRotation();
+  }
+
+  prevLightboxImage(): void {
+    const total = this.activeImages().length;
+    if (total > 1) {
+      this.activeImageIndex.update(i => (i - 1 + total) % total);
+    }
+  }
+
+  nextLightboxImage(): void {
+    const total = this.activeImages().length;
+    if (total > 1) {
+      this.activeImageIndex.update(i => (i + 1) % total);
+    }
+  }
+
+  onImgError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target && !target.src.includes('banner_001.jpg')) {
+      target.src = '/images/banners/banner_001.jpg';
     }
   }
 

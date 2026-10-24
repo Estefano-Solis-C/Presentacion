@@ -169,6 +169,7 @@ import { EventModel } from '../../models/portal.models';
                       <img
                         [src]="getCardActiveImage(evento)"
                         [alt]="evento.titulo"
+                        (error)="onImgError($event)"
                         class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 pointer-events-none"
                         loading="lazy"
                       />
@@ -296,6 +297,7 @@ import { EventModel } from '../../models/portal.models';
                       <img
                         [src]="getCardActiveImage(evento)"
                         [alt]="evento.titulo"
+                        (error)="onImgError($event)"
                         class="w-16 h-16 rounded-md object-cover border border-slate-200 hidden md:block group-hover:scale-105 transition-transform"
                       />
                     }
@@ -438,23 +440,34 @@ import { EventModel } from '../../models/portal.models';
             <!-- Galería Multi-imagen del Modal -->
             @if (getModalImages(modalItem).length > 0) {
               <div class="relative rounded-lg overflow-hidden border border-[#0F296B]/15 bg-slate-900 group">
-                <div class="relative h-64 sm:h-80 w-full overflow-hidden flex items-center justify-center">
+                <div
+                  (click)="openLightbox(modalItem, modalImageIndex())"
+                  class="relative h-64 sm:h-80 w-full overflow-hidden flex items-center justify-center cursor-zoom-in"
+                  title="Clic para ampliar imagen"
+                >
                   @for (img of getModalImages(modalItem); track img; let idx = $index) {
                     <img
                       [src]="img"
                       [alt]="modalItem.titulo + ' foto ' + (idx + 1)"
-                      class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
+                      (error)="onImgError($event)"
+                      class="absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
                       [class.opacity-100]="modalImageIndex() === idx"
                       [class.opacity-0]="modalImageIndex() !== idx"
                     />
                   }
+
+                  <!-- Badge flotante de indicación de zoom -->
+                  <div class="absolute top-2.5 right-2.5 z-10 px-2.5 py-1 bg-black/60 hover:bg-black/80 text-white rounded-full text-[11px] font-sans font-medium backdrop-blur-xs flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <app-icon name="sparkles" [size]="12" className="text-[#FBB600]"></app-icon>
+                    <span>Clic para ampliar</span>
+                  </div>
                 </div>
 
                 @if (getModalImages(modalItem).length > 1) {
                   <!-- Flechas Navegación Imagen -->
                   <button
                     type="button"
-                    (click)="prevModalImage(modalItem)"
+                    (click)="prevModalImage(modalItem); $event.stopPropagation()"
                     class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center transition-colors cursor-pointer"
                     aria-label="Foto anterior"
                   >
@@ -462,7 +475,7 @@ import { EventModel } from '../../models/portal.models';
                   </button>
                   <button
                     type="button"
-                    (click)="nextModalImage(modalItem)"
+                    (click)="nextModalImage(modalItem); $event.stopPropagation()"
                     class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center transition-colors cursor-pointer"
                     aria-label="Foto siguiente"
                   >
@@ -474,7 +487,7 @@ import { EventModel } from '../../models/portal.models';
                     @for (img of getModalImages(modalItem); track img; let idx = $index) {
                       <button
                         type="button"
-                        (click)="modalImageIndex.set(idx)"
+                        (click)="modalImageIndex.set(idx); $event.stopPropagation()"
                         [class]="modalImageIndex() === idx ? 'w-5 bg-[#FBB600]' : 'w-1.5 bg-white/70 hover:bg-white'"
                         class="h-1.5 rounded-full transition-all cursor-pointer"
                       ></button>
@@ -524,6 +537,88 @@ import { EventModel } from '../../models/portal.models';
         </div>
       }
 
+      <!-- ======================= LIGHTBOX DE IMAGEN AMPLIADA (ZOOM) ======================= -->
+      @if (lightboxData(); as lb) {
+        <div
+          class="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-black/92 backdrop-blur-md animate-fade-in"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Imagen ampliada"
+          (click)="closeLightbox()"
+        >
+          <div
+            class="relative max-w-5xl w-full max-h-[92vh] flex flex-col items-center justify-center"
+            (click)="$event.stopPropagation()"
+          >
+            <!-- Cabecera del Lightbox -->
+            <div class="w-full flex items-center justify-between pb-3 text-white">
+              <div class="flex items-center gap-2 text-xs sm:text-sm font-sans">
+                <span class="font-bold text-[#FBB600]">
+                  {{ lb.title }}
+                </span>
+                @if (lb.images.length > 1) {
+                  <span class="text-white/60">· Foto {{ lb.index + 1 }} de {{ lb.images.length }}</span>
+                }
+              </div>
+
+              <button
+                type="button"
+                (click)="closeLightbox()"
+                class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer flex items-center justify-center"
+                aria-label="Cerrar ampliación"
+              >
+                <app-icon name="close" [size]="22"></app-icon>
+              </button>
+            </div>
+
+            <!-- Imagen Ampliada con Zoom Scale Up -->
+            <div class="relative overflow-hidden rounded-xl shadow-2xl flex items-center justify-center max-h-[80vh]">
+              <img
+                [src]="lb.images[lb.index]"
+                [alt]="lb.title"
+                (error)="onImgError($event)"
+                class="max-h-[80vh] max-w-full w-auto object-contain rounded-xl animate-scale-up"
+              />
+
+              <!-- Flechas de navegación en Lightbox -->
+              @if (lb.images.length > 1) {
+                <button
+                  type="button"
+                  (click)="prevLightboxImage()"
+                  class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition-all cursor-pointer shadow-lg hover:scale-110"
+                  aria-label="Foto anterior"
+                >
+                  <app-icon name="arrow-left" [size]="20"></app-icon>
+                </button>
+                <button
+                  type="button"
+                  (click)="nextLightboxImage()"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition-all cursor-pointer shadow-lg hover:scale-110"
+                  aria-label="Foto siguiente"
+                >
+                  <app-icon name="arrow-right" [size]="20"></app-icon>
+                </button>
+              }
+            </div>
+
+            <!-- Miniaturas / dots en Lightbox -->
+            @if (lb.images.length > 1) {
+              <div class="flex items-center gap-2 pt-3">
+                @for (img of lb.images; track img; let i = $index) {
+                  <button
+                    type="button"
+                    (click)="setLightboxIndex(i)"
+                    [class]="lb.index === i ? 'w-6 bg-[#FBB600]' : 'w-2 bg-white/50 hover:bg-white'"
+                    class="h-2 rounded-full transition-all cursor-pointer"
+                    [attr.aria-label]="'Ir a foto ' + (i + 1)"
+                  ></button>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+
     </section>
   `,
   styles: [`
@@ -531,8 +626,15 @@ import { EventModel } from '../../models/portal.models';
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    @keyframes scaleUp {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
     .animate-fade-in {
       animation: viewFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .animate-scale-up {
+      animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
   `]
 })
@@ -550,6 +652,7 @@ export class EventsComponent implements OnInit, OnDestroy {
 
   selectedEvent = signal<EventModel | null>(null);
   modalImageIndex = signal<number>(0);
+  lightboxData = signal<{ title: string; images: string[]; index: number } | null>(null);
 
   currentIndex = signal<number>(0);
   visibleCards = signal<number>(3);
@@ -590,6 +693,19 @@ export class EventsComponent implements OnInit, OnDestroy {
 
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
+    if (this.lightboxData()) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        this.closeLightbox();
+      } else if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        this.prevLightboxImage();
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        this.nextLightboxImage();
+      }
+      return;
+    }
     if (event.key === 'Escape' && this.selectedEvent()) {
       this.closeModal();
     }
@@ -732,6 +848,46 @@ export class EventsComponent implements OnInit, OnDestroy {
     if (images.length > 1) {
       const prev = (this.modalImageIndex() - 1 + images.length) % images.length;
       this.modalImageIndex.set(prev);
+    }
+  }
+
+  openLightbox(item: EventModel, initialIndex: number = 0) {
+    const images = this.getModalImages(item);
+    this.lightboxData.set({
+      title: item.titulo,
+      images: images.length > 0 ? images : [item.imagenUrl || '/images/posts/inicio_clases.jpg'],
+      index: Math.min(initialIndex, Math.max(0, images.length - 1))
+    });
+  }
+
+  closeLightbox() {
+    this.lightboxData.set(null);
+  }
+
+  prevLightboxImage() {
+    const lb = this.lightboxData();
+    if (!lb || lb.images.length <= 1) return;
+    const newIndex = (lb.index - 1 + lb.images.length) % lb.images.length;
+    this.lightboxData.set({ ...lb, index: newIndex });
+  }
+
+  nextLightboxImage() {
+    const lb = this.lightboxData();
+    if (!lb || lb.images.length <= 1) return;
+    const newIndex = (lb.index + 1) % lb.images.length;
+    this.lightboxData.set({ ...lb, index: newIndex });
+  }
+
+  setLightboxIndex(idx: number) {
+    const lb = this.lightboxData();
+    if (!lb) return;
+    this.lightboxData.set({ ...lb, index: idx });
+  }
+
+  onImgError(event: Event) {
+    const target = event.target as HTMLImageElement;
+    if (target && !target.src.includes('banner_001.jpg')) {
+      target.src = '/images/banners/banner_001.jpg';
     }
   }
 

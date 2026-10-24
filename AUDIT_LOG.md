@@ -781,6 +781,46 @@ umberScrollWidth: 66px, hasOverflow: false (zero overflow).
 
 ---
 
+## Step 18.0: Phase 18 — Official GitHub Tabler WhatsApp Outline Icon, Disabled Gray Button State, Image 404 Normalization & Fullscreen Lightbox Zoom
+- **Date/Time:** 2026-10-24T04:02:00Z
+- **Sequential Thinking Protocol:**
+  - `[THOUGHT]`: The user reported that the WhatsApp icon was visually deformed due to a filled silhouette inside an SVG with `stroke-width="2"`, requested the official outline icon from GitHub, pointed out that the submit button icon should be gray when disabled rather than bright green, noted that photos 2 of "Inicio de Clases" and "Fiestas Patrias" were broken (404), and requested that clicking photos opens an enlarged zoom effect (Lightbox).
+  - `[HYPOTHESIS]`: Replacing the `whatsapp` vector in `OutlineIconComponent` with Tabler Icons' official `brand-whatsapp.svg` (`M3 21l1.65 -3.8a9 9 0 1 1 3.4 2.9l-5.05 .9` + receiver), dynamically assigning `text-slate-400` when `leadForm.invalid` and `text-[#25D366]` when valid in `HeroComponent`, creating disk aliases (`.jpg` for `.jpeg`) in `banners/`, executing migration `V6` to point to `.jpeg`, adding `(error)="onImgError($event)"` fallback, and implementing a fullscreen Lightbox Zoom viewer (`fixed inset-0 z-[100] bg-black/92 backdrop-blur-md` with scale-up transition and keyboard/click dismissal) will completely resolve all visual and functional defects.
+  - `[RISK ANALYSIS]`: Lightbox must not conflict with underlying scroll or modal ESC key events; this was solved by handling `Escape` hierarchically (closing Lightbox first if open, or modal if Lightbox is closed) and stopping event propagation on dialog contents.
+  - `[VERIFICATION PLAN]`:
+    1. Verify Tabler SVG path in Hero, Footer, and Floating Assistant.
+    2. Verify submit button icon color: `rgb(148, 163, 184)` (gray) when disabled, switching to `rgb(37, 211, 102)` (green) when valid.
+    3. Verify photo 2 of "Inicio de Clases" and "Fiestas Patrias" load with `naturalWidth > 0` and `complete: true`.
+    4. Verify clicking photo opens Lightbox with `scale-up` animation, navigation arrows, and `Escape` dismissal.
+  - `[EXECUTION]`: All tasks completed and verified via Edge CDP automated test script (`scratch/verify_phase18_fixes.js`).
+- **Files Modified / Created:**
+  - `frontend/src/app/components/icon/outline-icon.component.ts`: Integrated official Tabler Icons outline vector for WhatsApp.
+  - `frontend/src/app/components/hero/hero.component.ts`: Conditional gray icon when disabled (`text-slate-400`) vs green when enabled (`text-[#25D366]`).
+  - `frontend/public/images/banners/`: Created `.jpg` copies of `foto_primaria_1`, `foto_primaria_2`, `foto_inicial_1,2,3`, `foto_secundaria_1,2,3`.
+  - `backend/src/main/resources/db/migration/V6__fix_image_extensions_and_paths.sql`: Created and applied migration to MySQL database.
+  - `schema.sql`: Updated seed rows to match `.jpeg` file extensions.
+  - `frontend/src/app/components/events/events.component.ts`: Added full-screen Lightbox Zoom viewer with image navigation, zoom cursor, sparkles badge, and `onImgError` fallback.
+  - `frontend/src/app/components/latest-announcement-modal/latest-announcement-modal.component.ts`: Added full-screen Lightbox Zoom viewer with image navigation, zoom cursor, sparkles badge, and `onImgError` fallback.
+- **Verification/Test Command Executed & Result:**
+  - Edge CDP Automation (`scratch/verify_phase18_fixes.js`):
+    - Submit Button Disabled State: `btnDisabled: true`, `computedColor: "rgb(148, 163, 184)"`, `isTablerPath: true`.
+    - Submit Button Enabled State: `btnDisabled: false`, `computedColor: "rgb(37, 211, 102)"`, `isGreen: true`.
+    - Footer WhatsApp Icon: `found: true`, `isTablerPath: true`.
+    - Floating Widget WhatsApp Icon: `found: true`, `isTablerPath: true`.
+    - "Inicio de Clases" Photo 2: `complete: true`, `naturalWidth: 591`, `isBroken: false`.
+    - Lightbox Zoom: `open: true`, `title: "Inicio de Clases"`, `naturalWidth: 591`, closed with `Escape`.
+    - "Fiestas Patrias" Photo 2: `complete: true`, `naturalWidth: 591`, `isBroken: false`.
+  - Artifact Screenshots Generated:
+    - `phase18_submit_button_disabled_gray.png`
+    - `phase18_submit_button_enabled_green.png`
+    - `phase18_footer_whatsapp_icon.png`
+    - `phase18_inicio_clases_photo2_loaded.png`
+    - `phase18_lightbox_zoom_enlarged.png`
+    - `phase18_fiestas_patrias_photo2_loaded.png`
+- **Status:** **VERIFIED & COMPLETE**
+
+---
+
 ## Step 15.0: Editorial Enhancements, Reactive Level/Grade Sync, Auditable Excel Generation, and Visual Ergonomics
 
 - **Date:** 2026-10-23
@@ -940,4 +980,44 @@ ivelSeleccionado, dynamic grade options, and flexible contact validator.
     - `phase17_events_list_view.png`
     - `phase17_mobile_entrance.png`
     - `phase17_mobile_hero.png`
+- **Status:** **VERIFIED & COMPLETE**
+
+---
+
+## Step 18.0: Phase 18 — Official GitHub Tabler WhatsApp Outline Icon, Disabled Gray Button State, Image 404 Normalization & Fullscreen Lightbox Zoom
+- **Date/Time:** 2026-10-24T04:02:00Z
+- **Sequential Thinking Protocol:**
+  - `[THOUGHT]`: The user reported that the WhatsApp icon was visually deformed due to a filled silhouette inside an SVG with `stroke-width="2"`, requested the official outline icon from GitHub, pointed out that the submit button icon should be gray when disabled rather than bright green, noted that photos 2 of "Inicio de Clases" and "Fiestas Patrias" were broken (404), and requested that clicking photos opens an enlarged zoom effect (Lightbox).
+  - `[HYPOTHESIS]`: Replacing the `whatsapp` vector in `OutlineIconComponent` with Tabler Icons' official `brand-whatsapp.svg` (`M3 21l1.65 -3.8a9 9 0 1 1 3.4 2.9l-5.05 .9` + receiver), dynamically assigning `text-slate-400` when `leadForm.invalid` and `text-[#25D366]` when valid in `HeroComponent`, creating disk aliases (`.jpg` for `.jpeg`) in `banners/`, executing migration `V6` to point to `.jpeg`, adding `(error)="onImgError($event)"` fallback, and implementing a fullscreen Lightbox Zoom viewer (`fixed inset-0 z-[100] bg-black/92 backdrop-blur-md` with scale-up transition and keyboard/click dismissal) will completely resolve all visual and functional defects.
+  - `[RISK ANALYSIS]`: Lightbox must not conflict with underlying scroll or modal ESC key events; this was solved by handling `Escape` hierarchically (closing Lightbox first if open, or modal if Lightbox is closed) and stopping event propagation on dialog contents.
+  - `[VERIFICATION PLAN]`:
+    1. Verify Tabler SVG path in Hero, Footer, and Floating Assistant.
+    2. Verify submit button icon color: `rgb(148, 163, 184)` (gray) when disabled, switching to `rgb(37, 211, 102)` (green) when valid.
+    3. Verify photo 2 of "Inicio de Clases" and "Fiestas Patrias" load with `naturalWidth > 0` and `complete: true`.
+    4. Verify clicking photo opens Lightbox with `scale-up` animation, navigation arrows, and `Escape` dismissal.
+  - `[EXECUTION]`: All tasks completed and verified via Edge CDP automated test script (`scratch/verify_phase18_fixes.js`).
+- **Files Modified / Created:**
+  - `frontend/src/app/components/icon/outline-icon.component.ts`: Integrated official Tabler Icons outline vector for WhatsApp.
+  - `frontend/src/app/components/hero/hero.component.ts`: Conditional gray icon when disabled (`text-slate-400`) vs green when enabled (`text-[#25D366]`).
+  - `frontend/public/images/banners/`: Created `.jpg` copies of `foto_primaria_1`, `foto_primaria_2`, `foto_inicial_1,2,3`, `foto_secundaria_1,2,3`.
+  - `backend/src/main/resources/db/migration/V6__fix_image_extensions_and_paths.sql`: Created and applied migration to MySQL database.
+  - `schema.sql`: Updated seed rows to match `.jpeg` file extensions.
+  - `frontend/src/app/components/events/events.component.ts`: Added full-screen Lightbox Zoom viewer with image navigation, zoom cursor, sparkles badge, and `onImgError` fallback.
+  - `frontend/src/app/components/latest-announcement-modal/latest-announcement-modal.component.ts`: Added full-screen Lightbox Zoom viewer with image navigation, zoom cursor, sparkles badge, and `onImgError` fallback.
+- **Verification/Test Command Executed & Result:**
+  - Edge CDP Automation (`scratch/verify_phase18_fixes.js`):
+    - Submit Button Disabled State: `btnDisabled: true`, `computedColor: "rgb(148, 163, 184)"`, `isTablerPath: true`.
+    - Submit Button Enabled State: `btnDisabled: false`, `computedColor: "rgb(37, 211, 102)"`, `isGreen: true`.
+    - Footer WhatsApp Icon: `found: true`, `isTablerPath: true`.
+    - Floating Widget WhatsApp Icon: `found: true`, `isTablerPath: true`.
+    - "Inicio de Clases" Photo 2: `complete: true`, `naturalWidth: 591`, `isBroken: false`.
+    - Lightbox Zoom: `open: true`, `title: "Inicio de Clases"`, `naturalWidth: 591`, closed with `Escape`.
+    - "Fiestas Patrias" Photo 2: `complete: true`, `naturalWidth: 591`, `isBroken: false`.
+  - Artifact Screenshots Generated:
+    - `phase18_submit_button_disabled_gray.png`
+    - `phase18_submit_button_enabled_green.png`
+    - `phase18_footer_whatsapp_icon.png`
+    - `phase18_inicio_clases_photo2_loaded.png`
+    - `phase18_lightbox_zoom_enlarged.png`
+    - `phase18_fiestas_patrias_photo2_loaded.png`
 - **Status:** **VERIFIED & COMPLETE**

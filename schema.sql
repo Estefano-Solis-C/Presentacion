@@ -136,7 +136,7 @@ INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_ur
     TRUE,
     'fb_post_2026_inicio',
     'https://www.facebook.com/doramayer.dezulen',
-    '["/images/posts/inicio_clases.jpg", "/images/banners/foto_primaria_1.jpg"]'
+    '["/images/posts/inicio_clases.jpg", "/images/banners/foto_primaria_1.jpeg"]'
 ),
 (
     2,
@@ -166,7 +166,7 @@ INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_ur
     TRUE,
     'fb_post_2026_patrias',
     'https://www.facebook.com/doramayer.dezulen',
-    '["/images/posts/fiestas_patrias.jpg", "/images/banners/foto_primaria_1.jpg", "/images/banners/foto_secundaria_3.jpeg"]'
+    '["/images/posts/fiestas_patrias.jpg", "/images/banners/foto_primaria_1.jpeg", "/images/banners/foto_secundaria_3.jpeg"]'
 ),
 (
     4,

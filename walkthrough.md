@@ -299,7 +299,46 @@ En esta fase se cumplieron a cabalidad todas las especificaciones de pureza arqu
 
 ---
 
-## 11. Lista de Acciones Pendientes (Recomendaciones Institucionales)
+## 11. Icono Oficial WhatsApp Outline de GitHub, Estado Deshabilitado Gris, Corrección de Imágenes 404 y Visor Lightbox con Zoom
+
+En esta fase se abordaron y resolvieron con rigor los 4 aspectos señalados por el usuario:
+
+1. **Icono Oficial de WhatsApp Outline desde GitHub (`tabler/tabler-icons`):**
+   - Se reemplazó el vector distorsionado en `OutlineIconComponent` por el trazo lineal oficial de Tabler Icons (`viewBox="0 0 24 24"`, `M3 21l1.65 -3.8a9 9 0 1 1 3.4 2.9l-5.05 .9` y su auricular central).
+   - Ahora luce nítido, sobrio e idéntico en el pie de página ("WhatsApp Admisión"), en el botón flotante ("¿Consultas? Escríbenos"), en la cabecera institucional y en el formulario de admisión.
+
+2. **Botón Deshabilitado con Icono en Gris Sobrio:**
+   - En el formulario de postulación escolar de `HeroComponent`, mientras el formulario no esté completo (`leadForm.invalid`), el icono de WhatsApp adopta el color gris `text-slate-400` que armoniza con el fondo `bg-slate-300` del botón deshabilitado.
+   - En cuanto el padre de familia completa los datos requeridos, el botón se habilita y el icono se transforma inmediatamente en el verde oficial `#25D366`.
+
+3. **Resolución Definitiva de Imágenes 404 en "Inicio de Clases" y "Fiestas Patrias":**
+   - Se crearon copias de alias `.jpg` para todos los archivos con extensión `.jpeg` en `frontend/public/images/banners/`.
+   - Se aplicó la migración `V6__fix_image_extensions_and_paths.sql` en la base de datos MySQL `doramayer`, normalizando las rutas.
+   - Se añadió un manejador reactivo `(error)="onImgError($event)"` en todos los componentes de imágenes para que, ante cualquier eventualidad de red, se sustituya de inmediato por un banner institucional seguro sin mostrar nunca cajas oscuras o iconos rotos.
+   - Comprobado en vivo: la foto 2 de *"Inicio de Clases"* y *"Fiestas Patrias"* carga con resolución nativa completa (591x443 px, `isBroken: false`).
+
+4. **Visor Lightbox Interactivo con Efecto de Zoom Expandible:**
+   - Al hacer clic sobre cualquier fotografía dentro del modal de lectura o de la tarjeta del último comunicado, se abre una capa en pantalla completa (`bg-black/92 backdrop-blur-md`).
+   - La imagen se expande con animación fluida `scale-up` acelerada por hardware.
+   - Incluye navegación entre fotografías (`<` y `>`), teclado con flechas izquierda/derecha, contador fotográfico y botón de cierre o pulsación de la tecla `Escape`.
+
+````carousel
+![Botón Deshabilitado con Icono Gris](/C:/Users/Fano/.gemini/antigravity/brain/4e933b4a-ecc6-4e2a-9098-ee167f8404fd/phase18_submit_button_disabled_gray.png)
+<!-- slide -->
+![Botón Habilitado con Icono Verde Oficial](/C:/Users/Fano/.gemini/antigravity/brain/4e933b4a-ecc6-4e2a-9098-ee167f8404fd/phase18_submit_button_enabled_green.png)
+<!-- slide -->
+![Icono WhatsApp Tabler Oficial en Pie de Página](/C:/Users/Fano/.gemini/antigravity/brain/4e933b4a-ecc6-4e2a-9098-ee167f8404fd/phase18_footer_whatsapp_icon.png)
+<!-- slide -->
+![Foto 2 de Inicio de Clases Cargada Sin Error 404](/C:/Users/Fano/.gemini/antigravity/brain/4e933b4a-ecc6-4e2a-9098-ee167f8404fd/phase18_inicio_clases_photo2_loaded.png)
+<!-- slide -->
+![Visor Lightbox de Zoom Pantalla Completa](/C:/Users/Fano/.gemini/antigravity/brain/4e933b4a-ecc6-4e2a-9098-ee167f8404fd/phase18_lightbox_zoom_enlarged.png)
+<!-- slide -->
+![Foto 2 de Fiestas Patrias Cargada Sin Error 404](/C:/Users/Fano/.gemini/antigravity/brain/4e933b4a-ecc6-4e2a-9098-ee167f8404fd/phase18_fiestas_patrias_photo2_loaded.png)
+````
+
+---
+
+## 12. Lista de Acciones Pendientes (Recomendaciones Institucionales)
 
 1. **Sustitución de Fotografías con Mascarillas:**
    - `foto_inicial.jpg` y `foto_primaria.jpeg` corresponden a la época de contingencia sanitaria 2021-2022. Se recomienda reemplazarlas en `frontend/public/images/` por fotografías escolares de las promociones recientes sin mascarillas y con autorización parental para difusión web.
