@@ -74,33 +74,33 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
       class="sticky top-0 z-40 transition-all duration-300 ease-in-out"
       [class]="isScrolled()
         ? 'bg-white/95 backdrop-blur-md shadow-card-soft border-b border-[#0F296B]/15 py-1.5'
-        : 'bg-white border-b border-[#0F296B]/10 py-2.5'"
+        : 'bg-white border-b border-[#0F296B]/10 py-3'"
     >
       <div
-        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3 transition-all duration-300"
-        [class]="isScrolled() ? 'h-14 sm:h-16' : 'h-16 sm:h-20'"
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 transition-all duration-300"
+        [class]="isScrolled() ? 'h-16 sm:h-18' : 'h-20 sm:h-24'"
       >
         
-        <!-- Logotipo Institucional y Escudo -->
-        <a href="#" class="flex items-center space-x-3 group min-w-0 focus:outline-hidden">
+        <!-- Logotipo Institucional y Escudo Ampliado -->
+        <a href="#" class="flex items-center space-x-3.5 group min-w-0 focus:outline-hidden">
           <img
             src="/images/insignia.png"
             alt="Insignia Oficial I.E.P. Dora Mayer de Zulen"
             class="object-contain drop-shadow-sm group-hover:scale-105 transition-all duration-300 shrink-0"
-            [class]="isScrolled() ? 'w-10 h-10 sm:w-11 sm:h-11' : 'w-12 h-12 sm:w-14 sm:h-14'"
+            [class]="isScrolled() ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-14 h-14 sm:w-16 sm:h-16 lg:w-18 lg:h-18'"
           />
           <div class="min-w-0">
-            <div class="font-serif font-bold text-sm sm:text-lg text-[#0F296B] tracking-tight leading-tight truncate">
+            <div class="font-serif font-bold text-base sm:text-xl lg:text-2xl text-[#0F296B] tracking-tight leading-tight truncate">
               I.E.P. Dora Mayer de Zulen
             </div>
-            <div class="text-[11px] sm:text-xs text-slate-500 font-sans tracking-wide truncate">
+            <div class="text-xs sm:text-sm text-slate-500 font-sans tracking-wide truncate mt-0.5">
               Estudio, Trabajo y Amistad · Rímac
             </div>
           </div>
         </a>
 
         <!-- Menú de Navegación Desktop con Scrollspy -->
-        <nav class="hidden lg:flex items-center space-x-7 text-sm font-sans font-medium text-slate-700">
+        <nav class="hidden lg:flex items-center space-x-8 text-[15px] lg:text-base font-sans font-semibold text-slate-700">
           <a
             href="#propuesta"
             (click)="scrollTo('#propuesta', $event)"
@@ -158,14 +158,14 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
         </nav>
 
         <!-- CTAs y Botón Hamburguesa -->
-        <div class="flex items-center space-x-2.5 shrink-0">
+        <div class="flex items-center space-x-3 shrink-0">
           <a
             href="#matricula"
             (click)="scrollTo('#matricula', $event)"
-            class="hidden sm:inline-flex px-4 py-2 rounded-sm bg-[#254EB6] hover:bg-[#1D3FA2] text-white text-xs font-sans font-bold uppercase tracking-wider shadow-xs hover:shadow-card-soft transition-all items-center space-x-1.5 focus:outline-hidden focus:ring-2 focus:ring-[#254EB6]/40"
+            class="hidden sm:inline-flex px-5 py-2.5 sm:px-6 sm:py-3 rounded-sm bg-[#254EB6] hover:bg-[#1D3FA2] text-white text-xs sm:text-sm font-sans font-bold uppercase tracking-wider shadow-xs hover:shadow-card-soft transition-all items-center space-x-2 focus:outline-hidden focus:ring-2 focus:ring-[#254EB6]/40"
           >
             <span>Admisión {{ currentAdmissionCycle() }}</span>
-            <app-icon name="arrow-right" size="13" className="text-[#FBB600]"></app-icon>
+            <app-icon name="arrow-right" size="14" className="text-[#FBB600]"></app-icon>
           </a>
 
           <a

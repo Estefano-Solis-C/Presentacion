@@ -27,8 +27,8 @@ WORKDIR /app
 # Copiar JAR generado en la etapa anterior
 COPY --from=builder /build/target/*.jar app.jar
 
-# Cambiar propiedad al usuario seguro
-RUN chown -R appuser:appgroup /app
+# Crear directorio de datos persistentes y cambiar propiedad al usuario seguro
+RUN mkdir -p /app/data && chown -R appuser:appgroup /app
 USER appuser
 
 # Configuración de variables de entorno por defecto

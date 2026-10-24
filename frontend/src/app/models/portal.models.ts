@@ -38,8 +38,8 @@ export interface LeadSubmission {
   apoderadoNombres: string;
   apoderadoApellidos: string;
   documento?: string;
-  celular: string;
-  correo: string;
+  celular?: string;
+  correo?: string;
   alumnoNombre: string;
   nivel: 'INICIAL' | 'PRIMARIA' | 'SECUNDARIA';
   grado: string;

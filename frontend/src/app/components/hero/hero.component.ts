@@ -1,12 +1,22 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  OnDestroy,
+  OnInit,
   computed,
   inject,
   signal
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators
+} from '@angular/forms';
 import { OutlineIconComponent } from '../icon/outline-icon.component';
 import { PortalApiService } from '../../services/portal-api.service';
 
@@ -29,6 +39,20 @@ export const DICCIONARIO_GRADOS: Record<string, string[]> = {
   ]
 };
 
+/**
+ * Validador que garantiza que al menos un medio de contacto (celular o correo) esté presente.
+ */
+export function atLeastOneContactValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const celular = control.get('celular')?.value?.toString().trim();
+    const correo = control.get('correo')?.value?.toString().trim();
+    if (!celular && !correo) {
+      return { contactRequired: true };
+    }
+    return null;
+  };
+}
+
 @Component({
   selector: 'app-hero',
   standalone: true,
@@ -37,15 +61,21 @@ export const DICCIONARIO_GRADOS: Record<string, string[]> = {
   template: `
     <section id="matricula" class="relative overflow-hidden pt-10 pb-16 lg:pt-16 lg:pb-24 border-b border-[#0F296B]/15 bg-[#0F296B]">
       
-      <!-- Fondo Fotográfico Institucional Nítido y Solemne (Sin Mascarillas) -->
+      <!-- Carrusel de Fondos Fotográficos Institucionales con Transición Suave (Crossfade) -->
       <div class="absolute inset-0 overflow-hidden pointer-events-none">
-        <img
-          src="/images/banners/banner_001.jpg"
-          alt="Fachada Institucional I.E.P. Dora Mayer de Zulen"
-          class="w-full h-full object-cover object-center"
-        />
-        <!-- Overlay Azul Marino Más Ligero para Dejar Respirar la Fotografía Real -->
-        <div class="absolute inset-0 bg-gradient-to-r from-[#0F296B]/90 via-[#0F296B]/80 to-[#0F296B]/65 pointer-events-none"></div>
+        @for (img of heroImages; track img; let i = $index) {
+          <img
+            [src]="img"
+            alt="Fachada e Instalaciones I.E.P. Dora Mayer de Zulen"
+            class="absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-in-out"
+            [class.opacity-100]="currentHeroImageIndex() === i"
+            [class.opacity-0]="currentHeroImageIndex() !== i"
+            [class.z-1]="currentHeroImageIndex() === i"
+            [class.z-0]="currentHeroImageIndex() !== i"
+          />
+        }
+        <!-- Overlay Azul Marino Equilibrado para Legibilidad y Contraste -->
+        <div class="absolute inset-0 bg-gradient-to-r from-[#0F296B]/90 via-[#0F296B]/80 to-[#0F296B]/65 pointer-events-none z-2"></div>
       </div>
 
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -60,8 +90,8 @@ export const DICCIONARIO_GRADOS: Record<string, string[]> = {
               <span>Fundado en 1957 · Rímac</span>
             </div>
 
-            <!-- UN Titular Editorial en Serif -->
-            <h1 class="font-serif text-3xl sm:text-5xl lg:text-[3.25rem] font-bold text-white tracking-tight leading-[1.18] drop-shadow-xs">
+            <!-- UN Titular Editorial en Serif con Interlineado Holgado y Respiración -->
+            <h1 class="font-serif text-3xl sm:text-5xl lg:text-[3.25rem] font-bold text-white tracking-normal leading-snug sm:leading-[1.28] lg:leading-[1.25] drop-shadow-xs">
               Formación con valores, rigor y calidez en el corazón del Rímac
             </h1>
 
@@ -141,7 +171,7 @@ export const DICCIONARIO_GRADOS: Record<string, string[]> = {
                   <input type="text" formControlName="website" tabindex="-1" autocomplete="off" />
                 </div>
 
-                <!-- Nombre del Apoderado -->
+                <!-- Nombre y Apellidos del Apoderado -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label class="block font-sans text-xs font-semibold text-slate-700 mb-1">
@@ -156,7 +186,7 @@ export const DICCIONARIO_GRADOS: Record<string, string[]> = {
                   </div>
                   <div>
                     <label class="block font-sans text-xs font-semibold text-slate-700 mb-1">
-                      Apellidos *
+                      Apellidos del apoderado *
                     </label>
                     <input
                       type="text"
@@ -167,23 +197,25 @@ export const DICCIONARIO_GRADOS: Record<string, string[]> = {
                   </div>
                 </div>
 
-                <!-- Celular y Correo -->
+                <!-- Celular y Correo (Flexibles: al menos uno requerido) -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label class="block font-sans text-xs font-semibold text-slate-700 mb-1">
                       Celular WhatsApp *
+                      <span class="text-[10px] text-slate-400 font-normal ml-0.5">(o correo)</span>
                     </label>
                     <input
                       type="tel"
                       formControlName="celular"
                       placeholder="987 654 321"
-                      maxlength="12"
+                      maxlength="15"
                       class="w-full px-3 py-2 text-sm border border-slate-300 rounded-sm focus:border-[#254EB6] focus:ring-1 focus:ring-[#254EB6] outline-hidden transition"
                     />
                   </div>
                   <div>
                     <label class="block font-sans text-xs font-semibold text-slate-700 mb-1">
                       Correo electrónico *
+                      <span class="text-[10px] text-slate-400 font-normal ml-0.5">(o celular)</span>
                     </label>
                     <input
                       type="email"
@@ -194,10 +226,17 @@ export const DICCIONARIO_GRADOS: Record<string, string[]> = {
                   </div>
                 </div>
 
-                <!-- Nombre del Alumno -->
+                <!-- Aviso contextual si falta contacto -->
+                @if (leadForm.hasError('contactRequired') && (leadForm.get('celular')?.touched || leadForm.get('correo')?.touched)) {
+                  <div class="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-xs px-2.5 py-1">
+                    * Ingrese al menos un medio de contacto (número celular o correo) para poder comunicarnos.
+                  </div>
+                }
+
+                <!-- Nombre y Apellidos del Estudiante a Inscribir -->
                 <div>
                   <label class="block font-sans text-xs font-semibold text-slate-700 mb-1">
-                    Nombres y apellidos del alumno *
+                    Nombres y apellidos del estudiante *
                   </label>
                   <input
                     type="text"
@@ -207,15 +246,15 @@ export const DICCIONARIO_GRADOS: Record<string, string[]> = {
                   />
                 </div>
 
-                <!-- Nivel y Grado -->
+                <!-- Nivel Educativo y Grado al que Postula (Sincronización Reactiva) -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label class="block font-sans text-xs font-semibold text-slate-700 mb-1">
-                      Nivel educativo *
+                      Nivel educativo del estudiante a inscribir *
                     </label>
                     <select
                       formControlName="nivel"
-                      (change)="onNivelChange()"
+                      (change)="onNivelChange($event)"
                       class="w-full px-3 py-2 text-sm border border-slate-300 rounded-sm bg-white focus:border-[#254EB6] focus:ring-1 focus:ring-[#254EB6] outline-hidden transition"
                     >
                       <option value="INICIAL">Inicial (3 a 5 años)</option>
@@ -225,7 +264,7 @@ export const DICCIONARIO_GRADOS: Record<string, string[]> = {
                   </div>
                   <div>
                     <label class="block font-sans text-xs font-semibold text-slate-700 mb-1">
-                      Grado de postulación *
+                      Grado al que postula el estudiante *
                     </label>
                     <select
                       formControlName="grado"
@@ -281,7 +320,7 @@ export const DICCIONARIO_GRADOS: Record<string, string[]> = {
     </section>
   `
 })
-export class HeroComponent {
+export class HeroComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private api = inject(PortalApiService);
 
@@ -289,21 +328,23 @@ export class HeroComponent {
   submitSuccess = signal<boolean>(false);
   submitError = signal<string | null>(null);
 
-  leadForm: FormGroup = this.fb.group({
-    apoderadoNombres: ['', [Validators.required, Validators.minLength(2)]],
-    apoderadoApellidos: ['', [Validators.required, Validators.minLength(2)]],
-    documento: [''], // Opcional
-    celular: ['', [Validators.required, Validators.pattern(/^[0-9+ ]{9,15}$/)]],
-    correo: ['', [Validators.required, Validators.email]],
-    alumnoNombre: ['', [Validators.required, Validators.minLength(2)]],
-    nivel: ['PRIMARIA', Validators.required],
-    grado: ['1° de Primaria', Validators.required],
-    website: [''] // Honeypot
-  });
+  // Carrusel rotacional de fondos reales
+  heroImages = [
+    '/images/banners/banner_001.jpg',
+    '/images/banners/banner_002.jpg',
+    '/images/banners/banner_003.jpg',
+    '/images/banners/foto_secundaria_1.jpeg',
+    '/images/banners/foto_primaria_3.jpg',
+    '/images/banners/foto_secundaria_3.jpeg'
+  ];
+  currentHeroImageIndex = signal<number>(0);
+  private heroInterval: any = null;
+
+  // Señal reactiva pura para el nivel seleccionado
+  nivelSeleccionado = signal<string>('PRIMARIA');
 
   gradosDisponibles = computed(() => {
-    const nivel = this.leadForm?.get('nivel')?.value || 'PRIMARIA';
-    return DICCIONARIO_GRADOS[nivel] || [];
+    return DICCIONARIO_GRADOS[this.nivelSeleccionado()] || [];
   });
 
   currentAdmissionCycle = computed(() => {
@@ -312,11 +353,68 @@ export class HeroComponent {
     return now.getMonth() >= 6 ? year + 1 : year;
   });
 
-  onNivelChange() {
-    const nivel = this.leadForm.get('nivel')?.value;
-    const grados = DICCIONARIO_GRADOS[nivel] || [];
-    if (grados.length > 0) {
-      this.leadForm.get('grado')?.setValue(grados[0]);
+  leadForm: FormGroup = this.fb.group({
+    apoderadoNombres: ['', [Validators.required, Validators.minLength(2)]],
+    apoderadoApellidos: ['', [Validators.required, Validators.minLength(2)]],
+    documento: [''], // Opcional
+    celular: ['', [Validators.pattern(/^[0-9+ ]{9,15}$/)]], // Opcional si hay correo
+    correo: ['', [Validators.email]], // Opcional si hay celular
+    alumnoNombre: ['', [Validators.required, Validators.minLength(2)]],
+    nivel: ['PRIMARIA', Validators.required],
+    grado: ['1° de Primaria', Validators.required],
+    website: [''] // Honeypot
+  }, {
+    validators: [atLeastOneContactValidator()]
+  });
+
+  ngOnInit() {
+    this.startHeroCarousel();
+
+    // Sincronización reactiva continua del formulario
+    this.leadForm.get('nivel')?.valueChanges.subscribe(nivel => {
+      if (nivel && nivel !== this.nivelSeleccionado()) {
+        this.nivelSeleccionado.set(nivel);
+        const grados = DICCIONARIO_GRADOS[nivel] || [];
+        if (grados.length > 0 && !grados.includes(this.leadForm.get('grado')?.value)) {
+          this.leadForm.get('grado')?.setValue(grados[0]);
+        }
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.stopHeroCarousel();
+  }
+
+  private startHeroCarousel() {
+    this.stopHeroCarousel();
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+    this.heroInterval = setInterval(() => {
+      this.currentHeroImageIndex.update(idx => (idx + 1) % this.heroImages.length);
+    }, 6000);
+  }
+
+  private stopHeroCarousel() {
+    if (this.heroInterval) {
+      clearInterval(this.heroInterval);
+      this.heroInterval = null;
+    }
+  }
+
+  onNivelChange(event?: Event) {
+    let nivel = this.leadForm.get('nivel')?.value;
+    if (event && event.target) {
+      nivel = (event.target as HTMLSelectElement).value;
+      this.leadForm.get('nivel')?.setValue(nivel, { emitEvent: false });
+    }
+    if (nivel) {
+      this.nivelSeleccionado.set(nivel);
+      const grados = DICCIONARIO_GRADOS[nivel] || [];
+      if (grados.length > 0) {
+        this.leadForm.get('grado')?.setValue(grados[0]);
+      }
     }
   }
 
@@ -332,8 +430,12 @@ export class HeroComponent {
   }
 
   setNivelFromExternal(nivel: 'INICIAL' | 'PRIMARIA' | 'SECUNDARIA') {
-    this.leadForm.get('nivel')?.setValue(nivel);
-    this.onNivelChange();
+    this.leadForm.get('nivel')?.setValue(nivel, { emitEvent: false });
+    this.nivelSeleccionado.set(nivel);
+    const grados = DICCIONARIO_GRADOS[nivel] || [];
+    if (grados.length > 0) {
+      this.leadForm.get('grado')?.setValue(grados[0]);
+    }
     this.scrollToForm();
   }
 
@@ -353,8 +455,8 @@ export class HeroComponent {
       apoderadoNombres: formValue.apoderadoNombres,
       apoderadoApellidos: formValue.apoderadoApellidos,
       documento: formValue.documento || undefined,
-      celular: formValue.celular,
-      correo: formValue.correo,
+      celular: formValue.celular || undefined,
+      correo: formValue.correo || undefined,
       alumnoNombre: formValue.alumnoNombre,
       nivel: formValue.nivel,
       grado: formValue.grado,
@@ -364,7 +466,7 @@ export class HeroComponent {
         this.isSubmitting.set(false);
         this.submitSuccess.set(true);
 
-        // Abrir WhatsApp con el payload prellenado
+        // Abrir WhatsApp con el payload prellenado auditable
         if (response.whatsappRedirectUrl) {
           setTimeout(() => {
             window.open(response.whatsappRedirectUrl, '_blank');
@@ -376,6 +478,7 @@ export class HeroComponent {
           grado: '1° de Primaria',
           website: ''
         });
+        this.nivelSeleccionado.set('PRIMARIA');
       },
       error: () => {
         this.isSubmitting.set(false);

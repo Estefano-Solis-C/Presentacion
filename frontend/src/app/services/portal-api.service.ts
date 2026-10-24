@@ -79,12 +79,14 @@ export class PortalApiService {
         this.isLoading.set(false);
         // Fallback local en caso de desconexión momentánea de red
         const cleanNumber = '51966057981';
+        const celStr = payload.celular ? payload.celular : 'No especificado';
+        const correoStr = payload.correo ? payload.correo : 'No especificado';
         const text = encodeURIComponent(
           `*I.E.P. Dora Mayer de Zulen — Solicitud de Admisión*\n\n` +
           `Acabo de registrar una solicitud de vacante:\n` +
           `*Apoderado:* ${payload.apoderadoNombres} ${payload.apoderadoApellidos}\n` +
-          `*Celular:* ${payload.celular}\n` +
-          `*Correo:* ${payload.correo}\n` +
+          `*Celular:* ${celStr}\n` +
+          `*Correo:* ${correoStr}\n` +
           `*Alumno:* ${payload.alumnoNombre}\n` +
           `*Nivel/Grado:* ${payload.nivel} - ${payload.grado}\n\n` +
           `Deseo continuar con la evaluación de vacante e información de pensiones. ¡Muchas gracias!`

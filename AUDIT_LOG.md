@@ -675,3 +675,60 @@ umberScrollWidth: 66px, hasOverflow: false (zero overflow).
     - Founders card: orderLeftWidth: 4px, orderLeftColor: rgb(251, 182, 0), zero text overlap, title and motto badge verified.
     - High-resolution visual captures: phase14_counters_redesign.png and phase14_founders_redesign.png.
 - **Status:** **VERIFIED & COMPLETE**
+
+---
+
+## Step 15.0: Editorial Enhancements, Reactive Level/Grade Sync, Auditable Excel Generation, and Visual Ergonomics
+
+- **Date:** 2026-10-23
+- **Objective:**
+  - Desaturate and relax Hero heading (*"Formación con valores, rigor y calidez..."*) with generous line-height (leading-snug sm:leading-[1.28] lg:leading-[1.25]) and implement smooth background crossfade (	ransition-opacity duration-1000 ease-in-out cycling between 6 real school banners).
+  - Fix level/grade reactive synchronization: dynamically update available grades when educational level changes and auto-select the first valid grade (eliminating blank/stuck states).
+  - Clarify admission form labels: *"Nivel educativo del estudiante a inscribir \*"* and *"Grado al que postula el estudiante \*"*.
+  - Flexible contact validation: allow parents who have only phone or only email to submit without blockage (at least one valid contact channel required).
+  - Auditable Excel generation & WhatsApp integration: persist each lead to data/solicitudes_admision.xlsx with Apache POI, expose GET /api/leads/export/excel, and redirect to WhatsApp with an auditable vertical message format (ADM-YYYY-NNNN).
+  - Finely adjust photo crops: shift Pilar 01 ("Tareas dirigidas en aula") lower down (object-[center_35%]) and Pilar 02 ("Laboratorios y método activo") higher up (object-[center_15%]).
+  - Upgrade Nivel Inicial modal header to high-resolution landscape photo (/images/banners/foto_inicial_1.jpeg / 1600x1200).
+  - Redesign Testimonials carousel into complete 3-card pages with immediate hover-pause and centered ergonomic < and > buttons.
+  - Enlarge institutional header/navbar (larger insignia, prominent typography, increased height).
+- **Sequential Protocol Executed:**
+  - [THOUGHT -> HYPOTHESIS -> RISK ANALYSIS -> VERIFICATION PLAN -> EXECUTION]
+- **Execution & Files Modified:**
+  - ackend/pom.xml: Added poi-ooxml:5.3.0 dependency.
+  - ackend/Dockerfile: Created /app/data with proper permissions for unprivileged user.
+  - ackend/src/main/resources/db/migration/V3__allow_nullable_contact_on_leads.sql: Relaxed celular and correo to nullable.
+  - ackend/src/main/resources/db/migration/V2__seed.sql & schema.sql: Updated default seed photo for Inicial.
+  - ackend/src/main/java/pe/edu/doramayer/domain/Lead.java: Made celular and correo nullable.
+  - ackend/src/main/java/pe/edu/doramayer/web/api/dto/LeadRequest.java: Removed @NotBlank on contact fields.
+  - ackend/src/main/java/pe/edu/doramayer/service/ExcelLeadExportService.java: Synchronized Excel workbook generator styled in institutional Navy #0F296B and Gold #FBB600.
+  - ackend/src/main/java/pe/edu/doramayer/web/api/LeadApiController.java: At-least-one contact validation, Excel logging, /api/leads/export/excel endpoint, and auditable vertical WhatsApp redirect template.
+  - rontend/src/app/models/portal.models.ts & portal-api.service.ts: Updated LeadSubmission contact fields.
+  - rontend/src/app/components/header/header.component.ts: Enlarged insignia (w-14 to w-18), title (24px), nav links, and navbar height (h-20 sm:h-24).
+  - rontend/src/app/components/hero/hero.component.ts: Crossfade carousel with 6 banners, spacious heading line-height, reactive signal 
+ivelSeleccionado, dynamic grade options, and flexible contact validator.
+  - rontend/src/app/components/counters/counters.component.ts: Shifted Pilar 01 to object-[center_35%] and Pilar 02 to object-[center_15%].
+  - rontend/src/app/components/levels/levels.component.ts: Updated modal image to wide /images/banners/foto_inicial_1.jpeg with expanded header (h-52 sm:h-64).
+  - rontend/src/app/components/testimonials/testimonials.component.ts: Rebuilt carousel to page-based chunks of 3 cards, hover pause, and centered < / > navigation buttons.
+- **Verification/Test Command Executed & Result:**
+  - Backend compile: 28 unit tests passing with Maven inside Docker.
+  - Docker containers dora-mayer-backend and dora-mayer-frontend built and started with code 0.
+  - Leads API tested:
+    - Phone-only submission: HTTP 200, auditable code ADM-2026-0001, vertical WhatsApp payload.
+    - Email-only submission: HTTP 200, auditable code ADM-2026-0002, vertical WhatsApp payload.
+  - Excel download tested: GET /api/leads/export/excel returned 200 OK (pplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet).
+  - Edge CDP end-to-end audit (scratch/verify_phase15.js):
+    - Navbar enlarged: headerHeight: 121px, imgWidth: 64px, 	itleFontSize: 24px.
+    - Hero: h1LineHeight: 65px on 52px font, 6 rotating banners.
+    - Form sync: Inicial updated to Inicial - 3 años; Secundaria updated to 1° de Secundaria.
+    - Image positions: Pilar 1 at 50% 35%, Pilar 2 at 50% 15%.
+    - Modal Inicial: /images/banners/foto_inicial_1.jpeg, headerHeight: 256px.
+    - Testimonials: < and >, 2 pages of 3 cards each.
+    - Mobile 375px audit (scratch/verify_mobile.js): hasOverflow: false (zero horizontal blowout).
+  - Screenshots captured and verified:
+    - phase15_navbar_enlarged.png
+    - phase15_hero_and_form.png
+    - phase15_trinomio_images.png
+    - phase15_modal_inicial.png
+    - phase15_testimonials_carousel.png
+    - phase15_mobile_verified.png
+- **Status:** **VERIFIED & COMPLETE**

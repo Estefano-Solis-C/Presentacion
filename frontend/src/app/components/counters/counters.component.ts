@@ -92,7 +92,7 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
               <img
                 src="/images/tareas_clase.jpg"
                 alt="Alumnos realizando tareas dirigidas en aula con supervisión docente"
-                class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+                class="w-full h-full object-cover object-[center_35%] hover:scale-105 transition-transform duration-500"
                 loading="lazy"
               />
               <div class="absolute bottom-2 left-2 bg-[#0F296B] text-white text-[11px] font-sans font-bold uppercase px-2.5 py-0.5 rounded-xs border border-white/20">
@@ -121,7 +121,7 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
               <img
                 src="/images/banners/foto_secundaria_3.jpeg"
                 alt="Laboratorios de ciencias y cómputo práctico"
-                class="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-500"
+                class="w-full h-full object-cover object-[center_15%] hover:scale-105 transition-transform duration-500"
                 loading="lazy"
               />
               <div class="absolute bottom-2 left-2 bg-[#0F296B] text-white text-[11px] font-sans font-bold uppercase px-2.5 py-0.5 rounded-xs border border-white/20">

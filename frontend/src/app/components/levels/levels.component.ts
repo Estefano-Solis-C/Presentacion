@@ -103,12 +103,12 @@ import { LevelModel } from '../../models/portal.models';
             class="relative w-full max-w-2xl bg-white rounded-sm shadow-2xl border border-[#0F296B]/20 overflow-hidden z-10 max-h-[90vh] flex flex-col animate-modal-in"
             (click)="$event.stopPropagation()"
           >
-            <!-- Cabecera del Modal con Foto y Botón X -->
-            <div class="relative h-48 sm:h-56 bg-slate-100 shrink-0 overflow-hidden">
+            <!-- Cabecera del Modal con Foto Nítida y Botón X -->
+            <div class="relative h-52 sm:h-64 bg-slate-100 shrink-0 overflow-hidden">
               <img
-                [src]="level.fotoUrl"
+                [src]="getModalFotoUrl(level)"
                 [alt]="level.nombre"
-                class="w-full h-full object-cover object-top"
+                class="w-full h-full object-cover object-[center_30%]"
               />
               <div class="absolute inset-0 bg-gradient-to-t from-[#0F296B]/90 via-[#0F296B]/40 to-transparent"></div>
 
@@ -195,6 +195,13 @@ export class LevelsComponent implements OnInit {
 
   ngOnInit() {
     this.api.getLevels().subscribe(data => this.levels.set(data));
+  }
+
+  getModalFotoUrl(level: LevelModel): string {
+    if (level.slug === 'inicial' || level.fotoUrl?.includes('foto_inicial.jpg')) {
+      return '/images/banners/foto_inicial_1.jpeg';
+    }
+    return level.fotoUrl;
   }
 
   openModal(level: LevelModel, event: Event) {

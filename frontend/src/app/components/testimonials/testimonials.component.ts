@@ -1,11 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
   HostListener,
   OnDestroy,
   OnInit,
-  ViewChild,
   computed,
   inject,
   signal
@@ -45,108 +43,123 @@ import { TestimonialModel } from '../../models/portal.models';
           </div>
         </div>
 
-        <!-- Carrusel Enmarcado con Flechas Laterales -->
-        <div class="relative px-2 sm:px-12">
+        <!-- Carrusel Enmarcado con Botones Ergonómicos < y > Centrados -->
+        <div
+          class="relative px-2 sm:px-8"
+          (mouseenter)="pauseAutoPlay()"
+          (mouseleave)="resumeAutoPlay()"
+          (focusin)="pauseAutoPlay()"
+          (focusout)="resumeAutoPlay()"
+        >
           
-          <!-- Botón Anterior Flotante -->
-          @if (testimonials().length > 1) {
+          <!-- Botón Anterior Flotante Ergonómico '<' -->
+          @if (totalPages() > 1) {
             <button
               type="button"
               (click)="prev()"
-              aria-label="Testimonio anterior"
-              class="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#254EB6] hover:bg-[#0F296B] text-white shadow-md flex items-center justify-center transition-all cursor-pointer"
+              (mouseenter)="pauseAutoPlay()"
+              (mouseleave)="resumeAutoPlay()"
+              aria-label="Página anterior de testimonios"
+              class="absolute -left-2 sm:-left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white hover:bg-[#0F296B] text-[#0F296B] hover:text-white border border-[#0F296B]/25 shadow-md hover:shadow-lg flex items-center justify-center font-bold text-lg cursor-pointer transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-[#254EB6]"
             >
-              <app-icon name="arrow-left" size="18"></app-icon>
+              <span class="font-mono text-xl sm:text-2xl leading-none select-none">&lt;</span>
             </button>
           }
 
-          <!-- Contenedor del Carrusel Deslizable -->
+          <!-- Contenedor con Deslizamiento por Páginas Completas (Zero Cortes, 100% Centrado) -->
           <div
-            #carouselContainer
-            (mouseenter)="onMouseEnter()"
-            (mouseleave)="onMouseLeave()"
-            (focusin)="onMouseEnter()"
-            (focusout)="onMouseLeave()"
+            class="overflow-hidden py-2"
             (touchstart)="onTouchStart($event)"
             (touchmove)="onTouchMove($event)"
             (touchend)="onTouchEnd()"
-            class="flex space-x-4 sm:space-x-6 overflow-x-auto pb-4 pt-2 no-scrollbar scroll-smooth"
           >
-            @for (item of testimonials(); track item.id; let i = $index) {
-              <div
-                [attr.data-index]="i"
-                class="w-[82vw] sm:w-[350px] lg:w-[364px] min-w-[260px] sm:min-w-[350px] max-w-[380px] bg-[#F4F6FB] rounded-sm p-6 border border-[#0F296B]/15 shadow-card-soft hover:shadow-card-elevated hover:-translate-y-1 transition-all duration-300 h-[390px] sm:h-[380px] flex flex-col justify-between shrink-0"
-              >
-                
-                <!-- Encabezado de Tarjeta con Etiqueta Cálida Humana -->
-                <div class="space-y-3">
-                  <div class="flex items-center justify-between border-b border-[#0F296B]/10 pb-2.5">
-                    <span class="font-sans text-[11px] font-bold text-[#0F296B] uppercase tracking-wider truncate">
-                      {{ item.detalle || ('Egresado Promoción ' + (item.id)) }}
-                    </span>
-                    <div class="text-[#FBB600] text-2xl font-serif font-black leading-none">“</div>
-                  </div>
+            <div
+              class="flex transition-transform duration-500 ease-in-out"
+              [style.transform]="'translateX(-' + (currentPage() * 100) + '%)'"
+            >
+              @for (page of pagedTestimonials(); track $index; let pIdx = $index) {
+                <div class="w-full shrink-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-1">
+                  @for (item of page; track item.id) {
+                    <div
+                      (mouseenter)="pauseAutoPlay()"
+                      (mouseleave)="resumeAutoPlay()"
+                      class="bg-[#F4F6FB] rounded-sm p-6 border border-[#0F296B]/15 shadow-card-soft hover:shadow-card-elevated hover:-translate-y-1 transition-all duration-300 min-h-[380px] sm:min-h-[390px] flex flex-col justify-between"
+                    >
+                      
+                      <!-- Encabezado de Tarjeta con Etiqueta Cálida Humana -->
+                      <div class="space-y-3">
+                        <div class="flex items-center justify-between border-b border-[#0F296B]/10 pb-2.5">
+                          <span class="font-sans text-[11px] font-bold text-[#0F296B] uppercase tracking-wider truncate">
+                            {{ item.detalle || ('Egresado Promoción ' + (item.id)) }}
+                          </span>
+                          <div class="text-[#FBB600] text-2xl font-serif font-black leading-none">“</div>
+                        </div>
 
-                  <!-- Cita Testimonial en Cursiva -->
-                  <div class="min-h-[140px] max-h-[160px] overflow-hidden text-slate-700 leading-relaxed font-sans italic text-xs sm:text-[13px]">
-                    <p class="italic line-clamp-5">“{{ item.texto }}”</p>
-                  </div>
+                        <!-- Cita Testimonial en Cursiva -->
+                        <div class="min-h-[140px] max-h-[160px] overflow-hidden text-slate-700 leading-relaxed font-sans italic text-xs sm:text-[13px]">
+                          <p class="italic line-clamp-5">“{{ item.texto }}”</p>
+                        </div>
 
-                  <button
-                    type="button"
-                    (click)="openModal(item)"
-                    class="font-sans text-xs font-bold text-[#254EB6] hover:text-[#0F296B] flex items-center space-x-1 uppercase transition-colors cursor-pointer pt-1"
-                  >
-                    <span>Leer completo</span>
-                    <app-icon name="arrow-right" size="13"></app-icon>
-                  </button>
+                        <button
+                          type="button"
+                          (click)="openModal(item)"
+                          class="font-sans text-xs font-bold text-[#254EB6] hover:text-[#0F296B] flex items-center space-x-1 uppercase transition-colors cursor-pointer pt-1"
+                        >
+                          <span>Leer completo</span>
+                          <app-icon name="arrow-right" size="13"></app-icon>
+                        </button>
+                      </div>
+
+                      <!-- Autor Institucional con Fotografía Real y Rostro Visible -->
+                      <div class="pt-3 border-t border-[#0F296B]/10 flex items-center space-x-3.5">
+                        <div class="w-14 h-14 rounded-sm border border-[#0F296B]/20 shadow-xs overflow-hidden bg-slate-200 shrink-0">
+                          <img
+                            [src]="item.fotoUrl"
+                            [alt]="item.nombre"
+                            class="w-full h-full object-cover object-[center_15%] pointer-events-none"
+                            loading="lazy"
+                          />
+                        </div>
+                        <div class="min-w-0">
+                          <div class="font-serif font-bold text-sm text-[#0F296B] truncate">{{ item.nombre }}</div>
+                          <div class="text-[11px] font-sans text-[#254EB6] font-bold uppercase truncate">{{ item.profesion }}</div>
+                          <div class="text-[10px] font-sans text-slate-500 uppercase font-medium truncate">{{ item.detalle }}</div>
+                        </div>
+                      </div>
+
+                    </div>
+                  }
                 </div>
-
-                <!-- Autor Institucional con Fotografía Real y Rostro Visible -->
-                <div class="pt-3 border-t border-[#0F296B]/10 flex items-center space-x-3.5">
-                  <div class="w-14 h-14 rounded-sm border border-[#0F296B]/20 shadow-xs overflow-hidden bg-slate-200 shrink-0">
-                    <img
-                      [src]="item.fotoUrl"
-                      [alt]="item.nombre"
-                      class="w-full h-full object-cover object-[center_15%] pointer-events-none"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div class="min-w-0">
-                    <div class="font-serif font-bold text-sm text-[#0F296B] truncate">{{ item.nombre }}</div>
-                    <div class="text-[11px] font-sans text-[#254EB6] font-bold uppercase truncate">{{ item.profesion }}</div>
-                    <div class="text-[10px] font-sans text-slate-500 uppercase font-medium truncate">{{ item.detalle }}</div>
-                  </div>
-                </div>
-
-              </div>
-            }
+              }
+            </div>
           </div>
 
-          <!-- Botón Siguiente Flotante -->
-          @if (testimonials().length > 1) {
+          <!-- Botón Siguiente Flotante Ergonómico '>' -->
+          @if (totalPages() > 1) {
             <button
               type="button"
               (click)="next()"
-              aria-label="Testimonio siguiente"
-              class="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#254EB6] hover:bg-[#0F296B] text-white shadow-md flex items-center justify-center transition-all cursor-pointer"
+              (mouseenter)="pauseAutoPlay()"
+              (mouseleave)="resumeAutoPlay()"
+              aria-label="Página siguiente de testimonios"
+              class="absolute -right-2 sm:-right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white hover:bg-[#0F296B] text-[#0F296B] hover:text-white border border-[#0F296B]/25 shadow-md hover:shadow-lg flex items-center justify-center font-bold text-lg cursor-pointer transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-[#254EB6]"
             >
-              <app-icon name="arrow-right" size="18"></app-icon>
+              <span class="font-mono text-xl sm:text-2xl leading-none select-none">&gt;</span>
             </button>
           }
 
         </div>
 
-        <!-- Indicadores de Navegación Dinámicos (Dots según Viewport) -->
-        @if (dotIndexes().length > 1) {
-          <div class="flex items-center justify-center space-x-2 pt-2">
-            @for (idx of dotIndexes(); track idx) {
+        <!-- Indicadores de Navegación por Páginas (Dots Dinámicos) -->
+        @if (totalPages() > 1) {
+          <div class="flex items-center justify-center space-x-2.5 pt-2">
+            @for (page of pagedTestimonials(); track $index; let idx = $index) {
               <button
                 type="button"
-                (click)="scrollToIndex(idx)"
-                [class]="currentIndex() === idx ? 'w-8 bg-[#254EB6]' : 'w-2.5 bg-slate-300 hover:bg-slate-400'"
+                (click)="goToPage(idx)"
+                [class]="currentPage() === idx ? 'w-8 bg-[#254EB6]' : 'w-2.5 bg-slate-300 hover:bg-slate-400'"
                 class="h-2 rounded-full transition-all duration-300 cursor-pointer"
-                [attr.aria-label]="'Ir a parada ' + (idx + 1)"
+                [attr.aria-label]="'Ir a página de testimonios ' + (idx + 1)"
               ></button>
             }
           </div>
@@ -225,20 +238,27 @@ import { TestimonialModel } from '../../models/portal.models';
   `
 })
 export class TestimonialsComponent implements OnInit, OnDestroy {
-  @ViewChild('carouselContainer', { static: false })
-  carouselContainer?: ElementRef<HTMLDivElement>;
-
   private api = inject(PortalApiService);
 
   testimonials = signal<TestimonialModel[]>([]);
   selectedTestimonial = signal<TestimonialModel | null>(null);
 
-  currentIndex = signal<number>(0);
+  currentPage = signal<number>(0);
   visibleCards = signal<number>(3);
 
-  totalCards = computed(() => this.testimonials().length);
-  maxIndex = computed(() => Math.max(0, this.totalCards() - this.visibleCards()));
-  dotIndexes = computed(() => Array.from({ length: this.maxIndex() + 1 }, (_, i) => i));
+  // Agrupamiento dinámico por páginas completas
+  pagedTestimonials = computed(() => {
+    const list = this.testimonials();
+    const size = this.visibleCards();
+    if (!list || list.length === 0) return [];
+    const pages: TestimonialModel[][] = [];
+    for (let i = 0; i < list.length; i += size) {
+      pages.push(list.slice(i, i + size));
+    }
+    return pages;
+  });
+
+  totalPages = computed(() => this.pagedTestimonials().length);
 
   private autoPlayTimer: any = null;
   private isPaused = false;
@@ -307,8 +327,8 @@ export class TestimonialsComponent implements OnInit, OnDestroy {
       this.visibleCards.set(1);
     }
 
-    if (this.currentIndex() > this.maxIndex()) {
-      this.currentIndex.set(this.maxIndex());
+    if (this.currentPage() >= this.totalPages() && this.totalPages() > 0) {
+      this.currentPage.set(this.totalPages() - 1);
     }
   }
 
@@ -318,10 +338,10 @@ export class TestimonialsComponent implements OnInit, OnDestroy {
       return;
     }
     this.autoPlayTimer = setInterval(() => {
-      if (!this.isPaused && !this.selectedTestimonial() && this.totalCards() > this.visibleCards()) {
+      if (!this.isPaused && !this.selectedTestimonial() && this.totalPages() > 1) {
         this.next();
       }
-    }, 8000);
+    }, 7000);
   }
 
   private stopAutoPlay() {
@@ -331,37 +351,32 @@ export class TestimonialsComponent implements OnInit, OnDestroy {
     }
   }
 
-  onMouseEnter() {
+  pauseAutoPlay() {
     this.isPaused = true;
   }
 
-  onMouseLeave() {
+  resumeAutoPlay() {
     this.isPaused = false;
   }
 
   next() {
-    const nextIdx = this.currentIndex() >= this.maxIndex() ? 0 : this.currentIndex() + 1;
-    this.scrollToIndex(nextIdx);
+    const total = this.totalPages();
+    if (total <= 1) return;
+    this.currentPage.update(p => (p + 1) % total);
   }
 
   prev() {
-    const prevIdx = this.currentIndex() <= 0 ? this.maxIndex() : this.currentIndex() - 1;
-    this.scrollToIndex(prevIdx);
+    const total = this.totalPages();
+    if (total <= 1) return;
+    this.currentPage.update(p => (p <= 0 ? total - 1 : p - 1));
   }
 
-  scrollToIndex(index: number) {
-    this.currentIndex.set(index);
-    if (!this.carouselContainer?.nativeElement) return;
-    const container = this.carouselContainer.nativeElement;
-    const card = container.querySelector(`[data-index="${index}"]`) as HTMLElement;
-    if (card) {
-      const offset = card.offsetLeft - container.offsetLeft;
-      container.scrollTo({ left: offset, behavior: 'smooth' });
-    }
+  goToPage(page: number) {
+    this.currentPage.set(page);
   }
 
   onTouchStart(e: TouchEvent) {
-    this.isPaused = true;
+    this.pauseAutoPlay();
     this.touchStartX = e.touches[0].clientX;
   }
 
@@ -370,7 +385,7 @@ export class TestimonialsComponent implements OnInit, OnDestroy {
   }
 
   onTouchEnd() {
-    this.isPaused = false;
+    this.resumeAutoPlay();
     const deltaX = this.touchStartX - this.touchEndX;
     if (Math.abs(deltaX) > 40) {
       if (deltaX > 0) {

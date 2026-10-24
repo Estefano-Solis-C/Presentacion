@@ -20,10 +20,10 @@ public class Lead {
     @Column(length = 20)
     private String documento;
 
-    @Column(nullable = false, length = 20)
+    @Column(length = 20)
     private String celular;
 
-    @Column(nullable = false, length = 150)
+    @Column(length = 150)
     private String correo;
 
     @Column(name = "alumno_nombre", nullable = false, length = 150)

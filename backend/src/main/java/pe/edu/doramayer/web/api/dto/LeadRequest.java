@@ -16,11 +16,9 @@ public record LeadRequest(
         @Size(max = 20)
         String documento,
 
-        @NotBlank(message = "El número celular es obligatorio")
-        @Size(min = 9, max = 20)
+        @Size(max = 20)
         String celular,
 
-        @NotBlank(message = "El correo electrónico es obligatorio")
         @Email(message = "Ingrese un correo electrónico válido")
         @Size(max = 150)
         String correo,

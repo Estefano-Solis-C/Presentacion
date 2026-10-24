@@ -123,7 +123,7 @@ INSERT INTO levels (id, slug, nombre, rango_edades, resumen, descripcion, puntos
         'Psicomotricidad vivencial y expresión artística',
         'Acompañamiento psicopedagógico y escuela para padres'
     ),
-    '/images/foto_inicial.jpg',
+    '/images/banners/foto_inicial_1.jpeg',
     1
 ),
 (
