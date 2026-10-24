@@ -639,3 +639,39 @@ eal_crop_events.png: Every news/event card now renders full photographic headers
     - Dynamic event inserted directly in MySQL verified live in `/api/events` and on frontend in real-time.
   - Full screenshot captured and saved to `phase13_full_verification.png`.
 - **Status:** **VERIFIED & COMPLETE**
+
+---
+
+## Step 14.0: Indicators Strip Redesign & Founders Tribute Card Refinement with Micro-Motion
+
+- **Date:** 2026-10-23
+- **Objective:**
+  - Fix the 100% badge text overflow and dated aesthetics in counters.component.ts. Style all three indicator badges to match the solid deep navy (#0F296B) + gold (#FBB600) + crisp white badge style. Elevate the strip into an executive post-hero banner (shadow-elevated) with top tricolor accent gradient (#0F296B via #254EB6 to #FBB600).
+  - Redesign the founders tribute card in history.component.ts to be distinctive and authentic: commemorative medallion card with order-l-4 border-l-[#FBB600], watermark quotation “, prominent founders names (Prof. Paulino Lapa («El Dire») & Sra. Yolanda Salinas), highlighted motto badge («Estudio, Trabajo y Amistad»), and subtle CSS micro-motion (card hover lift, badge ring scale, expanding bottom accent line) with zero layout shifts and accessibility support (prefers-reduced-motion: reduce).
+- **Sequential Protocol Executed:**
+  - [THOUGHT -> HYPOTHESIS -> RISK ANALYSIS -> VERIFICATION PLAN -> EXECUTION]
+- **Execution & Files Modified:**
+  - rontend/src/app/components/counters/counters.component.ts:
+    - Replaced low-contrast border boxes with solid executive cards (w-20 min-w-[5rem] h-18 sm:h-20 bg-[#0F296B] border border-white/20 rounded-md shadow-md).
+    - Standardized badge typography: 	ext-2xl sm:text-3xl font-serif font-black text-[#FBB600] (100% in 	ext-xl sm:text-2xl), sub-labels in 	ext-[10px] font-sans font-bold text-white tracking-widest uppercase.
+    - Added executive top gradient line (h-1.5 bg-gradient-to-r from-[#0F296B] via-[#254EB6] to-[#FBB600]).
+    - Standardized card spacing to gap-6 sm:gap-8 and space-x-5 with interactive hover states.
+  - rontend/src/app/components/history/history.component.ts:
+    - Redesigned tribute card into a commemorative medallion card with order-l-4 border-l-[#FBB600], subtle background gradient rom-white via-white to-[#F4F6FB], and decorative quotation watermark “.
+    - Added generous gap-5 sm:gap-6 between medallion badge and editorial tribute text.
+    - Prominently styled founders names: Prof. Paulino Lapa («El Dire») & Sra. Yolanda Salinas.
+    - Created distinct styled motto badge: <span class="inline-block font-serif italic text-xs font-bold text-[#0F296B] bg-[#FBB600]/15 px-2.5 py-0.5 rounded-xs border border-[#FBB600]/30 shadow-2xs">«Estudio, Trabajo y Amistad»</span>.
+    - Integrated subtle CSS-driven micro-motion: card lift (hover:-translate-y-1 hover:shadow-elevated), medallion ring scale (group-hover:scale-105 group-hover:ring-2 group-hover:ring-[#FBB600]/40), and sliding bottom accent line (group-hover:w-full bg-gradient-to-r from-[#FBB600] via-[#254EB6] to-[#0F296B]).
+  - rontend/src/styles.css: Added @media (prefers-reduced-motion: reduce) accessibility query.
+- **Verification/Test Command Executed & Result:**
+  - Docker container rebuild: docker compose up -d --build dora-mayer-frontend exited with code 0.
+  - Edge CDP geometric and visual verification (scratch/verify_phase14_indicators.js):
+    - Badge 0 (69 AÑOS): adgeWidth: 78px, 
+umberScrollWidth: 36px, hasOverflow: false.
+    - Badge 1 (3 NIVELES): adgeWidth: 78px, 
+umberScrollWidth: 17px, hasOverflow: false.
+    - Badge 2 (100% EN AULA): adgeWidth: 78px, 
+umberScrollWidth: 66px, hasOverflow: false (zero overflow).
+    - Founders card: orderLeftWidth: 4px, orderLeftColor: rgb(251, 182, 0), zero text overlap, title and motto badge verified.
+    - High-resolution visual captures: phase14_counters_redesign.png and phase14_founders_redesign.png.
+- **Status:** **VERIFIED & COMPLETE**

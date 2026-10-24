@@ -11,39 +11,62 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
     <section id="propuesta" class="py-16 bg-[#F4F6FB] border-b border-[#0F296B]/15">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
-        <!-- Franja Fina y Sobria de Indicadores Clave -->
-        <div class="bg-white rounded-sm border border-[#0F296B]/15 shadow-card-soft p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-3 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
-          
-          <div class="flex items-center space-x-4 px-2">
-            <div class="w-12 h-12 rounded-sm bg-[#0F296B]/5 border border-[#0F296B]/15 flex items-center justify-center shrink-0">
-              <span class="font-serif font-black text-xl text-[#0F296B]">{{ yearsActive() }}</span>
-            </div>
-            <div>
-              <div class="font-serif font-bold text-sm text-[#0F296B]">Años de Tradición</div>
-              <div class="font-sans text-xs text-slate-500">Fundado en el Rímac en 1957</div>
-            </div>
-          </div>
+        <!-- Franja Ejecutiva de Indicadores Clave (Estilo Institucional Sólido) -->
+        <div class="bg-white rounded-md border border-[#0F296B]/15 shadow-elevated overflow-hidden relative">
+          <!-- Línea de acento institucional superior -->
+          <div class="h-1.5 bg-gradient-to-r from-[#0F296B] via-[#254EB6] to-[#FBB600]"></div>
 
-          <div class="flex items-center space-x-4 px-2 pt-4 sm:pt-0">
-            <div class="w-12 h-12 rounded-sm bg-[#0F296B]/5 border border-[#0F296B]/15 flex items-center justify-center shrink-0">
-              <span class="font-serif font-black text-xl text-[#254EB6]">3</span>
+          <div class="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+            
+            <!-- Indicador 1: Años de Tradición -->
+            <div class="flex items-center space-x-5 p-3.5 rounded-md hover:bg-[#F4F6FB] border border-transparent hover:border-[#0F296B]/10 transition-all duration-300 group">
+              <div class="w-20 min-w-[5rem] h-18 sm:h-20 bg-[#0F296B] border border-white/20 rounded-md shadow-md flex flex-col items-center justify-center shrink-0 group-hover:scale-105 group-hover:shadow-lg transition-transform duration-300">
+                <span class="font-serif font-black text-2xl sm:text-3xl text-[#FBB600] leading-none">{{ yearsActive() }}</span>
+                <span class="text-[10px] font-sans font-bold text-white tracking-widest uppercase mt-1">Años</span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-serif font-bold text-base sm:text-lg text-[#0F296B] group-hover:text-[#254EB6] transition-colors">
+                  Años de Tradición
+                </div>
+                <div class="font-sans text-xs text-slate-500 mt-1 leading-snug">
+                  Fundado en el Rímac en 1957
+                </div>
+              </div>
             </div>
-            <div>
-              <div class="font-serif font-bold text-sm text-[#0F296B]">Niveles Integrados</div>
-              <div class="font-sans text-xs text-slate-500">Inicial, Primaria y Secundaria</div>
-            </div>
-          </div>
 
-          <div class="flex items-center space-x-4 px-2 pt-4 sm:pt-0">
-            <div class="w-12 h-12 rounded-sm bg-[#0F296B]/5 border border-[#0F296B]/15 flex items-center justify-center shrink-0">
-              <span class="font-serif font-black text-xl text-[#FBB600]">100%</span>
+            <!-- Indicador 2: Niveles Integrados -->
+            <div class="flex items-center space-x-5 p-3.5 rounded-md hover:bg-[#F4F6FB] border border-transparent hover:border-[#0F296B]/10 transition-all duration-300 group">
+              <div class="w-20 min-w-[5rem] h-18 sm:h-20 bg-[#0F296B] border border-white/20 rounded-md shadow-md flex flex-col items-center justify-center shrink-0 group-hover:scale-105 group-hover:shadow-lg transition-transform duration-300">
+                <span class="font-serif font-black text-2xl sm:text-3xl text-[#FBB600] leading-none">3</span>
+                <span class="text-[10px] font-sans font-bold text-white tracking-widest uppercase mt-1">Niveles</span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-serif font-bold text-base sm:text-lg text-[#0F296B] group-hover:text-[#254EB6] transition-colors">
+                  Niveles Integrados
+                </div>
+                <div class="font-sans text-xs text-slate-500 mt-1 leading-snug">
+                  Inicial, Primaria y Secundaria
+                </div>
+              </div>
             </div>
-            <div>
-              <div class="font-serif font-bold text-sm text-[#0F296B]">Tareas en Aula</div>
-              <div class="font-sans text-xs text-slate-500">Desarrolladas con el profesor</div>
-            </div>
-          </div>
 
+            <!-- Indicador 3: Tareas en Aula (100% holgado sin desbordes) -->
+            <div class="flex items-center space-x-5 p-3.5 rounded-md hover:bg-[#F4F6FB] border border-transparent hover:border-[#0F296B]/10 transition-all duration-300 group">
+              <div class="w-20 min-w-[5rem] h-18 sm:h-20 bg-[#0F296B] border border-white/20 rounded-md shadow-md flex flex-col items-center justify-center shrink-0 group-hover:scale-105 group-hover:shadow-lg transition-transform duration-300">
+                <span class="font-serif font-black text-xl sm:text-2xl text-[#FBB600] leading-none tracking-tight">100%</span>
+                <span class="text-[10px] font-sans font-bold text-white tracking-widest uppercase mt-1">En Aula</span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-serif font-bold text-base sm:text-lg text-[#0F296B] group-hover:text-[#254EB6] transition-colors">
+                  Tareas en Aula
+                </div>
+                <div class="font-sans text-xs text-slate-500 mt-1 leading-snug">
+                  Desarrolladas con el profesor
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
 
         <!-- Encabezado de Sección: Estudio, Trabajo y Amistad -->

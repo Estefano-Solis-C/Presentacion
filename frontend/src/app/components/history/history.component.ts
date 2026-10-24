@@ -32,17 +32,51 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
               Inició sus actividades en el emblemático local de la <strong class="text-slate-900 font-semibold">Calle Monitor Huáscar</strong>, consolidándose como un referente bajopontino de disciplina, valores cívicos y rigor escolar. Con los años, la institución trasladó su sede central a su local propio en <strong class="text-slate-900 font-semibold">Calle Ricardo Bentín 749, Urb. Ventura Rossi, Rímac</strong>, donde generaciones de familias han confiado la formación humana y académica de sus hijos.
             </p>
 
-            <div class="p-5 bg-white rounded-sm border border-[#0F296B]/15 shadow-card-soft flex items-center space-x-4">
-              <div class="w-16 h-16 bg-[#0F296B] border border-white/20 flex flex-col items-center justify-center shrink-0 shadow-xs rounded-sm">
-                <span class="text-2xl font-serif font-black text-[#FBB600] leading-none">{{ yearsActive() }}</span>
-                <span class="text-[10px] font-sans font-bold text-white tracking-widest uppercase mt-0.5">Años</span>
+            <!-- Medallón Histórico de Homenaje a los Fundadores (Diseño Editorial + Micro-movimiento) -->
+            <div class="relative bg-gradient-to-br from-white via-white to-[#F4F6FB] p-5 sm:p-6 rounded-md border border-[#0F296B]/15 border-l-4 border-l-[#FBB600] shadow-card-soft hover:shadow-elevated hover:-translate-y-1 transition-all duration-300 group overflow-hidden">
+              
+              <!-- Marca de agua editorial comilla decorativa -->
+              <span class="absolute top-1 right-4 font-serif text-5xl text-[#0F296B]/5 select-none pointer-events-none transition-transform duration-500 group-hover:scale-110">
+                “
+              </span>
+
+              <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-6 relative z-10">
+                
+                <!-- Medallón Sólido Navy con Brillo Interactivo -->
+                <div class="w-20 min-w-[5rem] h-20 bg-[#0F296B] border border-white/20 rounded-md shadow-md flex flex-col items-center justify-center shrink-0 group-hover:scale-105 group-hover:ring-2 group-hover:ring-[#FBB600]/40 transition-all duration-300">
+                  <span class="text-3xl font-serif font-black text-[#FBB600] leading-none">{{ yearsActive() }}</span>
+                  <span class="text-[10px] font-sans font-bold text-white tracking-widest uppercase mt-1">Años</span>
+                </div>
+
+                <!-- Contenido Editorial de Homenaje -->
+                <div class="space-y-1.5 flex-1 min-w-0">
+                  
+                  <div class="flex items-center space-x-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#FBB600] shrink-0"></span>
+                    <span class="text-[10px] font-sans font-bold uppercase tracking-wider text-slate-500">
+                      Homenaje Vivo a Nuestros Fundadores
+                    </span>
+                  </div>
+
+                  <h3 class="font-serif text-[#0F296B] font-bold text-sm sm:text-base leading-snug">
+                    Prof. Paulino Lapa («El Dire») & Sra. Yolanda Salinas
+                  </h3>
+
+                  <div class="pt-0.5">
+                    <span class="inline-block font-serif italic text-xs font-bold text-[#0F296B] bg-[#FBB600]/15 px-2.5 py-0.5 rounded-xs border border-[#FBB600]/30 shadow-2xs">
+                      «Estudio, Trabajo y Amistad»
+                    </span>
+                  </div>
+
+                  <p class="font-sans text-xs text-slate-600 leading-relaxed pt-0.5">
+                    El compromiso moral y pedagógico de nuestros fundadores que continúa forjando el carácter y el futuro de cada promoción mayerina desde 1957.
+                  </p>
+                </div>
+
               </div>
-              <div class="text-xs text-slate-700 space-y-1">
-                <strong class="font-serif text-[#0F296B] font-bold block text-sm">Homenaje vivo a nuestros fundadores</strong>
-                <p class="font-sans text-slate-600 leading-relaxed">
-                  "Estudio, Trabajo y Amistad": El lema y compromiso moral del Prof. Paulino Lapa y la Sra. Yolanda Salinas continúa inspirando a cada promoción mayerina.
-                </p>
-              </div>
+
+              <!-- Línea de acento expansible interactiva inferior -->
+              <div class="absolute bottom-0 left-0 h-[2.5px] w-0 group-hover:w-full bg-gradient-to-r from-[#FBB600] via-[#254EB6] to-[#0F296B] transition-all duration-500 ease-out pointer-events-none"></div>
             </div>
           </div>
 
