@@ -1,11 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
   HostListener,
   OnDestroy,
   OnInit,
-  ViewChild,
   computed,
   inject,
   signal
@@ -128,143 +126,157 @@ import { EventModel } from '../../models/portal.models';
 
           <!-- ======================= VISTA CARRUSEL / CARDS ======================= -->
           @if (viewMode() === 'grid') {
-            <div class="relative px-2 sm:px-12 animate-fade-in">
+            <div
+              class="relative px-2 sm:px-8 animate-fade-in"
+              (mouseenter)="onMouseEnter()"
+              (mouseleave)="onMouseLeave()"
+              (focusin)="onMouseEnter()"
+              (focusout)="onMouseLeave()"
+            >
               
-              @if (filteredEvents().length > visibleCards()) {
+              <!-- Botón Anterior Flotante Ergonómico '<' -->
+              @if (totalPages() > 1) {
                 <button
                   type="button"
                   (click)="prev()"
-                  aria-label="Noticia anterior"
-                  class="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#254EB6] hover:bg-[#0F296B] text-white shadow-md flex items-center justify-center transition-all cursor-pointer"
+                  aria-label="Página anterior de comunicados"
+                  class="absolute -left-2 sm:-left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white hover:bg-[#0F296B] text-[#0F296B] hover:text-white border border-[#0F296B]/25 shadow-md hover:shadow-lg flex items-center justify-center font-bold text-lg cursor-pointer transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-[#254EB6]"
                 >
-                  <app-icon name="arrow-left" size="18"></app-icon>
+                  <span class="font-mono text-xl sm:text-2xl leading-none select-none">&lt;</span>
                 </button>
               }
 
-              <!-- Contenedor Deslizable de Tarjetas -->
+              <!-- Contenedor Deslizable de Páginas Completas (Zero Cortes, 100% Centrado) -->
               <div
-                #carouselContainer
-                (mouseenter)="onMouseEnter()"
-                (mouseleave)="onMouseLeave()"
-                (focusin)="onMouseEnter()"
-                (focusout)="onMouseLeave()"
+                class="overflow-hidden py-2"
                 (touchstart)="onTouchStart($event)"
                 (touchmove)="onTouchMove($event)"
                 (touchend)="onTouchEnd()"
-                class="flex space-x-6 overflow-x-auto pb-4 pt-2 no-scrollbar scroll-smooth"
               >
-                @for (evento of filteredEvents(); track evento.id; let i = $index) {
-                  <!-- TARJETA 100% CLICKEABLE (Estilo Niveles Educativos) -->
-                  <div
-                    [attr.data-index]="i"
-                    (click)="openModal(evento)"
-                    (keydown.enter)="openModal(evento)"
-                    tabindex="0"
-                    role="button"
-                    [attr.aria-label]="'Abrir comunicado: ' + evento.titulo"
-                    class="w-[85vw] sm:w-[350px] lg:w-[364px] min-w-[260px] sm:min-w-[350px] max-w-[380px] bg-white rounded-md border border-[#0F296B]/15 shadow-card-soft hover:shadow-card-elevated hover:border-[#254EB6]/50 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden shrink-0 cursor-pointer group focus:outline-none focus:ring-2 focus:ring-[#254EB6]"
-                  >
-                    <!-- Banner Fotográfico con Rotación Dinámica Multi-Imagen -->
-                    <div class="relative h-48 sm:h-52 overflow-hidden border-b border-[#0F296B]/10 bg-slate-100">
-                      <img
-                        [src]="getCardActiveImage(evento)"
-                        [alt]="evento.titulo"
-                        (error)="onImgError($event)"
-                        class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 pointer-events-none"
-                        loading="lazy"
-                      />
-                      <div class="absolute top-2 left-2 bg-[#0F296B] text-white font-sans text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-xs border border-white/20">
-                        {{ formatFecha(evento.fecha) }}
-                      </div>
-                      @if (evento.destacado) {
-                        <div class="absolute top-2 right-2 bg-[#FBB600] text-slate-950 font-sans text-[10px] font-bold uppercase px-2 py-0.5 rounded-xs shadow-xs flex items-center space-x-1">
-                          <app-icon name="sparkles" size="12"></app-icon>
-                          <span>Destacado</span>
-                        </div>
-                      }
-                      <!-- Indicador de Galería si tiene más de 1 imagen -->
-                      @if (getEventImages(evento).length > 1) {
-                        <div class="absolute bottom-2 right-2 flex items-center gap-1 bg-black/60 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-xs">
-                          <app-icon name="sparkles" [size]="10"></app-icon>
-                          <span>{{ getEventImages(evento).length }} fotos</span>
-                        </div>
-                      }
-                    </div>
-
-                    <!-- Cuerpo de Noticia -->
-                    <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
-                      <div class="space-y-2.5">
-                        <div class="flex items-center justify-between gap-2">
-                          <span
-                            [class]="getBadgeClass(evento.tipo)"
-                            class="inline-block px-2.5 py-0.5 text-[10px] font-sans font-bold uppercase tracking-wider rounded-xs"
-                          >
-                            {{ evento.tipo }}
-                          </span>
-                          @if (evento.facebookPermalink) {
-                            <a
-                              [href]="evento.facebookPermalink"
-                              (click)="$event.stopPropagation()"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              class="inline-flex items-center gap-1 text-[10px] text-[#254EB6] font-semibold bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded border border-blue-100 transition-colors"
-                              title="Ver en Facebook"
-                            >
-                              <app-icon name="facebook" [size]="12"></app-icon>
-                              <span>FB Oficial</span>
-                            </a>
-                          }
-                        </div>
-
-                        <h3 class="font-serif text-base sm:text-lg font-bold text-[#0F296B] group-hover:text-[#254EB6] leading-snug line-clamp-2 transition-colors">
-                          {{ evento.titulo }}
-                        </h3>
-
-                        <p class="text-xs text-slate-600 leading-relaxed font-sans line-clamp-3 font-normal">
-                          {{ evento.resumen }}
-                        </p>
-                      </div>
-
-                      <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                        <span class="font-sans text-[10px] text-slate-500 uppercase font-semibold tracking-wider">
-                          Año {{ evento.anio || getYearFromDate(evento.fecha) }}
-                        </span>
-                        <span
-                          class="font-sans text-xs font-bold text-[#254EB6] group-hover:text-[#0F296B] flex items-center space-x-1 transition uppercase"
+                <div
+                  class="flex transition-transform duration-500 ease-in-out"
+                  [style.transform]="'translateX(-' + (currentPage() * 100) + '%)'"
+                >
+                  @for (page of pagedEvents(); track $index; let pIdx = $index) {
+                    <div class="w-full shrink-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-1">
+                      @for (evento of page; track evento.id; let i = $index) {
+                        <!-- TARJETA 100% CLICKEABLE -->
+                        <div
+                          (click)="openModal(evento)"
+                          (keydown.enter)="openModal(evento)"
+                          tabindex="0"
+                          role="button"
+                          [attr.aria-label]="'Abrir comunicado: ' + evento.titulo"
+                          class="bg-white rounded-md border border-[#0F296B]/15 shadow-card-soft hover:shadow-card-elevated hover:border-[#254EB6]/50 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer group focus:outline-none focus:ring-2 focus:ring-[#254EB6]"
                         >
-                          <span>Leer más</span>
-                          <app-icon name="arrow-right" size="13" className="group-hover:translate-x-0.5 transition-transform"></app-icon>
-                        </span>
-                      </div>
-                    </div>
+                          <!-- Banner Fotográfico con Rotación Suave Multi-Imagen (Slide Horizontal + Crossfade) -->
+                          <div class="relative h-48 sm:h-52 overflow-hidden border-b border-[#0F296B]/10 bg-slate-900">
+                            @for (img of getEventImages(evento); track img; let imgIdx = $index) {
+                              <img
+                                [src]="img"
+                                [alt]="evento.titulo + ' foto ' + (imgIdx + 1)"
+                                (error)="onImgError($event)"
+                                class="absolute inset-0 w-full h-full object-cover pointer-events-none group-hover:scale-105"
+                                [class]="getCardImageClass(evento, imgIdx)"
+                                loading="lazy"
+                              />
+                            }
+                            <div class="absolute top-2 left-2 z-20 bg-[#0F296B] text-white font-sans text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-xs border border-white/20">
+                              {{ formatFecha(evento.fecha) }}
+                            </div>
+                            @if (evento.destacado) {
+                              <div class="absolute top-2 right-2 z-20 bg-[#FBB600] text-slate-950 font-sans text-[10px] font-bold uppercase px-2 py-0.5 rounded-xs shadow-xs flex items-center space-x-1">
+                                <app-icon name="sparkles" size="12"></app-icon>
+                                <span>Destacado</span>
+                              </div>
+                            }
+                            <!-- Indicador de Galería si tiene más de 1 imagen -->
+                            @if (getEventImages(evento).length > 1) {
+                              <div class="absolute bottom-2 right-2 z-20 flex items-center gap-1 bg-black/60 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-xs">
+                                <app-icon name="sparkles" [size]="10"></app-icon>
+                                <span>{{ getEventImages(evento).length }} fotos</span>
+                              </div>
+                            }
+                          </div>
 
-                  </div>
-                }
+                          <!-- Cuerpo de Noticia -->
+                          <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
+                            <div class="space-y-2.5">
+                              <div class="flex items-center justify-between gap-2">
+                                <span
+                                  [class]="getBadgeClass(evento.tipo)"
+                                  class="inline-block px-2.5 py-0.5 text-[10px] font-sans font-bold uppercase tracking-wider rounded-xs"
+                                >
+                                  {{ evento.tipo }}
+                                </span>
+                                @if (evento.facebookPermalink) {
+                                  <a
+                                    [href]="evento.facebookPermalink"
+                                    (click)="$event.stopPropagation()"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="inline-flex items-center gap-1 text-[10px] text-[#254EB6] font-semibold bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded border border-blue-100 transition-colors"
+                                    title="Ver en Facebook"
+                                  >
+                                    <app-icon name="facebook" [size]="12"></app-icon>
+                                    <span>FB Oficial</span>
+                                  </a>
+                                }
+                              </div>
+
+                              <h3 class="font-serif text-base sm:text-lg font-bold text-[#0F296B] group-hover:text-[#254EB6] leading-snug line-clamp-2 transition-colors">
+                                {{ evento.titulo }}
+                              </h3>
+
+                              <p class="text-xs text-slate-600 leading-relaxed font-sans line-clamp-3 font-normal">
+                                {{ evento.resumen }}
+                              </p>
+                            </div>
+
+                            <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                              <span class="font-sans text-[10px] text-slate-500 uppercase font-semibold tracking-wider">
+                                Año {{ evento.anio || getYearFromDate(evento.fecha) }}
+                              </span>
+                              <span
+                                class="font-sans text-xs font-bold text-[#254EB6] group-hover:text-[#0F296B] flex items-center space-x-1 transition uppercase"
+                              >
+                                <span>Leer más</span>
+                                <app-icon name="arrow-right" size="13" className="group-hover:translate-x-0.5 transition-transform"></app-icon>
+                              </span>
+                            </div>
+                          </div>
+
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
               </div>
 
-              @if (filteredEvents().length > visibleCards()) {
+              <!-- Botón Siguiente Flotante Ergonómico '>' -->
+              @if (totalPages() > 1) {
                 <button
                   type="button"
                   (click)="next()"
-                  aria-label="Noticia siguiente"
-                  class="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#254EB6] hover:bg-[#0F296B] text-white shadow-md flex items-center justify-center transition-all cursor-pointer"
+                  aria-label="Página siguiente de comunicados"
+                  class="absolute -right-2 sm:-right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white hover:bg-[#0F296B] text-[#0F296B] hover:text-white border border-[#0F296B]/25 shadow-md hover:shadow-lg flex items-center justify-center font-bold text-lg cursor-pointer transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-[#254EB6]"
                 >
-                  <app-icon name="arrow-right" size="18"></app-icon>
+                  <span class="font-mono text-xl sm:text-2xl leading-none select-none">&gt;</span>
                 </button>
               }
 
             </div>
 
-            <!-- Indicadores de Navegación Dinámicos -->
-            @if (dotIndexes().length > 1) {
-              <div class="flex items-center justify-center space-x-2 pt-2">
-                @for (idx of dotIndexes(); track idx) {
+            <!-- Indicadores de Navegación Dinámicos (1 dot por página) -->
+            @if (totalPages() > 1) {
+              <div class="flex items-center justify-center space-x-2 pt-4">
+                @for (p of pagedEvents(); track $index; let pIdx = $index) {
                   <button
                     type="button"
-                    (click)="scrollToIndex(idx)"
-                    [class]="currentIndex() === idx ? 'w-8 bg-[#254EB6]' : 'w-2.5 bg-slate-300 hover:bg-slate-400'"
+                    (click)="goToPage(pIdx)"
+                    [class]="currentPage() === pIdx ? 'w-8 bg-[#254EB6]' : 'w-2.5 bg-slate-300 hover:bg-slate-400'"
                     class="h-2 rounded-full transition-all duration-300 cursor-pointer"
-                    [attr.aria-label]="'Ir a publicación ' + (idx + 1)"
+                    [attr.aria-label]="'Ir a página ' + (pIdx + 1)"
                   ></button>
                 }
               </div>
@@ -550,24 +562,28 @@ import { EventModel } from '../../models/portal.models';
             class="relative max-w-5xl w-full max-h-[92vh] flex flex-col items-center justify-center"
             (click)="$event.stopPropagation()"
           >
-            <!-- Cabecera del Lightbox -->
-            <div class="w-full flex items-center justify-between pb-3 text-white">
-              <div class="flex items-center gap-2 text-xs sm:text-sm font-sans">
-                <span class="font-bold text-[#FBB600]">
+            <!-- Cabecera del Lightbox con Cápsula Protectora de Alto Contraste -->
+            <div class="w-full flex items-center justify-between pb-3">
+              <div class="flex items-center gap-2.5 max-w-[85%] bg-slate-950/85 backdrop-blur-md px-4 py-2 rounded-xl border border-white/15 shadow-2xl">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#FBB600] text-slate-950 text-[10px] font-bold uppercase tracking-wider shrink-0 shadow-xs">
+                  <app-icon name="sparkles" [size]="10"></app-icon>
+                  Foto Oficial
+                </span>
+                <span class="font-bold text-white text-xs sm:text-sm truncate font-serif">
                   {{ lb.title }}
                 </span>
                 @if (lb.images.length > 1) {
-                  <span class="text-white/60">· Foto {{ lb.index + 1 }} de {{ lb.images.length }}</span>
+                  <span class="text-white/70 text-xs shrink-0 font-medium font-sans">· {{ lb.index + 1 }}/{{ lb.images.length }}</span>
                 }
               </div>
 
               <button
                 type="button"
                 (click)="closeLightbox()"
-                class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer flex items-center justify-center"
+                class="w-9 h-9 rounded-full bg-slate-950/85 hover:bg-white hover:text-slate-950 text-white transition-all cursor-pointer flex items-center justify-center border border-white/20 shadow-2xl shrink-0 ml-2"
                 aria-label="Cerrar ampliación"
               >
-                <app-icon name="close" [size]="22"></app-icon>
+                <app-icon name="close" [size]="20"></app-icon>
               </button>
             </div>
 
@@ -639,9 +655,6 @@ import { EventModel } from '../../models/portal.models';
   `]
 })
 export class EventsComponent implements OnInit, OnDestroy {
-  @ViewChild('carouselContainer', { static: false })
-  carouselContainer?: ElementRef<HTMLDivElement>;
-
   private api = inject(PortalApiService);
 
   events = signal<EventModel[]>([]);
@@ -654,8 +667,8 @@ export class EventsComponent implements OnInit, OnDestroy {
   modalImageIndex = signal<number>(0);
   lightboxData = signal<{ title: string; images: string[]; index: number } | null>(null);
 
-  currentIndex = signal<number>(0);
-  visibleCards = signal<number>(3);
+  itemsPerPage = signal<number>(3);
+  currentPage = signal<number>(0);
   isTransitioning = signal<boolean>(false);
 
   // Tick para rotación periódica multi-imagen en tarjetas
@@ -675,9 +688,17 @@ export class EventsComponent implements OnInit, OnDestroy {
     return list;
   });
 
-  totalCards = computed(() => this.filteredEvents().length);
-  maxIndex = computed(() => Math.max(0, this.totalCards() - this.visibleCards()));
-  dotIndexes = computed(() => Array.from({ length: this.maxIndex() + 1 }, (_, i) => i));
+  pagedEvents = computed(() => {
+    const list = this.filteredEvents();
+    const size = this.itemsPerPage();
+    const pages: EventModel[][] = [];
+    for (let i = 0; i < list.length; i += size) {
+      pages.push(list.slice(i, i + size));
+    }
+    return pages;
+  });
+
+  totalPages = computed(() => Math.max(1, this.pagedEvents().length));
 
   private autoPlayTimer: any = null;
   private imageRotationTimer: any = null;
@@ -766,16 +787,14 @@ export class EventsComponent implements OnInit, OnDestroy {
   setFilter(filter: string) {
     this.triggerTransition();
     this.selectedFilter.set(filter);
-    this.currentIndex.set(0);
-    this.scrollToIndex(0);
+    this.currentPage.set(0);
     this.loadEvents();
   }
 
   setYear(year: number | null) {
     this.triggerTransition();
     this.selectedYear.set(year);
-    this.currentIndex.set(0);
-    this.scrollToIndex(0);
+    this.currentPage.set(0);
     this.loadEvents();
   }
 
@@ -783,8 +802,7 @@ export class EventsComponent implements OnInit, OnDestroy {
     this.triggerTransition();
     this.viewMode.set(mode);
     if (mode === 'grid') {
-      this.currentIndex.set(0);
-      setTimeout(() => this.scrollToIndex(0), 50);
+      this.currentPage.set(0);
     }
   }
 
@@ -799,6 +817,7 @@ export class EventsComponent implements OnInit, OnDestroy {
     this.triggerTransition();
     this.selectedFilter.set('TODOS');
     this.selectedYear.set(null);
+    this.currentPage.set(0);
     this.loadEvents();
   }
 
@@ -822,6 +841,22 @@ export class EventsComponent implements OnInit, OnDestroy {
       return evento.imagenes;
     }
     return evento.imagenUrl ? [evento.imagenUrl] : ['/images/posts/inicio_clases.jpg'];
+  }
+
+  getCardImageClass(evento: EventModel, imgIdx: number): string {
+    const images = this.getEventImages(evento);
+    if (images.length <= 1) {
+      return 'opacity-100 translate-x-0 z-10 transition-all duration-700 ease-in-out';
+    }
+    const active = this.cardImageTick() % images.length;
+    if (imgIdx === active) {
+      return 'opacity-100 translate-x-0 z-10 transition-all duration-700 ease-in-out';
+    }
+    const prev = (active - 1 + images.length) % images.length;
+    if (imgIdx === prev) {
+      return 'opacity-0 -translate-x-full z-0 transition-all duration-700 ease-in-out';
+    }
+    return 'opacity-0 translate-x-full z-0 transition-all duration-700 ease-in-out';
   }
 
   getCardActiveImage(evento: EventModel): string {
@@ -960,15 +995,15 @@ export class EventsComponent implements OnInit, OnDestroy {
     if (typeof window === 'undefined') return;
     const width = window.innerWidth;
     if (width >= 1024) {
-      this.visibleCards.set(3);
+      this.itemsPerPage.set(3);
     } else if (width >= 640) {
-      this.visibleCards.set(2);
+      this.itemsPerPage.set(2);
     } else {
-      this.visibleCards.set(1);
+      this.itemsPerPage.set(1);
     }
 
-    if (this.currentIndex() > this.maxIndex()) {
-      this.currentIndex.set(this.maxIndex());
+    if (this.currentPage() >= this.totalPages()) {
+      this.currentPage.set(Math.max(0, this.totalPages() - 1));
     }
   }
 
@@ -978,7 +1013,7 @@ export class EventsComponent implements OnInit, OnDestroy {
       return;
     }
     this.autoPlayTimer = setInterval(() => {
-      if (!this.isPaused && !this.selectedEvent() && this.totalCards() > this.visibleCards() && this.viewMode() === 'grid') {
+      if (!this.isPaused && !this.selectedEvent() && this.totalPages() > 1 && this.viewMode() === 'grid') {
         this.next();
       }
     }, 6000);
@@ -1000,23 +1035,20 @@ export class EventsComponent implements OnInit, OnDestroy {
   }
 
   next() {
-    const nextIdx = this.currentIndex() >= this.maxIndex() ? 0 : this.currentIndex() + 1;
-    this.scrollToIndex(nextIdx);
+    if (this.totalPages() <= 1) return;
+    const nextIdx = (this.currentPage() + 1) % this.totalPages();
+    this.currentPage.set(nextIdx);
   }
 
   prev() {
-    const prevIdx = this.currentIndex() <= 0 ? this.maxIndex() : this.currentIndex() - 1;
-    this.scrollToIndex(prevIdx);
+    if (this.totalPages() <= 1) return;
+    const prevIdx = (this.currentPage() - 1 + this.totalPages()) % this.totalPages();
+    this.currentPage.set(prevIdx);
   }
 
-  scrollToIndex(index: number) {
-    this.currentIndex.set(index);
-    if (!this.carouselContainer?.nativeElement) return;
-    const container = this.carouselContainer.nativeElement;
-    const card = container.querySelector(`[data-index="${index}"]`) as HTMLElement;
-    if (card) {
-      const offset = card.offsetLeft - container.offsetLeft;
-      container.scrollTo({ left: offset, behavior: 'smooth' });
+  goToPage(page: number) {
+    if (page >= 0 && page < this.totalPages()) {
+      this.currentPage.set(page);
     }
   }
 

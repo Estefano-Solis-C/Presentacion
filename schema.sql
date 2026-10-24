@@ -136,7 +136,7 @@ INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_ur
     TRUE,
     'fb_post_2026_inicio',
     'https://www.facebook.com/doramayer.dezulen',
-    '["/images/posts/inicio_clases.jpg", "/images/banners/foto_primaria_1.jpeg"]'
+    '["/images/posts/inicio_clases.jpg", "/images/banners/foto_primaria_3.jpg"]'
 ),
 (
     2,
@@ -166,7 +166,7 @@ INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_ur
     TRUE,
     'fb_post_2026_patrias',
     'https://www.facebook.com/doramayer.dezulen',
-    '["/images/posts/fiestas_patrias.jpg", "/images/banners/foto_primaria_1.jpeg", "/images/banners/foto_secundaria_3.jpeg"]'
+    '["/images/posts/fiestas_patrias.jpg", "/images/foto_secundaria.jpeg"]'
 ),
 (
     4,
@@ -191,12 +191,12 @@ INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_ur
     2025,
     'Rendimos merecido homenaje al esfuerzo, perseverancia y excelencia académica de nuestros alumnos mayerinos de los tres niveles.',
     'Con profunda satisfacción y orgullo mayerino, nuestra comunidad educativa celebró la Ceremonia de Clausura del Año Escolar 2025 en el patio de honor de nuestra sede institucional de Ricardo Bentín 749, Rímac.\n\nFelicitamos a los alumnos que alcanzaron los primeros puestos y a la Promoción de Secundaria por culminar con éxito su etapa escolar inspirados en el lema de Estudio, Trabajo y Amistad.',
-    '/images/banners/foto_secundaria_1.jpeg',
+    '/images/alumno_destacado.png',
     FALSE,
     TRUE,
     'fb_post_2025_12',
     'https://www.facebook.com/doramayer.dezulen',
-    '["/images/banners/foto_secundaria_1.jpeg", "/images/banners/foto_secundaria_2.jpeg"]'
+    '["/images/alumno_destacado.png", "/images/banners/foto_secundaria_2.jpeg"]'
 ),
 (
     6,
@@ -206,12 +206,12 @@ INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_ur
     2025,
     'Nuestros estudiantes de Primaria y Secundaria demostraron sus proyectos de investigación, robótica lúdica y experimentos en aula.',
     'La ciencia y el aprendizaje práctico cobraron vida en nuestra Feria Escolar de Ciencias 2025. Los alumnos expusieron proyectos desarrollados junto a sus docentes en el laboratorio del colegio, promoviendo el pensamiento crítico, la oratoria y la resolución de problemas reales.',
-    '/images/banners/foto_secundaria_3.jpeg',
+    '/images/estudiante_lab.png',
     FALSE,
     TRUE,
     'fb_post_2025_09',
     'https://www.facebook.com/doramayer.dezulen',
-    '["/images/banners/foto_secundaria_3.jpeg", "/images/banners/foto_secundaria_1.jpeg"]'
+    '["/images/estudiante_lab.png", "/images/banners/foto_secundaria_1.jpeg"]'
 ),
 (
     7,
@@ -241,7 +241,7 @@ INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_ur
     TRUE,
     'fb_post_2024_07',
     'https://www.facebook.com/doramayer.dezulen',
-    '["/images/posts/fiestas_patrias.jpg", "/images/banners/foto_secundaria_3.jpeg"]'
+    '["/images/posts/fiestas_patrias.jpg", "/images/amistad.png"]'
 ),
 (
     9,
@@ -251,12 +251,12 @@ INSERT INTO events (id, titulo, tipo, fecha, anio, resumen, contenido, imagen_ur
     2023,
     'Taller formativo para familias sobre normas de convivencia positiva, acompañamiento emocional y hábitos de estudio en casa.',
     'Con gran concurrencia se realizó la Escuela para Padres 2023 a cargo de nuestro departamento de Psicología. Agradecemos la activa participación de los padres de familia mayerinos en el fortalecimiento de la alianza hogar-escuela.',
-    '/images/banners/foto_inicial_2.jpeg',
+    '/images/atencion_psicologica.jpeg',
     FALSE,
     TRUE,
     'fb_post_2023_05',
     'https://www.facebook.com/doramayer.dezulen',
-    '["/images/banners/foto_inicial_2.jpeg", "/images/banners/foto_inicial_1.jpeg"]'
+    '["/images/atencion_psicologica.jpeg", "/images/banners/foto_inicial_1.jpeg"]'
 )
 ON DUPLICATE KEY UPDATE titulo = VALUES(titulo), tipo = VALUES(tipo), fecha = VALUES(fecha), anio = VALUES(anio), resumen = VALUES(resumen), contenido = VALUES(contenido), imagen_url = VALUES(imagen_url), destacado = VALUES(destacado), facebook_permalink = VALUES(facebook_permalink), imagenes = VALUES(imagenes);
 

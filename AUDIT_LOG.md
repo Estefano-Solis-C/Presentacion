@@ -1021,3 +1021,45 @@ ivelSeleccionado, dynamic grade options, and flexible contact validator.
     - `phase18_lightbox_zoom_enlarged.png`
     - `phase18_fiestas_patrias_photo2_loaded.png`
 - **Status:** **VERIFIED & COMPLETE**
+
+### Step 19.0: Smooth Multi-Image Rotation, Zero-Cutoff Page Carousel Grid, High-Contrast Lightbox Bar, and Facebook Thematic Authenticity
+- **User Intent / Trigger:**
+  - Card multi-image auto-rotation was jumping abruptly (`[src]` replacement). User requested a smooth rotating transition ("que se vea como gira como una rotacion no un cambio brusco").
+  - Last visible card in desktop carousels had an awkward fraction peeking or clipping outside the right frame boundary.
+  - Fullscreen Lightbox Zoom header title had poor contrast/legibility.
+  - Database images for events were generic (e.g. Clausura and Danzas showing students drawing with colored pencils) rather than authentic school ceremonies and activities matching real Facebook posts.
+- **Sequential Thinking Protocol:**
+  - `[THOUGHT]`: Single `<img>` elements with dynamic `[src]` cannot animate crossfades or slide transitions because the browser swaps the raster buffer instantaneously. To achieve a smooth sliding rotation reel, all images must be rendered absolutely and transitioned using CSS classes (`translate-x-0 opacity-100 z-10` for active, `-translate-x-full opacity-0 z-0` for exiting, `translate-x-full opacity-0 z-0` for incoming) with `transition-all duration-700 ease-in-out`.
+  - `[HYPOTHESIS]`: Replacing the `flex space-x-6 overflow-x-auto` container with the page-based grid layout proven in `TestimonialsComponent` (`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6` with `translateX(-currentPage * 100%)`) eliminates arbitrary scroll-offset rounding errors, ensures exactly 3 cards take 100% of the container with 0px overflow or cut-off on desktop, and binds navigation dots 1:1 to pages (`totalPages() = 3`).
+  - `[LIGHTBOX ENHANCEMENT]`: Designing a dedicated protective pill container (`bg-slate-950/85 backdrop-blur-md px-4 py-2 rounded-xl border border-white/15 shadow-2xl`) with crisp bold white title, `#FBB600` official badge, and circular close button guarantees legibility regardless of image brightness or screen size.
+  - `[THEMATIC MATCHING]`: Applying Flyway migration `V7__fix_event_thematic_images.sql` maps authentic photos to real Facebook events:
+    - Clausura 2025: `/images/alumno_destacado.png` (honor student with diploma/medal) + `/images/banners/foto_secundaria_2.jpeg` (formal discipline assembly).
+    - Feria de Ciencias 2025: `/images/estudiante_lab.png` (science laboratory) + `/images/banners/foto_secundaria_1.jpeg` (active methodology).
+    - Festival de Danzas 2024: `/images/posts/fiestas_patrias.jpg` + `/images/amistad.png` (traditional dances & joyful student fraternity).
+    - Escuela para Padres 2023: `/images/atencion_psicologica.jpeg` + `/images/banners/foto_inicial_1.jpeg` (school psychology & family orientation).
+  - `[VERIFICATION PLAN]`: Automated Edge CDP script (`scratch/verify_phase19_cards_and_rotation.js`):
+    1. Verify Page 1 has 3 complete cards with `isWithinOuter: true` and 0px cut off.
+    2. Verify clicking `>` slides to Page 2 with 3 complete cards with `isWithinOuter: true`.
+    3. Verify multi-image cards execute smooth reel translation classes.
+    4. Verify Lightbox Zoom header opens with dark protective pill, white title text, gold badge, and close button.
+- **Files Modified / Created:**
+  - `backend/src/main/resources/db/migration/V7__fix_event_thematic_images.sql`: Created and applied migration to MySQL database.
+  - `schema.sql`: Updated seed rows with authentic thematic photos for all 9 publications.
+  - `frontend/src/app/components/events/events.component.ts`:
+    - Replaced flex overflow container with page-based grid system (`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6` with `translateX(-currentPage * 100%)`).
+    - Implemented multi-image sliding reel rotation (`getCardImageClass(evento, imgIdx)`).
+    - Replaced Lightbox header with high-contrast protective dark pill.
+  - `frontend/src/app/components/latest-announcement-modal/latest-announcement-modal.component.ts`:
+    - Replaced Lightbox header with high-contrast protective dark pill.
+  - `scratch/verify_phase19_cards_and_rotation.js`: Automated Edge CDP test suite.
+- **Verification/Test Command Executed & Result:**
+  - Edge CDP Automation (`scratch/verify_phase19_cards_and_rotation.js`):
+    - Page 1 Geometry: `outerWidth: 1152px`, `cards: 3`, each `width: 365px`, `isWithinOuter: true` for all 3 cards, `dotsCount: 3`.
+    - Page 2 Navigation: `cards: 3`, each `width: 365px`, `isWithinOuter: true` for all 3 cards.
+    - Card Image Reel Classes: Outgoing image transitions to `-translate-x-full opacity-0 z-0`, incoming transitions to `translate-x-0 opacity-100 z-10` with `duration-700 ease-in-out transition-all`.
+    - Lightbox Zoom Header: `hasPillContainer: true`, `badgeText: "FOTO OFICIAL"`, `titleText: "Ceremonia de Clausura y Premiación del Año Escolar 2025"` in white bold text, `hasCloseButton: true`.
+  - Artifact Screenshots Generated:
+    - `phase19_carousel_page1_desktop.png`
+    - `phase19_carousel_page2_desktop.png`
+    - `phase19_lightbox_high_contrast.png`
+- **Status:** **VERIFIED & COMPLETE**

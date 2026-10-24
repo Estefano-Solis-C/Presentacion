@@ -185,24 +185,28 @@ import { OutlineIconComponent } from '../icon/outline-icon.component';
               class="relative max-w-5xl w-full max-h-[92vh] flex flex-col items-center justify-center"
               (click)="$event.stopPropagation()"
             >
-              <!-- Cabecera del Lightbox -->
-              <div class="w-full flex items-center justify-between pb-3 text-white">
-                <div class="flex items-center gap-2 text-xs sm:text-sm font-sans">
-                  <span class="font-bold text-[#FBB600]">
+              <!-- Cabecera del Lightbox con Cápsula Protectora de Alto Contraste -->
+              <div class="w-full flex items-center justify-between pb-3">
+                <div class="flex items-center gap-2.5 max-w-[85%] bg-slate-950/85 backdrop-blur-md px-4 py-2 rounded-xl border border-white/15 shadow-2xl">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#FBB600] text-slate-950 text-[10px] font-bold uppercase tracking-wider shrink-0 shadow-xs">
+                    <app-icon name="sparkles" [size]="10"></app-icon>
+                    Foto Oficial
+                  </span>
+                  <span class="font-bold text-white text-xs sm:text-sm truncate font-serif">
                     {{ announcement()!.titulo }}
                   </span>
                   @if (activeImages().length > 1) {
-                    <span class="text-white/60">· Foto {{ activeImageIndex() + 1 }} de {{ activeImages().length }}</span>
+                    <span class="text-white/70 text-xs shrink-0 font-medium font-sans">· {{ activeImageIndex() + 1 }}/{{ activeImages().length }}</span>
                   }
                 </div>
 
                 <button
                   type="button"
                   (click)="closeLightbox()"
-                  class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer flex items-center justify-center"
+                  class="w-9 h-9 rounded-full bg-slate-950/85 hover:bg-white hover:text-slate-950 text-white transition-all cursor-pointer flex items-center justify-center border border-white/20 shadow-2xl shrink-0 ml-2"
                   aria-label="Cerrar ampliación"
                 >
-                  <app-icon name="close" [size]="22"></app-icon>
+                  <app-icon name="close" [size]="20"></app-icon>
                 </button>
               </div>
 
