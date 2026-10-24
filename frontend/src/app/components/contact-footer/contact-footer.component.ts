@@ -80,7 +80,7 @@ import { ContactSubmission, ReclamoSubmission } from '../../models/portal.models
             </div>
 
             <!-- Mapa Embebido Seguro con Marco Arquitectónico -->
-            <div class="rounded-sm border border-[#0F296B]/15 shadow-card-soft aspect-video bg-slate-100 overflow-hidden">
+            <div class="rounded-sm border border-[#0F296B]/15 shadow-card-soft aspect-video bg-slate-100 overflow-hidden relative">
               <iframe
                 title="Ubicación I.E.P. Dora Mayer de Zulen Rímac"
                 src="https://maps.google.com/maps?q=Calle%20Ricardo%20Bentin%20749,%20Rimac,%20Lima&t=&z=16&ie=UTF8&iwloc=&output=embed"
@@ -88,6 +88,30 @@ import { ContactSubmission, ReclamoSubmission } from '../../models/portal.models
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"
               ></iframe>
+            </div>
+
+            <!-- Accesos Directos a GPS Móvil (Google Maps y Waze) -->
+            <div class="grid grid-cols-2 gap-2 pt-1">
+              <a
+                href="https://maps.google.com/?q=Calle+Ricardo+Bentin+749,+Rimac,+Lima"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="px-3 py-2 bg-white hover:bg-slate-50 border border-slate-300 rounded text-center text-[11px] font-bold text-[#0F296B] flex items-center justify-center gap-1.5 shadow-2xs hover:border-[#254EB6] transition-colors"
+                title="Abrir ubicación en Google Maps"
+              >
+                <app-icon name="map-pin" [size]="14" className="text-[#254EB6]"></app-icon>
+                <span>Google Maps</span>
+              </a>
+              <a
+                href="https://www.waze.com/ul?q=Calle+Ricardo+Bentin+749+Rimac"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="px-3 py-2 bg-white hover:bg-slate-50 border border-slate-300 rounded text-center text-[11px] font-bold text-[#0F296B] flex items-center justify-center gap-1.5 shadow-2xs hover:border-[#254EB6] transition-colors"
+                title="Cómo llegar con Waze"
+              >
+                <app-icon name="map-pin" [size]="14" className="text-emerald-600"></app-icon>
+                <span>Ruta en Waze</span>
+              </a>
             </div>
           </div>
 

@@ -359,21 +359,21 @@ import { EventModel } from '../../models/portal.models';
                   </div>
 
                   <!-- Botones de Acción -->
-                  <div class="flex items-center gap-2 shrink-0 self-end sm:self-center w-full sm:w-auto justify-end">
+                  <div class="flex items-center gap-2.5 shrink-0 self-end sm:self-center w-full sm:w-auto justify-end">
                     @if (evento.facebookPermalink) {
                       <a
                         [href]="evento.facebookPermalink"
                         (click)="$event.stopPropagation()"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="p-2 text-[#254EB6] hover:bg-blue-50 rounded border border-blue-200 transition-colors"
-                        title="Ver en Facebook"
+                        class="w-10 h-10 inline-flex items-center justify-center text-[#254EB6] hover:text-[#0F296B] hover:bg-blue-50 rounded-md border border-blue-200 shadow-2xs transition-all shrink-0 cursor-pointer"
+                        title="Ver publicación oficial en Facebook"
                       >
-                        <app-icon name="facebook" [size]="16"></app-icon>
+                        <app-icon name="facebook" [size]="18" className="flex items-center justify-center"></app-icon>
                       </a>
                     }
                     <span
-                      class="px-4 py-2 bg-[#254EB6] group-hover:bg-[#0F296B] text-white rounded font-sans font-bold uppercase text-xs transition flex items-center gap-1.5"
+                      class="px-4 py-2.5 bg-[#254EB6] group-hover:bg-[#0F296B] text-white rounded-md font-sans font-bold uppercase text-xs transition flex items-center gap-1.5 shadow-2xs"
                     >
                       <span>Leer completo</span>
                       <app-icon name="arrow-right" [size]="13"></app-icon>
@@ -921,8 +921,8 @@ export class EventsComponent implements OnInit, OnDestroy {
 
   onImgError(event: Event) {
     const target = event.target as HTMLImageElement;
-    if (target && !target.src.includes('banner_001.jpg')) {
-      target.src = '/images/banners/banner_001.jpg';
+    if (target && !target.src.includes('placeholder_evento.svg')) {
+      target.src = '/images/placeholder_evento.svg';
     }
   }
 

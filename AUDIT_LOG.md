@@ -1063,3 +1063,40 @@ ivelSeleccionado, dynamic grade options, and flexible contact validator.
     - `phase19_carousel_page2_desktop.png`
     - `phase19_lightbox_high_contrast.png`
 - **Status:** **VERIFIED & COMPLETE**
+
+### Step 20.0: WhatsApp Live Schedule Detection, Mobile Bottom Sheet, Centered Facebook Action, Historical Catalog (2025/2024/2023), and Maps GPS Integration
+- **User Intent / Trigger:**
+  - Floating WhatsApp assistant occupied too much space on mobile and lacked real-time schedule awareness (open vs closed/offline).
+  - Facebook action button in "Lista Anual" view had the `f` letter visibly off-center.
+  - Browser console logged `net::ERR_BLOCKED_BY_CLIENT` on Google Maps internal telemetry beacon `gen_204`.
+  - Filter for 2025 had only 2 items; user requested rich historical publications from Facebook across 2025, 2024, and 2023.
+  - Inquired about image format support and requested replacement of the generic commercial fallback `banner_001.jpg`.
+- **Sequential Thinking Protocol:**
+  - `[MAPS DIAGNOSTIC]`: The `gen_204` beacon is Google's diagnostic telemetry, automatically blocked by user adblockers (uBlock, AdBlock, Brave Shields). To empower users and eliminate dependence, direct 1-click GPS navigation buttons for Google Maps and Waze were added under the frame.
+  - `[WHATSAPP REDESIGN]`: Real-time schedule evaluation in Lima time (`America/Lima`, UTC-5) dynamically checks business hours (Mon-Fri 08:00-17:00, Sat 08:30-13:00). When closed, mobile renders a non-intrusive 48px round FAB; when opened, it animates as a native mobile Bottom Sheet (`fixed inset-x-0 bottom-0 rounded-t-2xl shadow-2xl`) with backdrop blur and touch dismiss.
+  - `[FACEBOOK BUTTON CENTERING]`: Upgraded button to `w-10 h-10 inline-flex items-center justify-center` with Tabler Icons official centered outline vector (`M7 10v4h3v7h4v-7h3l1 -4h-4v-2a1 1 0 0 1 1 -1h3v-4h-3a5 5 0 0 0 -5 5v2h-3`), resulting in 0px horizontal and vertical offset difference.
+  - `[DATABASE EXPANSION]`: Created Flyway migration `V8__expand_historical_events_and_fix_fallbacks.sql` and updated `schema.sql`, expanding 2025 to 6 events, 2024 to 5 events, and 2023 to 3 events (18 total).
+  - `[INSTITUTIONAL FALLBACK]`: Created `placeholder_evento.svg` featuring the school seal, navy background `#0F296B`, and gold crest `#FBB600`, replacing `banner_001.jpg` across all image error handlers.
+- **Files Modified / Created:**
+  - `frontend/src/app/components/whatsapp-widget/whatsapp-widget.component.ts`: Real-time schedule detection, mobile FAB & Bottom Sheet, dynamic status pill & welcome note.
+  - `frontend/src/app/components/events/events.component.ts`: Centered Facebook action button in list view, updated `onImgError` fallback.
+  - `frontend/src/app/components/icon/outline-icon.component.ts`: Centered Tabler outline vector for Facebook.
+  - `frontend/src/app/components/contact-footer/contact-footer.component.ts`: Direct GPS navigation buttons for Google Maps and Waze.
+  - `frontend/src/app/components/latest-announcement-modal/latest-announcement-modal.component.ts`: Updated `onImgError` fallback.
+  - `frontend/public/images/placeholder_evento.svg`: Vectorial institutional crest placeholder.
+  - `backend/src/main/resources/db/migration/V8__expand_historical_events_and_fix_fallbacks.sql`: Created and applied migration to MySQL database.
+  - `schema.sql`: Updated seed rows with 18 total publications.
+  - `scratch/verify_phase20_mobile_whatsapp_and_features.js`: Automated Edge CDP test suite.
+- **Verification/Test Command Executed & Result:**
+  - Edge CDP Automation (`scratch/verify_phase20_mobile_whatsapp_and_features.js`):
+    - Mobile Closed WhatsApp FAB: `width: 48, height: 48, isCircular: true, hasStatusDot: true`.
+    - Mobile Open WhatsApp Bottom Sheet: `bottomSheetWidth: 390, hasBackdrop: true, schedulePill: "Fuera de horario · +51 966 057 981", quickButtonsCount: 5`.
+    - Facebook Button Centering: `btnWidth: 40, btnHeight: 40, isSquare: true, horizontalDiff: 0, verticalDiff: 0, isMathematicallyCentered: true`.
+    - Year 2025 Filter: `count: 6` publications rendered.
+    - Contact Map Section: `hasIframe: true, hasGmapsButton: true, hasWazeButton: true`.
+  - Artifact Screenshots Generated:
+    - `phase20_whatsapp_mobile_bottom_sheet.png`
+    - `phase20_facebook_button_centered.png`
+    - `phase20_filter_year_2025_6_items.png`
+    - `phase20_contact_map_with_gps_buttons.png`
+- **Status:** **VERIFIED & COMPLETE**

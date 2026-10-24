@@ -409,8 +409,8 @@ export class LatestAnnouncementModalComponent implements OnInit, OnDestroy {
 
   onImgError(event: Event): void {
     const target = event.target as HTMLImageElement;
-    if (target && !target.src.includes('banner_001.jpg')) {
-      target.src = '/images/banners/banner_001.jpg';
+    if (target && !target.src.includes('placeholder_evento.svg')) {
+      target.src = '/images/placeholder_evento.svg';
     }
   }
 
