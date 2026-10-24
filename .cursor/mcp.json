@@ -1,7 +1,6 @@
 {
-  "servers": {
+  "mcpServers": {
     "render": {
-      "type": "http",
       "url": "https://mcp.render.com/mcp"
     },
     "database": {
@@ -9,10 +8,10 @@
       "args": [
         "-y",
         "@bytebase/mysql-mcp-server",
-        "--host", "gateway01.us-west-2.prod.aws.tidbcloud.com",
-        "--port", "4000",
-        "--user", "3ZmUQEc3F4u42vV.root",
-        "--password", "DoraMayer2026!TiDB",
+        "--host", "127.0.0.1",
+        "--port", "3306",
+        "--user", "root",
+        "--password", "mayerino1957",
         "--database", "doramayer"
       ]
     }

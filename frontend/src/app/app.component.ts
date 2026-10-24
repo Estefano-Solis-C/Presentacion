@@ -9,6 +9,7 @@ import { TestimonialsComponent } from './components/testimonials/testimonials.co
 import { EventsComponent } from './components/events/events.component';
 import { ContactFooterComponent } from './components/contact-footer/contact-footer.component';
 import { WhatsappWidgetComponent } from './components/whatsapp-widget/whatsapp-widget.component';
+import { LatestAnnouncementModalComponent } from './components/latest-announcement-modal/latest-announcement-modal.component';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +24,8 @@ import { WhatsappWidgetComponent } from './components/whatsapp-widget/whatsapp-w
     TestimonialsComponent,
     EventsComponent,
     ContactFooterComponent,
-    WhatsappWidgetComponent
+    WhatsappWidgetComponent,
+    LatestAnnouncementModalComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -82,6 +84,9 @@ import { WhatsappWidgetComponent } from './components/whatsapp-widget/whatsapp-w
 
       <!-- Asistente Flotante de WhatsApp -->
       <app-whatsapp-widget></app-whatsapp-widget>
+
+      <!-- Tarjeta Emergente con Marco Grueso del Último Comunicado Oficial (Facebook) -->
+      <app-latest-announcement-modal></app-latest-announcement-modal>
 
     </div>
   `

@@ -3,11 +3,14 @@ export interface EventModel {
   titulo: string;
   tipo: 'COMUNICADO' | 'EVENTO';
   fecha: string;
+  anio?: number;
   resumen: string;
   contenido: string;
   imagenUrl?: string;
   destacado: boolean;
   publicado: boolean;
+  facebookPostId?: string;
+  facebookPermalink?: string;
   createdAt?: string;
 }
 

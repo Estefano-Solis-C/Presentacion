@@ -19,14 +19,49 @@ public class EventApiController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Event>>> getLatestPublishedEvents(
-            @RequestParam(required = false) String tipo) {
+    public ResponseEntity<ApiResponse<List<Event>>> getPublishedEvents(
+            @RequestParam(required = false) String tipo,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false, defaultValue = "false") Boolean all) {
 
-        List<Event> events = (tipo != null && !tipo.isBlank() && !"TODOS".equalsIgnoreCase(tipo))
-                ? eventRepository.findTop5ByPublicadoTrueAndTipoIgnoreCaseOrderByFechaDesc(tipo)
-                : eventRepository.findTop5ByPublicadoTrueOrderByFechaDesc();
+        boolean hasTipo = (tipo != null && !tipo.isBlank() && !"TODOS".equalsIgnoreCase(tipo));
+        List<Event> events;
+
+        if (year != null) {
+            events = hasTipo
+                    ? eventRepository.findByAnioAndTipoIgnoreCaseAndPublicadoTrueOrderByFechaDesc(year, tipo)
+                    : eventRepository.findByAnioAndPublicadoTrueOrderByFechaDesc(year);
+        } else if (Boolean.TRUE.equals(all)) {
+            events = hasTipo
+                    ? eventRepository.findByPublicadoTrueAndTipoIgnoreCaseOrderByFechaDesc(tipo)
+                    : eventRepository.findByPublicadoTrueOrderByFechaDesc();
+        } else {
+            events = hasTipo
+                    ? eventRepository.findTop5ByPublicadoTrueAndTipoIgnoreCaseOrderByFechaDesc(tipo)
+                    : eventRepository.findTop5ByPublicadoTrueOrderByFechaDesc();
+        }
 
         return ResponseEntity.ok(ApiResponse.ok("Eventos obtenidos exitosamente", events));
+    }
+
+    @GetMapping("/latest")
+    public ResponseEntity<ApiResponse<Event>> getLatestAnnouncement(
+            @RequestParam(required = false, defaultValue = "COMUNICADO") String tipo) {
+
+        Event event = eventRepository.findFirstByPublicadoTrueAndTipoIgnoreCaseOrderByFechaDesc(tipo)
+                .or(() -> eventRepository.findFirstByPublicadoTrueOrderByFechaDesc())
+                .orElse(null);
+
+        if (event == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(ApiResponse.ok("Último comunicado obtenido", event));
+    }
+
+    @GetMapping("/years")
+    public ResponseEntity<ApiResponse<List<Integer>>> getAvailableYears() {
+        List<Integer> years = eventRepository.findDistinctYears();
+        return ResponseEntity.ok(ApiResponse.ok("Años disponibles obtenidos", years));
     }
 
     @GetMapping("/{id}")

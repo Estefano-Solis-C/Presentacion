@@ -22,16 +22,49 @@ export class PortalApiService {
   errorMessage = signal<string | null>(null);
 
   /**
-   * Obtiene los últimos 5 comunicados y eventos públicos (orden fecha DESC).
+   * Obtiene los comunicados y eventos públicos filtrados opcionalmente por tipo, año o todos.
    */
-  getEvents(tipo?: string): Observable<EventModel[]> {
-    const url = tipo && tipo !== 'TODOS'
-      ? `${this.baseUrl}/events?tipo=${encodeURIComponent(tipo)}`
-      : `${this.baseUrl}/events`;
+  getEvents(tipo?: string, year?: number, all?: boolean): Observable<EventModel[]> {
+    const params = new URLSearchParams();
+    if (tipo && tipo !== 'TODOS') {
+      params.append('tipo', tipo);
+    }
+    if (year) {
+      params.append('year', year.toString());
+    }
+    if (all) {
+      params.append('all', 'true');
+    }
+
+    const queryString = params.toString();
+    const url = queryString ? `${this.baseUrl}/events?${queryString}` : `${this.baseUrl}/events`;
 
     return this.http.get<ApiResponse<EventModel[]>>(url).pipe(
       map(res => res.data),
-      catchError(() => of(this.getFallbackEvents()))
+      catchError(() => of(this.getFallbackEvents(tipo, year)))
+    );
+  }
+
+  /**
+   * Obtiene el último comunicado oficial publicado (para la tarjeta de entrada en primer plano).
+   */
+  getLatestAnnouncement(): Observable<EventModel | null> {
+    return this.http.get<ApiResponse<EventModel>>(`${this.baseUrl}/events/latest?tipo=COMUNICADO`).pipe(
+      map(res => res.data),
+      catchError(() => {
+        const fallbacks = this.getFallbackEvents();
+        return of(fallbacks.find(e => e.id === 4) || fallbacks[0] || null);
+      })
+    );
+  }
+
+  /**
+   * Obtiene la lista de años disponibles con publicaciones en base de datos.
+   */
+  getEventYears(): Observable<number[]> {
+    return this.http.get<ApiResponse<number[]>>(`${this.baseUrl}/events/years`).pipe(
+      map(res => res.data),
+      catchError(() => of([2026, 2025, 2024, 2023]))
     );
   }
 
@@ -181,42 +214,135 @@ export class PortalApiService {
     };
   }
 
-  private getFallbackEvents(): EventModel[] {
-    return [
+  private getFallbackEvents(tipo?: string, year?: number): EventModel[] {
+    const all: EventModel[] = [
+      {
+        id: 4,
+        titulo: 'Proceso de Admisión y Matrícula 2026: Vacantes Disponibles',
+        tipo: 'COMUNICADO',
+        fecha: '2026-03-05',
+        anio: 2026,
+        resumen: 'La Dirección y Secretaría informa a la comunidad mayerina el cronograma de matrícula 2026 y recepción de postulaciones para Inicial, Primaria y Secundaria.',
+        contenido: 'Estimados padres de familia y comunidad mayerina:\n\nLes comunicamos que se encuentra abierto el proceso de admisión y ratificación de matrícula para el año lectivo 2026. Los invitamos a comunicarse a nuestra secretaría escolar o solicitar información mediante nuestro portal oficial.\n\nRecordamos que contamos con vacantes limitadas por aula para garantizar la atención pedagógica personalizada y el desarrollo de tareas dirigidas en aula.',
+        imagenUrl: '/images/banners/banner_001.jpg',
+        destacado: true,
+        publicado: true,
+        facebookPermalink: 'https://www.facebook.com/doramayer.dezulen'
+      },
       {
         id: 1,
         titulo: 'Inicio de Clases',
         tipo: 'COMUNICADO',
         fecha: '2026-03-01',
+        anio: 2026,
         resumen: 'Es el reencuentro de maestros, alumnos y comunidad educativa.',
         contenido: 'Damos la más cordial bienvenida a nuestros estudiantes para dar inicio al año escolar en los niveles de Inicial, Primaria y Secundaria, reafirmando nuestro compromiso con la formación académica y moral en nuestras aulas del Rímac.',
         imagenUrl: '/images/posts/inicio_clases.jpg',
         destacado: true,
-        publicado: true
+        publicado: true,
+        facebookPermalink: 'https://www.facebook.com/doramayer.dezulen'
       },
       {
         id: 2,
-        titulo: 'Día de la Madre',
+        titulo: 'Día de la Madre Mayerina',
         tipo: 'EVENTO',
         fecha: '2026-05-10',
+        anio: 2026,
         resumen: 'Rendimos un justo homenaje a la madre Mayerina por su abnegada labor.',
         contenido: 'Nuestra comunidad educativa celebra con fervor y gratitud a todas las madres de familia mayerinas en su día, reconociendo su dedicación incansable y amor en la formación de sus hijos.',
         imagenUrl: '/images/posts/dia_madre.jpg',
         destacado: true,
-        publicado: true
+        publicado: true,
+        facebookPermalink: 'https://www.facebook.com/doramayer.dezulen'
       },
       {
         id: 3,
         titulo: 'Fiestas Patrias',
         tipo: 'EVENTO',
         fecha: '2026-07-28',
+        anio: 2026,
         resumen: 'Celebramos nuestro aniversario patrio con estampas folklóricas.',
         contenido: 'Conmemoramos las Fiestas Patrias del Perú con presentaciones cívicas, números artísticos y estampas de danzas folklóricas preparadas con entusiasmo por nuestros alumnos.',
         imagenUrl: '/images/posts/fiestas_patrias.jpg',
         destacado: false,
-        publicado: true
+        publicado: true,
+        facebookPermalink: 'https://www.facebook.com/doramayer.dezulen'
+      },
+      {
+        id: 5,
+        titulo: 'Ceremonia de Clausura y Premiación del Año Escolar 2025',
+        tipo: 'EVENTO',
+        fecha: '2025-12-19',
+        anio: 2025,
+        resumen: 'Rendimos merecido homenaje al esfuerzo, perseverancia y excelencia académica de nuestros alumnos mayerinos de los tres niveles.',
+        contenido: 'Con profunda satisfacción y orgullo mayerino, nuestra comunidad educativa celebró la Ceremonia de Clausura del Año Escolar 2025 en el patio de honor de nuestra sede institucional de Ricardo Bentín 749, Rímac.\n\nFelicitamos a los alumnos que alcanzaron los primeros puestos y a la Promoción de Secundaria por culminar con éxito su etapa escolar inspirados en el lema de Estudio, Trabajo y Amistad.',
+        imagenUrl: '/images/banners/foto_secundaria_1.jpeg',
+        destacado: false,
+        publicado: true,
+        facebookPermalink: 'https://www.facebook.com/doramayer.dezulen'
+      },
+      {
+        id: 6,
+        titulo: 'Feria de Ciencias y Demostración de Método Activo 2025',
+        tipo: 'EVENTO',
+        fecha: '2025-09-24',
+        anio: 2025,
+        resumen: 'Nuestros estudiantes de Primaria y Secundaria demostraron sus proyectos de investigación, robótica lúdica y experimentos en aula.',
+        contenido: 'La ciencia y el aprendizaje práctico cobraron vida en nuestra Feria Escolar de Ciencias 2025. Los alumnos expusieron proyectos desarrollados junto a sus docentes en el laboratorio del colegio, promoviendo el pensamiento crítico, la oratoria y la resolución de problemas reales.',
+        imagenUrl: '/images/banners/foto_secundaria_3.jpeg',
+        destacado: false,
+        publicado: true,
+        facebookPermalink: 'https://www.facebook.com/doramayer.dezulen'
+      },
+      {
+        id: 7,
+        titulo: 'Bienvenido Año Escolar Mayerino 2024: Feliz Inicio de Clases',
+        tipo: 'COMUNICADO',
+        fecha: '2024-03-08',
+        anio: 2024,
+        resumen: '¡Feliz inicio de año escolar a toda la familia mayerina! Les abrimos las puertas con alegría y entusiasmo pedagógico.',
+        contenido: 'Damos la más afectuosa bienvenida a nuestros queridos estudiantes de Inicial, Primaria y Secundaria para dar inicio al Año Escolar 2024.\n\nNuestros maestros y directivos renuevan su compromiso de brindar una formación humana sólida, cálida y de alta calidad académica en el distrito del Rímac.',
+        imagenUrl: '/images/banners/foto_primaria_3.jpg',
+        destacado: false,
+        publicado: true,
+        facebookPermalink: 'https://www.facebook.com/doramayer.dezulen'
+      },
+      {
+        id: 8,
+        titulo: 'Festival de Danzas Folklóricas y Tradición Peruana 2024',
+        tipo: 'EVENTO',
+        fecha: '2024-07-20',
+        anio: 2024,
+        resumen: 'Color, música y patriotismo: estampas costumbristas presentadas por nuestros estudiantes en homenaje al Perú.',
+        contenido: 'Nuestros alumnos de Inicial, Primaria y Secundaria deslumbraron con su talento y gracia artística en el Festival de Danzas 2024, revalorando nuestra identidad cultural y tradiciones peruanas en el marco de las Fiestas Patrias.',
+        imagenUrl: '/images/posts/fiestas_patrias.jpg',
+        destacado: false,
+        publicado: true,
+        facebookPermalink: 'https://www.facebook.com/doramayer.dezulen'
+      },
+      {
+        id: 9,
+        titulo: 'Jornada Psicopedagógica y Escuela para Padres 2023',
+        tipo: 'COMUNICADO',
+        fecha: '2023-05-18',
+        anio: 2023,
+        resumen: 'Taller formativo para familias sobre normas de convivencia positiva, acompañamiento emocional y hábitos de estudio en casa.',
+        contenido: 'Con gran concurrencia se realizó la Escuela para Padres 2023 a cargo de nuestro departamento de Psicología. Agradecemos la activa participación de los padres de familia mayerinos en el fortalecimiento de la alianza hogar-escuela.',
+        imagenUrl: '/images/banners/foto_inicial_2.jpeg',
+        destacado: false,
+        publicado: true,
+        facebookPermalink: 'https://www.facebook.com/doramayer.dezulen'
       }
     ];
+
+    let filtered = all;
+    if (tipo && tipo !== 'TODOS') {
+      filtered = filtered.filter(e => e.tipo === tipo);
+    }
+    if (year) {
+      filtered = filtered.filter(e => e.anio === year);
+    }
+    return filtered;
   }
 
   private getFallbackTestimonials(): TestimonialModel[] {

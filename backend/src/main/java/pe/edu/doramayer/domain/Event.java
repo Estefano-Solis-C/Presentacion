@@ -39,6 +39,15 @@ public class Event {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(name = "facebook_post_id", length = 100)
+    private String facebookPostId;
+
+    @Column(name = "facebook_permalink", length = 350)
+    private String facebookPermalink;
+
+    @Column(name = "anio", nullable = false)
+    private Integer anio = 2026;
+
     public Event() {}
 
     public Long getId() { return id; }
@@ -70,4 +79,13 @@ public class Event {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public String getFacebookPostId() { return facebookPostId; }
+    public void setFacebookPostId(String facebookPostId) { this.facebookPostId = facebookPostId; }
+
+    public String getFacebookPermalink() { return facebookPermalink; }
+    public void setFacebookPermalink(String facebookPermalink) { this.facebookPermalink = facebookPermalink; }
+
+    public Integer getAnio() { return anio; }
+    public void setAnio(Integer anio) { this.anio = anio; }
 }

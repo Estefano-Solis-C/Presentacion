@@ -599,9 +599,6 @@ eal_crop_events.png: Every news/event card now renders full photographic headers
   - CDP Verification Screenshot `phase12_final_testimonials.png`: Confirmed all quotes rendered in elegant italics (`font-style: italic`), cards fully aligned, 0 characters clipped.
 - **Status:** **VERIFIED & COMPLETE**
 
-
-
-
 ---
 
 ### Step 13.0: Full Functional Persistence, Spring Boot 3 API Endpoints, Accessible Modals, Indecopi Virtual Claims Book & GitHub Sychronization
@@ -676,6 +673,58 @@ umberScrollWidth: 66px, hasOverflow: false (zero overflow).
     - High-resolution visual captures: phase14_counters_redesign.png and phase14_founders_redesign.png.
 - **Status:** **VERIFIED & COMPLETE**
 
+## Step 16.0: Facebook Announcements Sync, Entrance Thick-Border Card, Yearly Archive List View, and API Integration
+- **Timestamp:** 2026-10-24T01:57:00-05:00
+- **Task Summary:**
+  1. Addressed user requirements regarding Facebook integration (`https://www.facebook.com/doramayer.dezulen`), Meta Graph API analysis ($0.00 / free tier), and persistence of historical announcements (2026, 2025, 2024, 2023).
+  2. Implemented the Entrance Announcement Modal (`app-latest-announcement-modal`) featuring:
+     - Prominent thick border (`border-4 border-[#0F296B]`) with outer accent ring (`ring-4 ring-[#FBB600]/40`) and institutional header gradient ribbon.
+     - Live badges: `[ ● ÚLTIMO COMUNICADO OFICIAL ]` with pulsing gold dot and `[ Facebook Oficial ]`.
+     - Explicit publication date formatted with full year (e.g., `Publicado el 5 de Marzo de 2026`).
+     - Real banner/post photography (`/images/banners/banner_001.jpg`), quotation box, and detailed body text.
+     - Direct CTA buttons: `[ Entendido / Continuar al portal ]` and `[ Ver publicación original en Facebook ↗ ]`.
+     - Non-intrusive `sessionStorage` management to display once per browsing session with accessible keyboard/ESC and backdrop dismissal.
+  3. Upgraded Events and Communications Section (`EventsComponent`):
+     - Dynamic historical year filter buttons: `[ Todos los años ] [ 2026 ] [ 2025 ] [ 2024 ] [ 2023 ]`.
+     - View mode toggle between **Carrusel (Cards)** and **Lista Anual (Historical Archive)**.
+     - List View with date block (day in large bold serif, month in small caps, year in institutional gold), thumbnail preview, category badge, Facebook badge, 2-line summary, and reading button.
+     - Read Modal with explicit date with year, full content, and direct Facebook post link.
+  4. Backend & Database:
+     - Migration `V4__add_facebook_fields_and_announcements.sql` adding `facebook_post_id`, `facebook_permalink`, `anio`, index `idx_events_anio`, and seeding 9 authentic communications and civic/academic events from 2026 to 2023.
+     - Updated JPA entity `Event`, `EventRepository` with queries for years, year filtering, and latest announcement.
+     - Controller `EventApiController` exposing `GET /api/events?year={anio}&all=true`, `GET /api/events/latest?tipo=COMUNICADO`, and `GET /api/events/years`.
+- **Files Modified / Created:**
+  - `backend/src/main/resources/db/migration/V4__add_facebook_fields_and_announcements.sql`: Schema migration and seed.
+  - `schema.sql`: Synced production schema with new columns and seeds.
+  - `backend/src/main/java/pe/edu/doramayer/domain/Event.java`: Added `facebookPostId`, `facebookPermalink`, `anio`.
+  - `backend/src/main/java/pe/edu/doramayer/repository/EventRepository.java`: Added methods `findFirstByPublicadoTrueAndTipoIgnoreCaseOrderByFechaDesc`, `findDistinctYears`, and yearly filters.
+  - `backend/src/main/java/pe/edu/doramayer/web/api/EventApiController.java`: Added `/latest`, `/years`, and year param.
+  - `frontend/src/app/models/portal.models.ts`: Added `anio`, `facebookPostId`, `facebookPermalink` to `EventModel`.
+  - `frontend/src/app/services/portal-api.service.ts`: Added `getLatestAnnouncement()`, `getEventYears()`, and updated fallback data.
+  - `frontend/src/app/components/latest-announcement-modal/latest-announcement-modal.component.ts`: New standalone component with thick institutional border, Facebook link, and responsive mobile layout.
+  - `frontend/src/app/components/events/events.component.ts`: Added yearly archive filter, list view mode, full year date formatting, and Facebook permalinks in modal.
+  - `frontend/src/app/app.component.ts`: Integrated `LatestAnnouncementModalComponent`.
+- **Verification/Test Command Executed & Result:**
+  - Database schema & rows verified via MySQL CLI: 9 publications across 2026, 2025, 2024, 2023 with permalinks.
+  - Backend compile & test: Maven 28 unit tests passing, `BUILD SUCCESS`.
+  - REST endpoints verified:
+    - `GET /health`: 200 OK (`status: UP`, `database: CONNECTED`).
+    - `GET /api/events/latest`: 200 OK (`id: 4`, "Proceso de Admisión y Matrícula 2026", `anio: 2026`, `facebookPermalink`).
+    - `GET /api/events/years`: 200 OK (`[2026, 2025, 2024, 2023]`).
+  - Edge CDP end-to-end automation (`scratch/run_cdp_verification.js`):
+    - Entrance Modal validated: `hasThickBorder: true`, Facebook CTA link present, dismissed cleanly.
+    - Events section carousel validated: 6 year filter buttons, 9 historical cards rendered.
+    - Switch to List Mode validated: list layout rendered with date blocks and thumbnails.
+    - Read modal validated: exact date with year (`28 de Julio de 2026`), Facebook link verified.
+    - Mobile 390x844 audit: modal fully responsive, non-transparent white card, stacked action buttons.
+  - Artifact screenshots verified:
+    - `phase16_entrance_modal_facebook.png`
+    - `phase16_events_carousel_years.png`
+    - `phase16_events_list_view.png`
+    - `phase16_events_read_modal_facebook.png`
+    - `phase16_mobile_entrance_modal.png`
+- **Status:** **VERIFIED & COMPLETE**
+
 ---
 
 ## Step 15.0: Editorial Enhancements, Reactive Level/Grade Sync, Auditable Excel Generation, and Visual Ergonomics
@@ -731,4 +780,56 @@ ivelSeleccionado, dynamic grade options, and flexible contact validator.
     - phase15_modal_inicial.png
     - phase15_testimonials_carousel.png
     - phase15_mobile_verified.png
+- **Status:** **VERIFIED & COMPLETE**
+
+## Step 16.0: Facebook Announcements Sync, Entrance Thick-Border Card, Yearly Archive List View, and API Integration
+- **Timestamp:** 2026-10-24T01:57:00-05:00
+- **Task Summary:**
+  1. Addressed user requirements regarding Facebook integration (`https://www.facebook.com/doramayer.dezulen`), Meta Graph API analysis ($0.00 / free tier), and persistence of historical announcements (2026, 2025, 2024, 2023).
+  2. Implemented the Entrance Announcement Modal (`app-latest-announcement-modal`) featuring:
+     - Prominent thick border (`border-4 border-[#0F296B]`) with outer accent ring (`ring-4 ring-[#FBB600]/40`) and institutional header gradient ribbon.
+     - Live badges: `[ ● ÚLTIMO COMUNICADO OFICIAL ]` with pulsing gold dot and `[ Facebook Oficial ]`.
+     - Explicit publication date formatted with full year (e.g., `Publicado el 5 de Marzo de 2026`).
+     - Real banner/post photography (`/images/banners/banner_001.jpg`), quotation box, and detailed body text.
+     - Direct CTA buttons: `[ Entendido / Continuar al portal ]` and `[ Ver publicación original en Facebook ↗ ]`.
+     - Non-intrusive `sessionStorage` management to display once per browsing session with accessible keyboard/ESC and backdrop dismissal.
+  3. Upgraded Events and Communications Section (`EventsComponent`):
+     - Dynamic historical year filter buttons: `[ Todos los años ] [ 2026 ] [ 2025 ] [ 2024 ] [ 2023 ]`.
+     - View mode toggle between **Carrusel (Cards)** and **Lista Anual (Historical Archive)**.
+     - List View with date block (day in large bold serif, month in small caps, year in institutional gold), thumbnail preview, category badge, Facebook badge, 2-line summary, and reading button.
+     - Read Modal with explicit date with year, full content, and direct Facebook post link.
+  4. Backend & Database:
+     - Migration `V4__add_facebook_fields_and_announcements.sql` adding `facebook_post_id`, `facebook_permalink`, `anio`, index `idx_events_anio`, and seeding 9 authentic communications and civic/academic events from 2026 to 2023.
+     - Updated JPA entity `Event`, `EventRepository` with queries for years, year filtering, and latest announcement.
+     - Controller `EventApiController` exposing `GET /api/events?year={anio}&all=true`, `GET /api/events/latest?tipo=COMUNICADO`, and `GET /api/events/years`.
+- **Files Modified / Created:**
+  - `backend/src/main/resources/db/migration/V4__add_facebook_fields_and_announcements.sql`: Schema migration and seed.
+  - `schema.sql`: Synced production schema with new columns and seeds.
+  - `backend/src/main/java/pe/edu/doramayer/domain/Event.java`: Added `facebookPostId`, `facebookPermalink`, `anio`.
+  - `backend/src/main/java/pe/edu/doramayer/repository/EventRepository.java`: Added methods `findFirstByPublicadoTrueAndTipoIgnoreCaseOrderByFechaDesc`, `findDistinctYears`, and yearly filters.
+  - `backend/src/main/java/pe/edu/doramayer/web/api/EventApiController.java`: Added `/latest`, `/years`, and year param.
+  - `frontend/src/app/models/portal.models.ts`: Added `anio`, `facebookPostId`, `facebookPermalink` to `EventModel`.
+  - `frontend/src/app/services/portal-api.service.ts`: Added `getLatestAnnouncement()`, `getEventYears()`, and updated fallback data.
+  - `frontend/src/app/components/latest-announcement-modal/latest-announcement-modal.component.ts`: New standalone component with thick institutional border, Facebook link, and responsive mobile layout.
+  - `frontend/src/app/components/events/events.component.ts`: Added yearly archive filter, list view mode, full year date formatting, and Facebook permalinks in modal.
+  - `frontend/src/app/app.component.ts`: Integrated `LatestAnnouncementModalComponent`.
+- **Verification/Test Command Executed & Result:**
+  - Database schema & rows verified via MySQL CLI: 9 publications across 2026, 2025, 2024, 2023 with permalinks.
+  - Backend compile & test: Maven 28 unit tests passing, `BUILD SUCCESS`.
+  - REST endpoints verified:
+    - `GET /health`: 200 OK (`status: UP`, `database: CONNECTED`).
+    - `GET /api/events/latest`: 200 OK (`id: 4`, "Proceso de Admisión y Matrícula 2026", `anio: 2026`, `facebookPermalink`).
+    - `GET /api/events/years`: 200 OK (`[2026, 2025, 2024, 2023]`).
+  - Edge CDP end-to-end automation (`scratch/run_cdp_verification.js`):
+    - Entrance Modal validated: `hasThickBorder: true`, Facebook CTA link present, dismissed cleanly.
+    - Events section carousel validated: 6 year filter buttons, 9 historical cards rendered.
+    - Switch to List Mode validated: list layout rendered with date blocks and thumbnails.
+    - Read modal validated: exact date with year (`28 de Julio de 2026`), Facebook link verified.
+    - Mobile 390x844 audit: modal fully responsive, non-transparent white card, stacked action buttons.
+  - Artifact screenshots verified:
+    - `phase16_entrance_modal_facebook.png`
+    - `phase16_events_carousel_years.png`
+    - `phase16_events_list_view.png`
+    - `phase16_events_read_modal_facebook.png`
+    - `phase16_mobile_entrance_modal.png`
 - **Status:** **VERIFIED & COMPLETE**
